@@ -5,8 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor @NoArgsConstructor
-public class UserFormDto {
+@NoArgsConstructor @AllArgsConstructor
+public class UserDeleteFormDto {
 
-    private String nickname;
+    private String username;
+    private String password;
 }
