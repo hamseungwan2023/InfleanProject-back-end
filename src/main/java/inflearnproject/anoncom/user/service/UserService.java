@@ -17,6 +17,7 @@ public class UserService {
 
     public UserEntity joinUser(UserEntity userEntity){
         userEntity.changeToBCryptPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+        userRepository.save(userEntity);
         return userEntity;
     }
 }

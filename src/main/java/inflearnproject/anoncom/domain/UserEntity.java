@@ -28,8 +28,6 @@ public class UserEntity extends BaseTimeEntity{
 
     private String password;
 
-    private LocalDateTime joinedAt;
-
     private String location;
 
     public UserEntity(UserFormDto userFormDto){
