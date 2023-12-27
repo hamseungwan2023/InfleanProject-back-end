@@ -1,13 +1,11 @@
 package inflearnproject.anoncom.domain;
 
-import inflearnproject.anoncom.user.dto.UserFormDto;
+import inflearnproject.anoncom.user.dto.UserJoinFormDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor @AllArgsConstructor
@@ -30,11 +28,11 @@ public class UserEntity extends BaseTimeEntity{
 
     private String location;
 
-    public UserEntity(UserFormDto userFormDto){
-        this.nickname = userFormDto.getNickname();
-        this.username = userFormDto.getUsername();
-        this.password = userFormDto.getPassword();
-        this.email = userFormDto.getEmail();
+    public UserEntity(UserJoinFormDto userJoinFormDto){
+        this.nickname = userJoinFormDto.getNickname();
+        this.username = userJoinFormDto.getUsername();
+        this.password = userJoinFormDto.getPassword();
+        this.email = userJoinFormDto.getEmail();
     }
 
     public void changeToBCryptPassword(String bcryptPassword) {
