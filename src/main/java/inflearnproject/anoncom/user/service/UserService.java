@@ -52,11 +52,16 @@ public class UserService {
     }
 
     public void deleteUser(UserDeleteFormDto userDeleteFormDto){
+        if(!userRepository.existsByUsername(userDeleteFormDto.getUsername())){
+            throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }
+        UserEntity user = userRepository.findByUsername(userDeleteFormDto.getUsername());
+        if(!bCryptPasswordEncoder.matches(userDeleteFormDto.getPassword(), user.getPassword())){
+            throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }
 
-        UserEntity userEntity = userRepository.findByUsername(userDeleteFormDto.getUsername());
-
-        if(bCryptPasswordEncoder.matches(userDeleteFormDto.getPassword(), userEntity.getPassword())){
-            userRepository.delete(userEntity);
+        if(bCryptPasswordEncoder.matches(userDeleteFormDto.getPassword(), user.getPassword())){
+            userRepository.delete(user);
         }
     }
 
