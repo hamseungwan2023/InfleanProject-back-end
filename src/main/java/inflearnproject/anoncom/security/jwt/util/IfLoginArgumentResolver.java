@@ -1,6 +1,6 @@
 package inflearnproject.anoncom.security.jwt.util;
 
-import com.example.fakeshopapi.security.jwt.token.JwtAuthenticationToken;
+import inflearnproject.anoncom.security.jwt.token.JwtAuthenticationToken;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

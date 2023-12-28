@@ -1,8 +1,8 @@
 package inflearnproject.anoncom.security.jwt.filter;
 
 
-import com.example.fakeshopapi.security.jwt.exception.JwtExceptionCode;
-import com.example.fakeshopapi.security.jwt.token.JwtAuthenticationToken;
+import inflearnproject.anoncom.security.jwt.exception.JwtExceptionCode;
+import inflearnproject.anoncom.security.jwt.token.JwtAuthenticationToken;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;

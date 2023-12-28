@@ -1,8 +1,8 @@
 package inflearnproject.anoncom.security.jwt.provider;
 
-import com.example.fakeshopapi.security.jwt.token.JwtAuthenticationToken;
-import com.example.fakeshopapi.security.jwt.util.JwtTokenizer;
-import com.example.fakeshopapi.security.jwt.util.LoginInfoDto;
+import inflearnproject.anoncom.security.jwt.token.JwtAuthenticationToken;
+import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
+import inflearnproject.anoncom.security.jwt.util.LoginInfoDto;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
