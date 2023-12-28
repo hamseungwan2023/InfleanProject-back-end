@@ -4,6 +4,7 @@ import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
+import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public UserEntity findUser(String username, String password){
+        if(!userRepository.existsByUsername(username)){
+            throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }
+        UserEntity user = userRepository.findByUsername(username);
+        if(!bCryptPasswordEncoder.matches(password,user.getPassword())){
+            throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }
+        return user;
+    }
+
     public UserEntity joinUser(UserEntity userEntity){
         if(existsUserEntity(userEntity)){
-            throw new SameInfoUserEntityException("[동일한 회원 정보가 이미 존재합니다.]");
+            throw new SameInfoUserEntityException("동일한 회원 정보가 이미 존재합니다");
         }
         Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
         userEntity.addRole(userRole.get());

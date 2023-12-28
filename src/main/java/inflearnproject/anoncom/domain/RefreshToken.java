@@ -14,6 +14,8 @@ public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long memberId;
-    private String value;
+
+    private Long userEntityId;
+
+    private String tokenValue;
 }

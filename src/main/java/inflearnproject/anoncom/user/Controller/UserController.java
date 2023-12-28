@@ -1,19 +1,19 @@
 package inflearnproject.anoncom.user.Controller;
 
+import inflearnproject.anoncom.domain.RefreshToken;
+import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
-import inflearnproject.anoncom.user.dto.ResUserJoinFormDto;
-import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
-import inflearnproject.anoncom.user.dto.UserFormDto;
-import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
-import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
+import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
+import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
+import inflearnproject.anoncom.user.dto.*;
 import inflearnproject.anoncom.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +21,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenizer jwtTokenizer;
+    private final RefreshTokenService refreshTokenService;
 
 
     @GetMapping()
@@ -45,5 +47,30 @@ public class UserController {
     public ResponseEntity<?> delete(@RequestBody UserDeleteFormDto userDeleteFormDto){
         userService.deleteUser(userDeleteFormDto);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ResUserLoginDto> login(@RequestBody @Valid ReqUserLoginDto loginDto) {
+
+        UserEntity user = userService.findUser(loginDto.getUsername(),loginDto.getPassword());
+        List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+
+
+        String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
+        String refreshToken = jwtTokenizer.createRefreshToken(user.getId(), user.getEmail(), user.getUsername(), roles);
+
+        // RefreshToken을 DB에 저장한다. 성능 때문에 DB가 아니라 Redis에 저장하는 것이 좋다.
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setTokenValue(refreshToken);
+        refreshTokenEntity.setUserEntityId(user.getId());
+        refreshTokenService.addRefreshToken(refreshTokenEntity);
+
+        ResUserLoginDto loginResponse = ResUserLoginDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .memberId(user.getId())
+                .nickname(user.getUsername())
+                .build();
+        return ResponseEntity.ok().body(loginResponse);
     }
 }

@@ -39,9 +39,8 @@ public class SecurityConfig {
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .authorizeHttpRequests(httpRequests -> httpRequests
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers( "/user/signup").permitAll()
+                        .requestMatchers( "/user/signup","/user/login").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
 
                 .apply(authenticationManagerConfig);
 
