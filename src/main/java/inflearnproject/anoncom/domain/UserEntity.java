@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @NoArgsConstructor @AllArgsConstructor
 @Builder @Getter
@@ -28,6 +31,11 @@ public class UserEntity extends BaseTimeEntity{
 
     private String location;
 
+    @ManyToMany
+    @JoinTable(name = "member_role",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
     public UserEntity(UserJoinFormDto userJoinFormDto){
         this.nickname = userJoinFormDto.getNickname();
         this.username = userJoinFormDto.getUsername();
@@ -37,5 +45,9 @@ public class UserEntity extends BaseTimeEntity{
 
     public void changeToBCryptPassword(String bcryptPassword) {
         this.password = bcryptPassword;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
     }
 }
