@@ -79,4 +79,9 @@ public class UserService {
     public boolean existsByUsername(String username){
         return userRepository.existsByUsername(username);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findUserEntityById(Long memberId){
+        return userRepository.findById(memberId);
+    }
 }
