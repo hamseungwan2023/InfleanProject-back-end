@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserJoinFormDto {
+public class ReqUserJoinFormDto {
 
     @NotBlank
     @Length(min = 4,max = 10)
@@ -29,7 +29,7 @@ public class UserJoinFormDto {
     @Email
     private String email;
 
-    public UserJoinFormDto(UserEntity userEntity){
+    public ReqUserJoinFormDto(UserEntity userEntity){
         this.nickname = userEntity.getNickname();
         this.username = userEntity.getUsername();
         this.email = userEntity.getEmail();

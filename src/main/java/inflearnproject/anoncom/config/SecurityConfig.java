@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.config;
 
+import inflearnproject.anoncom.security.jwt.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ import static org.springframework.http.HttpMethod.POST;
 public class SecurityConfig {
 
     private final AuthenticationManagerConfig authenticationManagerConfig;
-
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -38,11 +39,10 @@ public class SecurityConfig {
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .authorizeHttpRequests(httpRequests -> httpRequests
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers( "/members/signup", "/members/login", "/members/refreshToken","/hello").permitAll()
-                        .requestMatchers(GET, "/categories/**", "/products/**").permitAll()
-                        .requestMatchers(GET,"/**").hasAnyRole( "USER")
-                        .requestMatchers(POST,"/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers( "/user/signup").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
+
                 .apply(authenticationManagerConfig);
 
         return httpSecurity.build();

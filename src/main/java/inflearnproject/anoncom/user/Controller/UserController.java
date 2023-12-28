@@ -1,13 +1,15 @@
 package inflearnproject.anoncom.user.Controller;
 
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.user.dto.ResUserJoinFormDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.dto.UserFormDto;
-import inflearnproject.anoncom.user.dto.UserJoinFormDto;
-import inflearnproject.anoncom.user.repository.UserRepository;
+import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
+import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
 import inflearnproject.anoncom.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
+
     @GetMapping()
     public ResponseEntity<List<UserFormDto>> allUsers(){
         List<UserEntity> userEntities = userService.allUsers();
@@ -27,14 +30,15 @@ public class UserController {
         return ResponseEntity.ok().body(dtos);
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<UserJoinFormDto> join(@Valid @RequestBody UserJoinFormDto userJoinFormDto){
+    @PostMapping("/signup")
+    public ResponseEntity<ResUserJoinFormDto> join(@Valid @RequestBody ReqUserJoinFormDto reqUserJoinFormDto){
 
-        UserEntity userEntity = new UserEntity(userJoinFormDto);
+        UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
         UserEntity createdUserEntity = userService.joinUser(userEntity);
-        UserJoinFormDto createdUserJoinFormDto = new UserJoinFormDto(createdUserEntity);
+        ResUserJoinFormDto res = ResUserJoinFormDto.builder().nickname(createdUserEntity.getNickname())
+                .email(createdUserEntity.getEmail()).build();
 
-        return ResponseEntity.ok().body(createdUserJoinFormDto);
+        return ResponseEntity.ok().body(res);
     }
 
     @DeleteMapping("/delete")

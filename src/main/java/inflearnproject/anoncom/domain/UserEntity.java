@@ -1,6 +1,6 @@
 package inflearnproject.anoncom.domain;
 
-import inflearnproject.anoncom.user.dto.UserJoinFormDto;
+import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,15 +32,15 @@ public class UserEntity extends BaseTimeEntity{
     private String location;
 
     @ManyToMany
-    @JoinTable(name = "member_role",
-            joinColumns = @JoinColumn(name = "member_id"),
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-    public UserEntity(UserJoinFormDto userJoinFormDto){
-        this.nickname = userJoinFormDto.getNickname();
-        this.username = userJoinFormDto.getUsername();
-        this.password = userJoinFormDto.getPassword();
-        this.email = userJoinFormDto.getEmail();
+    public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto){
+        this.nickname = reqUserJoinFormDto.getNickname();
+        this.username = reqUserJoinFormDto.getUsername();
+        this.password = reqUserJoinFormDto.getPassword();
+        this.email = reqUserJoinFormDto.getEmail();
     }
 
     public void changeToBCryptPassword(String bcryptPassword) {
