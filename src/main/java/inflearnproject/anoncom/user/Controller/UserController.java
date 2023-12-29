@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
 
     private final UserService userService;
@@ -56,7 +57,7 @@ public class UserController {
      * 로그인을 하게되면 프론트엔드 쪽에서 accessToken이랑 refreshToken값을 만료시간과 함께 localStorage에 저장
      */
     @PostMapping("/login")
-    public ResponseEntity<ResUserLoginDto> login(@RequestBody @Valid ReqUserLoginDto loginDto) {
+    public ResponseEntity<ResUserLoginDto> login(@RequestBody ReqUserLoginDto loginDto) {
 
         UserEntity user = userService.findUser(loginDto.getUsername(),loginDto.getPassword());
         List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
