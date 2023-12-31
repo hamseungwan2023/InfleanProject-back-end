@@ -34,10 +34,7 @@ public class ReqUserJoinFormDto {
     @Length(max=50)
     private String info;
 
-    @NotNull
     private String location;
-
-    private MultipartFile profileImg;
 
     public ReqUserJoinFormDto(UserEntity userEntity){
         this.nickname = userEntity.getNickname();

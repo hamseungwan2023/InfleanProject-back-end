@@ -49,12 +49,13 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> join(@Valid @RequestBody ReqUserJoinFormDto reqUserJoinFormDto) {
+    public ResponseEntity<?> join(@Valid @RequestPart ReqUserJoinFormDto reqUserJoinFormDto,
+                                  @RequestPart(required = false) MultipartFile profileImg) {
 
         try {
             UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
 
-            ifProfileImgNotNull(reqUserJoinFormDto.getProfileImg(), userEntity);
+            ifProfileImgNotNull(profileImg, userEntity);
             UserEntity createdUserEntity = userService.joinUser(userEntity);
             ResUserJoinFormDto res = ResUserJoinFormDto.builder().nickname(createdUserEntity.getNickname())
                     .email(createdUserEntity.getEmail()).build();
