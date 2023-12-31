@@ -30,10 +30,16 @@ public class UserService {
     }
 
     public UserEntity findUser(String username, String password){
-        if(!userRepository.existsByUsername(username)){
+        UserEntity user = null;
+        if(!userRepository.existsByUsername(username) && !userRepository.existsByEmail(username)){
             throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }else{
+            if(userRepository.existsByUsername(username)){
+                user = userRepository.findByUsername(username);
+            }else if(userRepository.existsByEmail(username)){
+                user = userRepository.findByEmail(username);
+            }
         }
-        UserEntity user = userRepository.findByUsername(username);
         if(!bCryptPasswordEncoder.matches(password,user.getPassword())){
             throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
         }
