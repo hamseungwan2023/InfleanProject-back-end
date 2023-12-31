@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.user.Controller;
 
+import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionUserController {
 
     @ExceptionHandler(SameInfoUserEntityException.class)
-    public ResponseEntity<String> handleSameInfoUserEntityException(SameInfoUserEntityException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    public ResponseEntity<ErrorDTO> handleSameInfoUserEntityException(SameInfoUserEntityException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(NoUserEntityException.class)
-    public ResponseEntity<String> handleNoNoUserEntityException(NoUserEntityException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    public ResponseEntity<ErrorDTO> handleNoNoUserEntityException(NoUserEntityException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 }
