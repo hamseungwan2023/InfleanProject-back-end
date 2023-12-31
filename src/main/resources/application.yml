@@ -25,3 +25,7 @@ logging.level:
 jwt:
   secretKey: 12345678901234567890123456789012
   refreshKey: 12345678901234567890123456789012
+
+
+upload:
+  path: C:/profile_upload

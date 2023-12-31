@@ -3,19 +3,29 @@ package inflearnproject.anoncom.user.Controller;
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
 import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
+import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
 import inflearnproject.anoncom.user.dto.*;
 import inflearnproject.anoncom.user.service.UserService;
+import inflearnproject.anoncom.user.util.FileUploadUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,10 +34,12 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class UserController {
 
+    @Value("${upload.path}")
+    private String uploadRootPath;
+
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
-
 
     @GetMapping
     public ResponseEntity<List<UserFormDto>> allUsers(){
@@ -37,14 +49,37 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ResUserJoinFormDto> join(@Valid @RequestBody ReqUserJoinFormDto reqUserJoinFormDto){
+    public ResponseEntity<?> join(@Valid @RequestBody ReqUserJoinFormDto reqUserJoinFormDto) {
 
-        UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
-        UserEntity createdUserEntity = userService.joinUser(userEntity);
-        ResUserJoinFormDto res = ResUserJoinFormDto.builder().nickname(createdUserEntity.getNickname())
-                .email(createdUserEntity.getEmail()).build();
+        try {
+            UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
 
-        return ResponseEntity.ok().body(res);
+            ifProfileImgNotNull(reqUserJoinFormDto.getProfileImg(), userEntity);
+            UserEntity createdUserEntity = userService.joinUser(userEntity);
+            ResUserJoinFormDto res = ResUserJoinFormDto.builder().nickname(createdUserEntity.getNickname())
+                    .email(createdUserEntity.getEmail()).build();
+
+            return ResponseEntity.ok().body(res);
+
+        }catch(RuntimeException | IOException e){
+            return ResponseEntity.badRequest().body(new ErrorDTO(e.getMessage()));
+        }
+
+    }
+
+    private void ifProfileImgNotNull(MultipartFile profileImg, UserEntity userEntity) throws IOException {
+        if(profileImg != null){
+            String originalFilename = profileImg.getOriginalFilename();
+            String uploadFileName = UUID.randomUUID() + "_" + originalFilename;
+            String newUploadPath = FileUploadUtil.makeUploadDirectory(uploadRootPath);
+            File uploadFile = new File(newUploadPath + File.separator + uploadFileName);
+            profileImg.transferTo(uploadFile);
+            String savePath
+                    = newUploadPath.substring(uploadRootPath.length());
+
+            userEntity.setProfileImg(savePath + File.separator + uploadFileName);
+
+        }
     }
 
     @DeleteMapping("/delete")
@@ -119,4 +154,19 @@ public class UserController {
         return  ResponseEntity.ok().body(loginResponse);
     }
 
+    @GetMapping("/load-profile")
+    public ResponseEntity<?> loadProfile(@IfLogin UserEntity userEntity) throws IOException {
+
+        String profilePath = userService.getProfilePath(userEntity.getId());
+
+        String fullPath = uploadRootPath + File.separator + profilePath;
+        File targetFile = new File(fullPath);
+        if(!targetFile.exists()) return ResponseEntity.notFound().build();
+        byte[] rawImageData = FileCopyUtils.copyToByteArray(targetFile);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(FileUploadUtil.getMediaType(profilePath));
+
+        return ResponseEntity.ok().headers(headers).body(rawImageData);
+    }
 }

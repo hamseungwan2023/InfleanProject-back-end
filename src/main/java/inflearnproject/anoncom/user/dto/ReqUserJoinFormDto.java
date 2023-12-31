@@ -3,10 +3,12 @@ package inflearnproject.anoncom.user.dto;
 import inflearnproject.anoncom.domain.UserEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -29,9 +31,19 @@ public class ReqUserJoinFormDto {
     @Email
     private String email;
 
+    @Length(max=50)
+    private String info;
+
+    @NotNull
+    private String location;
+
+    private MultipartFile profileImg;
+
     public ReqUserJoinFormDto(UserEntity userEntity){
         this.nickname = userEntity.getNickname();
         this.username = userEntity.getUsername();
         this.email = userEntity.getEmail();
+        this.info = userEntity.getInfo();
+        this.location = userEntity.getLocation();
     }
 }

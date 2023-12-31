@@ -31,6 +31,10 @@ public class UserEntity extends BaseTimeEntity{
 
     private String location;
 
+    private String info;
+
+    private String profileImg;
+
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -41,6 +45,8 @@ public class UserEntity extends BaseTimeEntity{
         this.username = reqUserJoinFormDto.getUsername();
         this.password = reqUserJoinFormDto.getPassword();
         this.email = reqUserJoinFormDto.getEmail();
+        this.location = reqUserJoinFormDto.getLocation();
+        this.info = reqUserJoinFormDto.getInfo();
     }
 
     public void changeToBCryptPassword(String bcryptPassword) {
@@ -49,5 +55,9 @@ public class UserEntity extends BaseTimeEntity{
 
     public void addRole(Role role) {
         roles.add(role);
+    }
+
+    public void setProfileImg(String profileImg){
+        this.profileImg = profileImg;
     }
 }

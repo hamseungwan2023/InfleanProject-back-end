@@ -70,6 +70,11 @@ public class UserService {
         return existsByEmail(userEntity.getEmail()) || existsByNickname(userEntity.getNickname()) || existsByUsername(userEntity.getUsername());
     }
 
+    public String getProfilePath(Long id){
+        String profile = userRepository.findProfileImgById(id);
+        return profile;
+    }
+
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email){
         return userRepository.existsByEmail(email);
