@@ -49,8 +49,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> join(@Valid @RequestPart ReqUserJoinFormDto reqUserJoinFormDto,
-                                  @RequestPart(required = false) MultipartFile profileImg) {
+    public ResponseEntity<?> join(@Valid @RequestPart("reqUserJoinFormDto") ReqUserJoinFormDto reqUserJoinFormDto,
+                                  @RequestPart(value = "profileImg",required = false) MultipartFile profileImg) {
 
         try {
             UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
