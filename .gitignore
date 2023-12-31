@@ -38,6 +38,5 @@ out/
 
 ## 빌드 파일 ##
 build/
-## application.yml ##
-/src/main/resources/application.yml
+
 /src/main/generated
