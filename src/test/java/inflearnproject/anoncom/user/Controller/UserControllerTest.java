@@ -1,5 +1,7 @@
 package inflearnproject.anoncom.user.Controller;
 
+import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +25,11 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // ... 기타 필드
+    @Autowired
+    private UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Test
     @DisplayName("회원가입이 잘 되었나")
     void signup_success() throws Exception {
@@ -38,6 +44,11 @@ class UserControllerTest {
                         .file(jsonFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
+        UserEntity user = userRepository.findByUsername("username");
+        assertEquals(user.getNickname(),"nickname");
+        assertEquals(user.getUsername(),"username");
+        assertTrue(passwordEncoder.matches("password",user.getPassword()));
+        assertEquals(user.getEmail(),"1@naver.com");
 
     }
 }
