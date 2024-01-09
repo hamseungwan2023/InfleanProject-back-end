@@ -13,6 +13,7 @@ import lombok.Setter;
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "refresh_id")
     private Long id;
 
     private Long userEntityId;
