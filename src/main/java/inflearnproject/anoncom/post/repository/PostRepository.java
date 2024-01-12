@@ -7,5 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    Post findPostById(Long id);
 
 }

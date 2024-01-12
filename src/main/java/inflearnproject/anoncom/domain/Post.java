@@ -35,4 +35,10 @@ public class Post extends BaseTimeEntity{
         this.user = user;
         user.getPosts().add(this);
     }
+
+    public void updateValues(String title, String category, String content){
+        this.title = title;
+        this.category = category;
+        this.content = content;
+    }
 }
