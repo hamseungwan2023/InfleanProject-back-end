@@ -13,22 +13,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResPostDto {
+public class ResAddPostDto {
 
     private long id;
     private String title;
     private String category;
     private LocalDateTime createdAt;
-    private UserEntity user;
+    private Long userId;
     private int finalLike;
 
-    public static ResPostDto buildResPostDto(UserEntity user, Post post){
-        ResPostDto dto = ResPostDto.builder()
+    public static ResAddPostDto buildResPostDto(UserEntity user, Post post){
+        ResAddPostDto dto = ResAddPostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .category(post.getCategory())
                 .createdAt(post.getCreatedAt())
-                .user(user)
+                .userId(user.getId())
                 .finalLike(post.getUserLike() - post.getUserDisLike())
                 .build();
         return dto;
