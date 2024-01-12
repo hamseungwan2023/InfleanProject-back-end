@@ -2,10 +2,7 @@ package inflearnproject.anoncom.domain;
 
 import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +12,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor @AllArgsConstructor
 @Builder @Getter
+@ToString(of = {"id","email","nickname","username","password","roles"})
 public class UserEntity extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
