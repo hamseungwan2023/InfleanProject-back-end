@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.comment.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import inflearnproject.anoncom.comment.dto.ReqAddPatchCommentDto;
 import inflearnproject.anoncom.comment.dto.ReqCommentDto;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
@@ -12,6 +13,7 @@ import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,4 +56,9 @@ public class CommentController {
         return ResponseEntity.ok().body("ok");
     }
 
+    @DeleteMapping("/api/commentDelete/{commentId}")
+    public ResponseEntity<?> deleteComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId){
+        commentService.deleteComment(userDto,commentId);
+        return ResponseEntity.ok().body("ok");
+    }
 }

@@ -35,6 +35,16 @@ public class CommentService {
     }
 
     public void updateComment(LoginUserDto userDto, Long commentId, String content){
+        Comment comment = validAndGetComment(userDto, commentId);
+        comment.updateContent(content);
+    }
+
+    public void deleteComment(LoginUserDto userDto, Long commentId){
+        Comment comment = validAndGetComment(userDto, commentId);
+        commentRepository.delete(comment);
+    }
+
+    private Comment validAndGetComment(LoginUserDto userDto, Long commentId) {
         Comment comment = commentRepository.findCommentById(commentId);
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
 
@@ -44,6 +54,6 @@ public class CommentService {
         if(!comment.getUser().equals(user)){
             throw new NotSameUserException("동일한 유저가 아니라서 삭제가 불가능합니다.");
         }
-        comment.updateContent(content);
+        return comment;
     }
 }
