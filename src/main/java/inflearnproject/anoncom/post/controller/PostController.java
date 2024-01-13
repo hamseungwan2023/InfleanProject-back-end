@@ -32,7 +32,7 @@ public class PostController {
     private final UserRepository userRepository;
     @PostMapping("/api/postWrite")
     public ResponseEntity<ResAddPostDto> addPost(@IfLogin LoginUserDto userDto, @RequestBody ReqAddPostDto postDto){
-        //TODO 로그인 안 되어있으면 에러 발생
+
         Post post = buildPost(postDto);
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         postService.savePost(user,post);

@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers( "/user/signup","/user/login","/user/refreshToken").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
-
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .apply(authenticationManagerConfig);
 
         return httpSecurity.build();

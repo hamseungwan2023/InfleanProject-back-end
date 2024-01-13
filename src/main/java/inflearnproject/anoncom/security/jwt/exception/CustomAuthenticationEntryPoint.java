@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,14 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute("exception");
 
+        // 요청 헤더에서 토큰 추출
+        String token = request.getHeader("Authorization");
+
+        // 토큰이 없거나 비어 있을 경우
+        if (token == null || token.trim().isEmpty()) {
+            log.error("entry point >> not found token");
+            setResponse(response, JwtExceptionCode.NOT_FOUND_TOKEN);
+        }
         if(exception != null) {
             log.error("Commence Get Exception : {}", exception);
             log.error("entry point >> not found token");
