@@ -4,6 +4,7 @@ import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
+import inflearnproject.anoncom.post.dto.ResPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
@@ -12,6 +13,9 @@ import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.*;
 import static inflearnproject.anoncom.post.dto.ResAddPostDto.buildResPostDto;
@@ -42,5 +46,16 @@ public class PostController {
                                                     @RequestBody ReqAddPostDto postDto){
         postService.update(postId,postDto);
         return ResponseEntity.ok().body("ok");
+    }
+
+
+    /**
+     카테고리에 따라 게시글들을 보여주는 메서드
+     */
+    @GetMapping("/api/postList/{category}")
+    public ResponseEntity<List<ResPostDto>> getPostsByCategory(@PathVariable("category") String category){
+        List<Post> postsByCategory = postService.findPostsByCategory(category);
+        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(dtos);
     }
 }
