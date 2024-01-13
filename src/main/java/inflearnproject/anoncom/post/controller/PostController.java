@@ -42,7 +42,7 @@ public class PostController {
     }
 
     //TODO API URL 규칙에 맞게 나중에 수정하기
-    //TODO 에러 핸들링
+
     @PatchMapping("/api/postCorrect/{postId}")
     public ResponseEntity<?> updatePost(@IfLogin LoginUserDto userDto,@PathVariable("postId") Long postId,
                                                     @RequestBody ReqAddPostDto postDto){

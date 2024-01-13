@@ -5,6 +5,7 @@ import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
+import inflearnproject.anoncom.post.exception.NoPostException;
 import inflearnproject.anoncom.post.repository.PostDSLRepository;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static inflearnproject.anoncom.user.exception.ExceptionMessage.NO_POST_MESSAGE;
 
 @Service
 @Transactional
@@ -36,7 +39,7 @@ public class PostService {
     public Post findPostById(Long id){
         Post post = postRepository.findPostById(id);
         if(post == null){
-            throw new NullPointerException("존재하지 않는 게시글입니다.");
+            throw new NoPostException(NO_POST_MESSAGE);
         }
         return post;
     }
