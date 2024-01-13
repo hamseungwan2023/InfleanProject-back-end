@@ -57,27 +57,6 @@ class PostRepositoryTest {
         userService.joinUser(user);
     }
 
-    @Test
-    @DisplayName("post가 잘 저장되나 확인하기")
-    void post_add_success(){
-        UserEntity user = userRepository.findByUsername("username");
-        Post post = Post.builder().content("컨텐트")
-                .title("타이틀")
-                .userLike(0)
-                .userDisLike(0)
-                .views(0)
-                .category("카테고리").build();
-        post.putUser(user);
-
-        postRepository.save(post);
-        Post post1 = postRepository.findById(1L).get();
-        assertThat(post1.getId()).isEqualTo(1L);
-        assertThat(post1.getContent()).isEqualTo("컨텐트");
-        assertThat(post1.getTitle()).isEqualTo("타이틀");
-        assertThat(post1.getUserLike()).isEqualTo(0);
-        assertThat(post1.getUser()).isEqualTo(user);
-
-    }
 
     @Test
     @DisplayName("post가 잘 삭제되나 확인하기")

@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder @Getter
-@ToString(of = {"title","category","content","user","userLike","userDisLike","views"})
+@ToString(of = {"id","title","category","content","user","userLike","userDisLike","views"})
 public class Post extends BaseTimeEntity{
 
     @Id
@@ -28,6 +28,8 @@ public class Post extends BaseTimeEntity{
     private int userLike; //좋아요
 
     private int userDisLike; //싫어요
+
+    private int finalLike = userLike - userDisLike; //좋아요 - 싫어요
 
     private int views; //조회수
     //TODO 댓글 연관관계 매핑 및 댓글의 총 개수
