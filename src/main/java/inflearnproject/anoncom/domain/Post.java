@@ -3,6 +3,9 @@ package inflearnproject.anoncom.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,10 +32,22 @@ public class Post extends BaseTimeEntity{
 
     private int userDisLike; //싫어요
 
+    //TODO : 나중에 수정
     private int finalLike = userLike - userDisLike; //좋아요 - 싫어요
 
     private int views; //조회수
-    //TODO 댓글 연관관계 매핑 및 댓글의 총 개수
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+
+    // 댓글 개수를 저장하지 않는 필드
+    @Transient
+    private int commentCount;
+
+    public int returnCommentCount() {
+        return comments.size();
+    }
+
     public void putUser(UserEntity user){
         this.user = user;
         user.getPosts().add(this);
