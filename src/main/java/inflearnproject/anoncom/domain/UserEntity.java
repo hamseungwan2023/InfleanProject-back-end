@@ -36,6 +36,8 @@ public class UserEntity extends BaseTimeEntity{
 
     private String profileImg;
 
+    private int rank;
+
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

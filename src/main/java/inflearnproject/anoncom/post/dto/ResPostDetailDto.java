@@ -16,7 +16,9 @@ public class ResPostDetailDto {
     private String category;
 
     private LocalDateTime createdAt;
-    private UserEntity user;
+    private Long writeId;
+    private String writeNickname;
+    private int rank;
 
     private int views;
     private int like;
@@ -31,7 +33,9 @@ public class ResPostDetailDto {
                 .title(post.getTitle())
                 .category(post.getCategory())
                 .createdAt(post.getCreatedAt())
-                .user(post.getUser())
+                .writeId(post.getUser().getId())
+                .writeNickname(post.getUser().getNickname())
+                .rank(post.getUser().getRank())
                 .views(post.getViews())
                 .like(post.getUserLike())
                 .dislike(post.getUserDisLike())

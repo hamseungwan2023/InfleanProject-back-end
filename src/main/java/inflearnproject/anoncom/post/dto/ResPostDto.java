@@ -15,7 +15,8 @@ public class ResPostDto {
     private String category;
 
     private LocalDateTime createdAt;
-    private UserEntity user;
+    private String writer;
+    private int rank;
     private int finalLike;
 
     public ResPostDto(Post post){
@@ -23,7 +24,8 @@ public class ResPostDto {
         this.title = post.getTitle();
         this.category = post.getCategory();
         this.createdAt = post.getCreatedAt();
-        this.user = post.getUser();
+        this.writer = post.getUser().getNickname();
+        this.rank = post.getUser().getRank();
         this.finalLike = post.getFinalLike();
     }
 }
