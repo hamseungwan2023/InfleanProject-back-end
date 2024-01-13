@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReqAddCommentDto {
+public class ReqAddPatchCommentDto {
 
     private String content;
 

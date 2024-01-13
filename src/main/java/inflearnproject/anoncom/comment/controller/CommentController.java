@@ -1,6 +1,6 @@
 package inflearnproject.anoncom.comment.controller;
 
-import inflearnproject.anoncom.comment.dto.ReqAddCommentDto;
+import inflearnproject.anoncom.comment.dto.ReqAddPatchCommentDto;
 import inflearnproject.anoncom.comment.dto.ReqCommentDto;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.comment.service.CommentService;
@@ -28,14 +28,14 @@ public class CommentController {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     @PostMapping("/api/commentWrite/{postId}")
-    public ResponseEntity<?> addComment(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId, @RequestBody ReqAddCommentDto reqAddCommentDto){
+    public ResponseEntity<?> addComment(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId, @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
         Post post = postRepository.findPostById(postId);
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         Comment comment = Comment.builder()
                 .post(post)
                 .user(user)
                 .userLike(0)
-                .content(reqAddCommentDto.getContent())
+                .content(reqAddPatchCommentDto.getContent())
                 .build();
         commentService.saveComment(comment,user,post);
 
@@ -46,6 +46,12 @@ public class CommentController {
     public ResponseEntity<List<ReqCommentDto>> showComments(@PathVariable("postId") Long postId){
         List<ReqCommentDto> comments = commentService.findComments(postId);
         return ResponseEntity.ok().body(comments);
+    }
+
+    @PatchMapping("/api/commentCorrect/{commentId}")
+    public ResponseEntity<?> patchComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
+        commentService.updateComment(userDto, commentId, reqAddPatchCommentDto.getContent());
+        return ResponseEntity.ok().body("ok");
     }
 
 }
