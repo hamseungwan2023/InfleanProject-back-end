@@ -27,8 +27,12 @@ public class Comment extends BaseTimeEntity{
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    private int like;
+    private int userLike;
 
     private String content;
 
+    public void putUserPost(UserEntity user, Post post){
+        this.user = user;
+        this.post = post;
+    }
 }
