@@ -4,6 +4,7 @@ import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
+import inflearnproject.anoncom.post.dto.ResPostDetailDto;
 import inflearnproject.anoncom.post.dto.ResPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.*;
 import static inflearnproject.anoncom.post.dto.ResAddPostDto.buildResPostDto;
+import static inflearnproject.anoncom.post.dto.ResPostDetailDto.buildResPostDetailDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,5 +59,14 @@ public class PostController {
         List<Post> postsByCategory = postService.findPostsByCategory(category);
         List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(dtos);
+    }
+    /**
+     * postId에 해당되는 게시글 하나의 상세 정보를 보여주는 메서드
+     */
+    @GetMapping("/api/postDetail/{postId}")
+    public ResponseEntity<ResPostDetailDto> getPost(@PathVariable Long postId){
+        Post post = postService.findPostById(postId);
+        ResPostDetailDto resPostDetailDto = buildResPostDetailDto(post);
+        return ResponseEntity.ok().body(resPostDetailDto);
     }
 }
