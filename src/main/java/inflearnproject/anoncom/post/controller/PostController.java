@@ -37,7 +37,8 @@ public class PostController {
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
 
         postService.savePost(user,post);
-        ResAddPostDto resAddPostDto = buildResPostDto(user, post);
+        ResAddPostDto resAddPostDto = buildResPostDto(user.getId(), post);
+
         return ResponseEntity.ok().body(resAddPostDto);
     }
 

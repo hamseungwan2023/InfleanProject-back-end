@@ -37,7 +37,7 @@ public class PostDSLRepository {
                         post.title,
                         post.category,
                         post.createdAt,
-                        userEntity,
+                        userEntity.id,
                         post.finalLike,
                         post.content
                 ))
