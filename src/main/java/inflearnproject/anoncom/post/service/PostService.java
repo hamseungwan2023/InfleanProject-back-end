@@ -24,6 +24,7 @@ public class PostService {
     public void savePost(UserEntity user, Post post){
         post.putUser(user);
         postRepository.save(post);
+        user.updateRank();
     }
 
     public Post update(Long postId, ReqAddPostDto postDto){

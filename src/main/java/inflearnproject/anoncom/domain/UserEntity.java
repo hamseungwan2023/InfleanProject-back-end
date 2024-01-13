@@ -67,4 +67,8 @@ public class UserEntity extends BaseTimeEntity{
     public void setProfileImg(String profileImg){
         this.profileImg = profileImg;
     }
+
+    public void updateRank(){
+        this.rank = this.posts.size();
+    }
 }

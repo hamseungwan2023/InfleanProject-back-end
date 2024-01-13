@@ -35,7 +35,6 @@ public class PostController {
         //TODO 로그인 안 되어있으면 에러 발생
         Post post = buildPost(postDto);
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
-
         postService.savePost(user,post);
         ResAddPostDto resAddPostDto = buildResPostDto(user.getId(), post);
 
