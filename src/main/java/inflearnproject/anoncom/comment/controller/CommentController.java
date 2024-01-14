@@ -8,6 +8,8 @@ import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.repository.PostRepository;
+import inflearnproject.anoncom.reComment.dto.ResReCommentDto;
+import inflearnproject.anoncom.reComment.repository.ReCommentDSLRepository;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
@@ -24,7 +26,7 @@ public class CommentController {
 
     private final CommentService commentService;
     private final CommentRepository commentRepository;
-
+    private final ReCommentDSLRepository reCommentDSLRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     @PostMapping("/api/commentWrite/{postId}")
@@ -45,6 +47,10 @@ public class CommentController {
     @GetMapping("/api/commentList/{postId}")
     public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId){
         List<ResCommentDto> comments = commentService.findComments(postId);
+        for (ResCommentDto comment : comments) {
+            List<ResReCommentDto> reCommentsByPost = reCommentDSLRepository.findReCommentsByPost(postId);
+            comment.setReplyCommentList(reCommentsByPost);
+        }
         return ResponseEntity.ok().body(comments);
     }
 
