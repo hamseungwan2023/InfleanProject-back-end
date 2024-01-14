@@ -30,4 +30,16 @@ public class ReComment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
+
+    private String content;
+
+    public void setReCommentInfo(UserEntity user, Post post, Comment comment){
+        this.user = user;
+        this.post = post;
+        this.comment = comment;
+    }
+
+    public void updateContent(String content){
+        this.content = content;
+    }
 }
