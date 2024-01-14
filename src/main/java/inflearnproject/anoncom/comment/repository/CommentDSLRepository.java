@@ -3,10 +3,7 @@ package inflearnproject.anoncom.comment.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import inflearnproject.anoncom.comment.dto.QReqCommentDto;
-import inflearnproject.anoncom.comment.dto.ReqCommentDto;
-import inflearnproject.anoncom.domain.QComment;
-import inflearnproject.anoncom.domain.QPost;
-import inflearnproject.anoncom.domain.QUserEntity;
+import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +11,6 @@ import java.util.List;
 
 import static inflearnproject.anoncom.domain.QComment.*;
 import static inflearnproject.anoncom.domain.QPost.*;
-import static inflearnproject.anoncom.domain.QUserEntity.*;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
@@ -28,7 +24,7 @@ public class CommentDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ReqCommentDto> findCommentByPostId(Long postId) {
+    public List<ResCommentDto> findCommentByPostId(Long postId) {
         return queryFactory.select(new QReqCommentDto(
                         comment.id,
                         post.id,

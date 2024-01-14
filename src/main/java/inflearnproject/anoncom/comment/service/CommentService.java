@@ -1,6 +1,6 @@
 package inflearnproject.anoncom.comment.service;
 
-import inflearnproject.anoncom.comment.dto.ReqCommentDto;
+import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import inflearnproject.anoncom.comment.exception.NoCommentException;
 import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.comment.repository.CommentDSLRepository;
@@ -30,7 +30,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<ReqCommentDto> findComments(Long postId){
+    public List<ResCommentDto> findComments(Long postId){
         return commentDSLRepository.findCommentByPostId(postId);
     }
 

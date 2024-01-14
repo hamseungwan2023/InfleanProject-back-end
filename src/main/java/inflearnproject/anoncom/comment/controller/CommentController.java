@@ -1,8 +1,7 @@
 package inflearnproject.anoncom.comment.controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import inflearnproject.anoncom.comment.dto.ReqAddPatchCommentDto;
-import inflearnproject.anoncom.comment.dto.ReqCommentDto;
+import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.comment.service.CommentService;
 import inflearnproject.anoncom.domain.Comment;
@@ -13,7 +12,6 @@ import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +43,8 @@ public class CommentController {
     }
 
     @GetMapping("/api/commentList/{postId}")
-    public ResponseEntity<List<ReqCommentDto>> showComments(@PathVariable("postId") Long postId){
-        List<ReqCommentDto> comments = commentService.findComments(postId);
+    public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId){
+        List<ResCommentDto> comments = commentService.findComments(postId);
         return ResponseEntity.ok().body(comments);
     }
 

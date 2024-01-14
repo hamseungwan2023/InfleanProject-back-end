@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ReqCommentDto {
+public class ResCommentDto {
 
     private Long id; //commentId
 
@@ -21,7 +21,7 @@ public class ReqCommentDto {
     private String content;
 
     @QueryProjection
-    public ReqCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, LocalDateTime createdAt, String content){
+    public ResCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, LocalDateTime createdAt, String content){
         this.id = id;
         this.postId = postId;
         this.writerId = writerId;
