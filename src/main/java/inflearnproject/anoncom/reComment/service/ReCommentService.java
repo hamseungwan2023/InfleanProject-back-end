@@ -37,11 +37,21 @@ public class ReCommentService {
     }
 
     public void patchComment(LoginUserDto userDto,Long reCommentId,ReqAddReCommentDto reqAddReCommentDto){
+        ReComment reComment = validAndGetReComment(userDto, reCommentId);
+        reComment.updateContent(reqAddReCommentDto.getContent());
+    }
+
+    public void deleteReComment(LoginUserDto userDto, Long reCommentId) {
+        ReComment reComment = validAndGetReComment(userDto, reCommentId);
+        reCommentRepository.delete(reComment);
+    }
+
+    private ReComment validAndGetReComment(LoginUserDto userDto, Long reCommentId) {
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         ReComment reComment = reCommentRepository.findById(reCommentId).orElseThrow(() -> new NoReCommentException("해당 댓글은 존재하지 않습니다."));
         if(!user.equals(reComment.getUser())){
             throw new NotSameUserException("대댓글을 작성한 사용자가 아니기에 수정할 수 없습니다.");
         }
-        reComment.updateContent(reqAddReCommentDto.getContent());
+        return reComment;
     }
 }

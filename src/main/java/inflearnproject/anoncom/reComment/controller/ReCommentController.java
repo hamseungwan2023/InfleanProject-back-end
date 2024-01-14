@@ -23,4 +23,9 @@ public class ReCommentController {
     public void patchReplayComment(@IfLogin LoginUserDto userDto, @PathVariable("replyCommentId") Long reCommentId, @RequestBody ReqAddReCommentDto reqAddReCommentDto){
         reCommentService.patchComment(userDto,reCommentId, reqAddReCommentDto);
     }
+
+    @DeleteMapping("/api/replyCommentDelete/{commentReplyId}")
+    public void deleteReplyComment(@IfLogin LoginUserDto userDto, @PathVariable("commentReplyId") Long reCommentId){
+        reCommentService.deleteReComment(userDto, reCommentId);
+    }
 }
