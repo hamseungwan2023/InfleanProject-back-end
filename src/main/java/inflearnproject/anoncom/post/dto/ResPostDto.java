@@ -18,7 +18,7 @@ public class ResPostDto {
     private String writer;
     private int rank;
     private int finalLike;
-
+    private int contentCount;
     public ResPostDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
@@ -27,5 +27,6 @@ public class ResPostDto {
         this.writer = post.getUser().getNickname();
         this.rank = post.getUser().getRank();
         this.finalLike = post.getFinalLike();
+        this.contentCount = post.getComments().size();
     }
 }
