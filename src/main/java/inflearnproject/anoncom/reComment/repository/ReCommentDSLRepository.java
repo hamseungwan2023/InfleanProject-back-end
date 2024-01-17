@@ -24,7 +24,7 @@ public class ReCommentDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ResReCommentDto> findReCommentsByPost(Long postId){
+    public List<ResReCommentDto> findReCommentsByPost(Long postId,Long commentId){
         return queryFactory.
                 select(new QResReCommentDto(
                         reComment.id,
@@ -37,7 +37,8 @@ public class ReCommentDSLRepository {
                         reComment.content
                 )).from(reComment)
                 .join(reComment.comment, comment)
-                .where(reComment.post.id.eq(postId))
+                .where(reComment.post.id.eq(postId),
+                        reComment.comment.id.eq(commentId))
                 .fetch();
     }
 }

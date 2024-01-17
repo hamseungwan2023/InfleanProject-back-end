@@ -48,7 +48,8 @@ public class CommentController {
     public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId){
         List<ResCommentDto> comments = commentService.findComments(postId);
         for (ResCommentDto comment : comments) {
-            List<ResReCommentDto> reCommentsByPost = reCommentDSLRepository.findReCommentsByPost(postId);
+            Long commentId = comment.getId();
+            List<ResReCommentDto> reCommentsByPost = reCommentDSLRepository.findReCommentsByPost(postId,commentId);
             comment.setReplyCommentList(reCommentsByPost);
         }
         return ResponseEntity.ok().body(comments);
