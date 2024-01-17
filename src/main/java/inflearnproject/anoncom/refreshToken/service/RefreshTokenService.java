@@ -16,8 +16,11 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public RefreshToken addRefreshToken(RefreshToken refreshToken) {
-        return refreshTokenRepository.save(refreshToken);
+    public RefreshToken addRefreshToken(RefreshToken refreshToken,Long userId) {
+        if(!refreshTokenRepository.existsByUserEntityId(userId)){
+            return refreshTokenRepository.save(refreshToken);
+        }
+        return null;
     }
 
     @Transactional

@@ -5,13 +5,17 @@ import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
+import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
+import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.dto.*;
+import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
 import inflearnproject.anoncom.user.util.FileUploadUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +44,8 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
-
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     @GetMapping
     public ResponseEntity<List<UserFormDto>> allUsers(){
         List<UserEntity> userEntities = userService.allUsers();
@@ -90,7 +95,7 @@ public class UserController {
     }
 
     /**
-     * 로그인을 하게되면 프론트엔드 쪽에서 accessToken이랑 refreshToken값을 만료시간과 함께 localStorage에 저장
+     * 로그인을 하게되면 프론트엔드 쪽에서 accessToken localStorage에 저장
      */
     @PostMapping("/login")
     public ResponseEntity<ResUserLoginDto> login(@RequestBody ReqUserLoginDto loginDto) {
@@ -106,13 +111,14 @@ public class UserController {
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setTokenValue(refreshToken);
         refreshTokenEntity.setUserEntityId(user.getId());
-        refreshTokenService.addRefreshToken(refreshTokenEntity);
+        refreshTokenService.addRefreshToken(refreshTokenEntity,user.getId());
 
         ResUserLoginDto loginResponse = ResUserLoginDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .memberId(user.getId())
                 .nickname(user.getUsername())
+                .rank(user.getRank())
                 .build();
         return ResponseEntity.ok().body(loginResponse);
     }
@@ -132,7 +138,12 @@ public class UserController {
      * @return
      */
     @PostMapping("/refreshToken")
-    public ResponseEntity<ResUserLoginDto> requestRefresh(@RequestBody RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<ResUserLoginDto> requestRefresh(@IfLogin LoginUserDto userDto, @RequestBody RefreshTokenDto refreshTokenDto) {
+
+        UserEntity user = userRepository.findByEmail(userDto.getEmail());
+        RefreshToken refreshTokenByUserEntityId = refreshTokenRepository.findRefreshTokenByUserEntityId(user.getId());
+        refreshTokenDto.setRefreshToken(refreshTokenByUserEntityId.getTokenValue());
+
         RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenDto.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getTokenValue());
 
