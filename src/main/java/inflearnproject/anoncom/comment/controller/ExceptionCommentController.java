@@ -15,12 +15,12 @@ public class ExceptionCommentController {
 
     @ExceptionHandler(NoCommentException.class)
     public ResponseEntity<ErrorDTO> handleNoCommentException(NoCommentException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("글자 수와 형식에 맞게 작성해주십시오"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(NotSameUserException.class)
     public ResponseEntity<ErrorDTO> handleNotSameUserException(NotSameUserException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("글자 수와 형식에 맞게 작성해주십시오"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
