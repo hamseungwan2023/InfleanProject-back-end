@@ -37,6 +37,7 @@ public class Comment extends BaseTimeEntity{
 
     private String content;
 
+    private boolean deleted; //삭제된 상태면 true, 삭제 안 된 상태면 false
     public void putUserPost(UserEntity user, Post post){
         this.user = user;
         this.post = post;
@@ -44,5 +45,9 @@ public class Comment extends BaseTimeEntity{
 
     public void updateContent(String content){
         this.content = content;
+    }
+
+    public void delete(){
+        this.deleted = true;
     }
 }

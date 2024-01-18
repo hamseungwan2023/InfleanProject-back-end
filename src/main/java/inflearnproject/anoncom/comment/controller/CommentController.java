@@ -40,6 +40,7 @@ public class CommentController {
                 .user(user)
                 .userLike(0)
                 .content(reqAddPatchCommentDto.getContent())
+                .deleted(false)
                 .build();
         commentService.saveComment(comment,user,post);
 

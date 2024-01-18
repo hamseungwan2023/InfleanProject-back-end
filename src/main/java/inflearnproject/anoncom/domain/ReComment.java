@@ -33,6 +33,8 @@ public class ReComment extends BaseTimeEntity {
 
     private String content;
 
+    private boolean deleted; //삭제된 상태면 true, 삭제 안 된 상태면 false
+
     public void setReCommentInfo(UserEntity user, Post post, Comment comment){
         this.user = user;
         this.post = post;
@@ -41,5 +43,9 @@ public class ReComment extends BaseTimeEntity {
 
     public void updateContent(String content){
         this.content = content;
+    }
+
+    public void delete(){
+        this.deleted = true;
     }
 }

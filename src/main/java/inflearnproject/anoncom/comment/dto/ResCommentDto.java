@@ -22,6 +22,7 @@ public class ResCommentDto {
     private int like;
     private LocalDateTime createdAt;
     private String content;
+    private boolean deleted;
 
     List<ResReCommentDto> replyCommentList = new ArrayList<>();
 
@@ -35,5 +36,6 @@ public class ResCommentDto {
         this.like = like;
         this.createdAt = createdAt;
         this.content = content;
+        this.deleted = false;
     }
 }

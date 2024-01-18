@@ -32,6 +32,7 @@ public class ReCommentService {
                 .user(user)
                 .comment(comment)
                 .content(reqAddReCommentDto.getContent())
+                .deleted(false)
                 .build();
         reCommentRepository.save(recomment);
     }
@@ -43,7 +44,7 @@ public class ReCommentService {
 
     public void deleteReComment(LoginUserDto userDto, Long reCommentId) {
         ReComment reComment = validAndGetReComment(userDto, reCommentId);
-        reCommentRepository.delete(reComment);
+        reComment.delete();
     }
 
     private ReComment validAndGetReComment(LoginUserDto userDto, Long reCommentId) {

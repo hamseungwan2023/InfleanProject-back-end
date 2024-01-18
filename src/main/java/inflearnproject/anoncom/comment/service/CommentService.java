@@ -41,7 +41,7 @@ public class CommentService {
 
     public void deleteComment(LoginUserDto userDto, Long commentId){
         Comment comment = validAndGetComment(userDto, commentId);
-        commentRepository.delete(comment);
+        comment.delete();
     }
 
     private Comment validAndGetComment(LoginUserDto userDto, Long commentId) {
