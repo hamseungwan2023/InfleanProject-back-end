@@ -37,8 +37,14 @@ public class Post extends BaseTimeEntity{
 
     private int views; //조회수
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ReComment> reComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostReaction> postReactions = new ArrayList<>();
 
     // 댓글 개수를 저장하지 않는 필드
     @Transient
