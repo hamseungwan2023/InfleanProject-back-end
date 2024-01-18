@@ -62,4 +62,16 @@ public class Post extends BaseTimeEntity{
     public boolean isOwnedBy(Long userId) {
         return this.user != null && userId.equals(this.user.getId());
     }
+
+    public void addUserLike(){
+        userLike++;
+    }
+
+    public void addUserDisLike(){
+        userDisLike++;
+    }
+
+    public void buildFinalLike(){
+        this.finalLike = userLike - userDisLike;
+    }
 }
