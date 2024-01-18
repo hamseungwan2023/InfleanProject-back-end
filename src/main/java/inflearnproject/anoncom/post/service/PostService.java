@@ -9,6 +9,8 @@ import inflearnproject.anoncom.post.exception.NoPostException;
 import inflearnproject.anoncom.post.repository.PostDSLRepository;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +46,8 @@ public class PostService {
         return post;
     }
 
-    public List<Post> findPostsByCategory(String category){
-        return postRepository.findPostByCategory(category);
+    public Page<Post> findPostsByCategory(String category, Pageable pageable){
+        return postRepository.findPostByCategory(category,pageable);
     }
     public List<ResAddPostDto> findPostsByCondByDSL(PostSearchCondition condition){
         return postDSLRepository.findPostsByCond(condition);

@@ -2,16 +2,17 @@ package inflearnproject.anoncom.post.controller;
 
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
-import inflearnproject.anoncom.post.dto.ReqAddPostDto;
-import inflearnproject.anoncom.post.dto.ResAddPostDto;
-import inflearnproject.anoncom.post.dto.ResPostDetailDto;
-import inflearnproject.anoncom.post.dto.ResPostDto;
+import inflearnproject.anoncom.post.dto.*;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,9 @@ public class PostController {
     private final PostService postService;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
+    @Value("${spring.data.web.pageable.default-page-size}")
+    private int defaultPageSize;
     @PostMapping("/api/postWrite")
     public ResponseEntity<ResAddPostDto> addPost(@IfLogin LoginUserDto userDto, @RequestBody ReqAddPostDto postDto){
 
@@ -55,10 +59,14 @@ public class PostController {
      카테고리에 따라 게시글들을 보여주는 메서드
      */
     @GetMapping("/api/postList/{category}")
-    public ResponseEntity<List<ResPostDto>> getPostsByCategory(@PathVariable("category") String category){
-        List<Post> postsByCategory = postService.findPostsByCategory(category);
+    public ResponseEntity<PagingPost> getPostsByCategory(@PathVariable("category") String category,@RequestParam(value = "page", defaultValue = "0") int page){
+
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> postsByCategory = postService.findPostsByCategory(category,pageable);
+        int currentPage = postsByCategory.getNumber();
+        int totalPage = postsByCategory.getTotalPages();
         List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok().body(dtos);
+        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
     }
     /**
      * postId에 해당되는 게시글 하나의 상세 정보를 보여주는 메서드
