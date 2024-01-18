@@ -37,7 +37,7 @@ public class Post extends BaseTimeEntity{
 
     private int views; //조회수
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     // 댓글 개수를 저장하지 않는 필드
