@@ -13,8 +13,10 @@ import inflearnproject.anoncom.reComment.repository.ReCommentDSLRepository;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,7 +58,7 @@ public class CommentController {
     }
 
     @PatchMapping("/api/commentCorrect/{commentId}")
-    public ResponseEntity<?> patchComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
+    public ResponseEntity<?> patchComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @Valid @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
         commentService.updateComment(userDto, commentId, reqAddPatchCommentDto.getContent());
         return ResponseEntity.ok().body("ok");
     }
