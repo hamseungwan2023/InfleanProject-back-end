@@ -83,4 +83,15 @@ public class PostController {
         ResPostDetailDto resPostDetailDto = buildResPostDetailDto(post);
         return ResponseEntity.ok().body(resPostDetailDto);
     }
+
+    @GetMapping("/api/postList")
+    public ResponseEntity<PagingPost> getPosts(@RequestParam(value = "page", defaultValue = "0") int page){
+
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> postsByCategory = postService.findPosts(pageable);
+        int currentPage = postsByCategory.getNumber();
+        int totalPage = postsByCategory.getTotalPages();
+        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+    }
 }

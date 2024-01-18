@@ -80,4 +80,8 @@ public class Post extends BaseTimeEntity{
     public void buildFinalLike(){
         this.finalLike = userLike - userDisLike;
     }
+
+    public void addView(){
+        this.views++;
+    }
 }

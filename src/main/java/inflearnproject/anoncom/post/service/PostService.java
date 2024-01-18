@@ -44,12 +44,18 @@ public class PostService {
         if(post == null){
             throw new NoPostException(NO_POST_MESSAGE);
         }
+        post.addView();
         return post;
     }
 
     public Page<Post> findPostsByCategory(String category, Pageable pageable){
         return postRepository.findPostByCategory(category,pageable);
     }
+
+    public Page<Post> findPosts(Pageable pageable){
+        return postRepository.findPosts(pageable);
+    }
+
     public List<ResAddPostDto> findPostsByCondByDSL(PostSearchCondition condition){
         return postDSLRepository.findPostsByCond(condition);
     }
