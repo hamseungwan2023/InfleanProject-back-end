@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.post.service;
 
+import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
@@ -51,5 +52,13 @@ public class PostService {
     }
     public List<ResAddPostDto> findPostsByCondByDSL(PostSearchCondition condition){
         return postDSLRepository.findPostsByCond(condition);
+    }
+
+    public void delete(Long userId, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostException(NO_POST_MESSAGE));
+        if (!post.isOwnedBy(userId)){
+            throw new NotSameUserException("동일한 유저가 아니라서 삭제가 불가능합니다.");
+        }
+        postRepository.delete(post);
     }
 }

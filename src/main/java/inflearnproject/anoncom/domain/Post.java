@@ -58,4 +58,8 @@ public class Post extends BaseTimeEntity{
         this.category = category;
         this.content = content;
     }
+
+    public boolean isOwnedBy(Long userId) {
+        return this.user != null && userId.equals(this.user.getId());
+    }
 }

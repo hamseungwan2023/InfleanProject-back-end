@@ -55,6 +55,12 @@ public class PostController {
     }
 
 
+    @DeleteMapping("/api/postDelete/{postId}")
+    public ResponseEntity<?> deletePost(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId){
+        postService.delete(userDto.getMemberId() ,postId);
+        return ResponseEntity.ok().body("ok");
+    }
+
     /**
      카테고리에 따라 게시글들을 보여주는 메서드
      */
