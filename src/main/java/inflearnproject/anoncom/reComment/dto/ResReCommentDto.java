@@ -22,7 +22,7 @@ public class ResReCommentDto {
     private boolean deleted;
     @QueryProjection
     public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, Long writerId,
-                           String writerNickname, int rank, LocalDateTime createdAt, String content) {
+                           String writerNickname, int rank, LocalDateTime createdAt, String content,boolean deleted) {
         this.id = id;
         this.parentCommentId = parentCommentId;
         this.parentCommentNickname = parentCommentNickname;
@@ -31,6 +31,6 @@ public class ResReCommentDto {
         this.rank = rank;
         this.createdAt = createdAt;
         this.content = content;
-        this.deleted = false;
+        this.deleted = deleted;
     }
 }

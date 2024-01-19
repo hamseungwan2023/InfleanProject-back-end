@@ -34,7 +34,8 @@ public class ReCommentDSLRepository {
                         reComment.user.nickname,
                         reComment.user.rank,
                         reComment.createdAt,
-                        reComment.content
+                        reComment.content,
+                        reComment.deleted
                 )).from(reComment)
                 .join(reComment.comment, comment)
                 .where(reComment.post.id.eq(postId),
