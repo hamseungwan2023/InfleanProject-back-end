@@ -33,7 +33,8 @@ public class CommentDSLRepository {
                         comment.user.rank,
                         post.userLike,
                         comment.createdAt,
-                        comment.content
+                        comment.content,
+                        comment.deleted
                 ))
                 .from(comment)
                 .join(comment.post, post)

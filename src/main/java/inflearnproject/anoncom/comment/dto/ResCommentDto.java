@@ -27,7 +27,7 @@ public class ResCommentDto {
     List<ResReCommentDto> replyCommentList = new ArrayList<>();
 
     @QueryProjection
-    public ResCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, LocalDateTime createdAt, String content){
+    public ResCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, LocalDateTime createdAt, String content,boolean deleted){
         this.id = id;
         this.postId = postId;
         this.writerId = writerId;
@@ -36,6 +36,6 @@ public class ResCommentDto {
         this.like = like;
         this.createdAt = createdAt;
         this.content = content;
-        this.deleted = false;
+        this.deleted = deleted;
     }
 }
