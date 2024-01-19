@@ -39,6 +39,7 @@ public class CommentController {
                 .post(post)
                 .user(user)
                 .userLike(0)
+                .userDisLike(0)
                 .content(reqAddPatchCommentDto.getContent())
                 .deleted(false)
                 .build();
