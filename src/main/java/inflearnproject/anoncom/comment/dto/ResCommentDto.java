@@ -20,6 +20,7 @@ public class ResCommentDto {
     private int rank;
 
     private int like;
+    private int disLike;
     private LocalDateTime createdAt;
     private String content;
     private boolean deleted;
@@ -27,13 +28,14 @@ public class ResCommentDto {
     List<ResReCommentDto> replyCommentList = new ArrayList<>();
 
     @QueryProjection
-    public ResCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, LocalDateTime createdAt, String content,boolean deleted){
+    public ResCommentDto(Long id, Long postId, Long writerId, String writerNickname, int rank, int like, int disLike,LocalDateTime createdAt, String content,boolean deleted){
         this.id = id;
         this.postId = postId;
         this.writerId = writerId;
         this.writerNickname = writerNickname;
         this.rank = rank;
         this.like = like;
+        this.disLike = disLike;
         this.createdAt = createdAt;
         this.content = content;
         this.deleted = deleted;

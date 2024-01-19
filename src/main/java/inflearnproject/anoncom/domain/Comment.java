@@ -35,6 +35,8 @@ public class Comment extends BaseTimeEntity{
 
     private int userLike;
 
+    private int userDisLike;
+
     private String content;
 
     private boolean deleted; //삭제된 상태면 true, 삭제 안 된 상태면 false
@@ -50,4 +52,18 @@ public class Comment extends BaseTimeEntity{
     public void delete(){
         this.deleted = true;
     }
+
+    public boolean isOwnedBy(Long userId) {
+        return this.user != null && userId.equals(this.user.getId());
+    }
+
+    public void addUserLike(){
+        userLike++;
+    }
+
+    public void addUserDisLike(){
+        userDisLike++;
+    }
+
+
 }
