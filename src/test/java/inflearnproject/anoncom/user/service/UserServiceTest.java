@@ -62,6 +62,6 @@ class UserServiceTest {
         UserDeleteFormDto req = UserDeleteFormDto.builder().password("password")
                 .username("username").build();
         userService.deleteUser(req);
-        assertFalse(userRepository.existsByUsername("username"));
+        assertFalse(userRepository.findByUsername("username").isActive());
     }
 }

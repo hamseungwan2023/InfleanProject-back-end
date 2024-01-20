@@ -30,6 +30,7 @@ public class ReCommentDSLRepository {
                         reComment.id,
                         reComment.comment.id,
                         reComment.comment.user.nickname,
+                        reComment.user.isActive,
                         reComment.user.id,
                         reComment.user.nickname,
                         reComment.user.rank,

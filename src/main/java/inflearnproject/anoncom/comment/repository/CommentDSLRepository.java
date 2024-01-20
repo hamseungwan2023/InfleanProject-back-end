@@ -31,6 +31,7 @@ public class CommentDSLRepository {
                         comment.user.id,
                         comment.user.nickname,
                         comment.user.rank,
+                        comment.user.isActive,
                         comment.userLike,
                         comment.userDisLike,
                         comment.createdAt,

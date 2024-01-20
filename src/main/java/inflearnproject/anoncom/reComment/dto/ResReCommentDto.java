@@ -16,16 +16,18 @@ public class ResReCommentDto {
 
     private Long writerId; //대댓글 작성자 id
     private String writerNickname; //대댓글 작성자 닉네임
+    private boolean writerActive;
     private int rank; //대댓글 작성자 랭크
     private LocalDateTime createdAt; //대댓글 작성 날짜
     private String content; //대댓글 내용
     private boolean isDelete;
     @QueryProjection
-    public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, Long writerId,
+    public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, boolean writerActive,Long writerId,
                            String writerNickname, int rank, LocalDateTime createdAt, String content,boolean isDelete) {
         this.id = id;
         this.parentCommentId = parentCommentId;
         this.parentCommentNickname = parentCommentNickname;
+        this.writerActive = writerActive;
         this.writerId = writerId;
         this.writerNickname = writerNickname;
         this.rank = rank;

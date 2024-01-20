@@ -16,6 +16,7 @@ public class ResPostDto {
 
     private LocalDateTime createdAt;
     private String writer;
+    private boolean writerActive;
     private int rank;
     private int finalLike;
     private int contentCount;
@@ -25,6 +26,7 @@ public class ResPostDto {
         this.category = post.getCategory();
         this.createdAt = post.getCreatedAt();
         this.writer = post.getUser().getNickname();
+        this.writerActive = post.getUser().isActive();
         this.rank = post.getUser().getRank();
         this.finalLike = post.getFinalLike();
         this.contentCount = post.getComments().size();

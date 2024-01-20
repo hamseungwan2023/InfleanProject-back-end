@@ -19,6 +19,7 @@ public class ResPostDetailDto {
     private Long writeId;
     private String writeNickname;
     private int rank;
+    private boolean writerActive;
 
     private int views;
     private int like;
@@ -37,6 +38,7 @@ public class ResPostDetailDto {
                 .writeId(post.getUser().getId())
                 .writeNickname(post.getUser().getNickname())
                 .rank(post.getUser().getRank())
+                .writerActive(post.getUser().isActive())
                 .views(post.getViews())
                 .like(post.getUserLike())
                 .dislike(post.getUserDisLike())
