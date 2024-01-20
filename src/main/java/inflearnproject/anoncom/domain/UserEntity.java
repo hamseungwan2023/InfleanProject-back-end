@@ -47,6 +47,18 @@ public class UserEntity extends BaseTimeEntity{
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<PostReaction> postReactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<ReComment> reComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentReaction> commentReactions = new ArrayList<>();
+
     public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto){
         this.nickname = reqUserJoinFormDto.getNickname();
         this.username = reqUserJoinFormDto.getUsername();

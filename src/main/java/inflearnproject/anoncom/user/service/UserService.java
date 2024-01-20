@@ -1,7 +1,6 @@
 package inflearnproject.anoncom.user.service;
 
-import inflearnproject.anoncom.domain.Role;
-import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.domain.*;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
@@ -67,6 +66,22 @@ public class UserService {
         }
 
         if(bCryptPasswordEncoder.matches(userDeleteFormDto.getPassword(), user.getPassword())){
+            for (Post post : user.getPosts()) {
+                post.setUser(null);
+            }
+            for (PostReaction postReaction : user.getPostReactions()) {
+                postReaction.setUser(null);
+            }
+            for (ReComment reComment : user.getReComments()) {
+                reComment.setUser(null);
+            }
+            for (Comment comment : user.getComments()) {
+                comment.setUser(null);
+            }
+            for (CommentReaction commentReaction : user.getCommentReactions()) {
+                commentReaction.setUser(null);
+            }
+
             userRepository.delete(user);
         }
     }

@@ -31,4 +31,8 @@ public class CommentReaction {
     private Comment comment;
 
     private boolean liked; // true이면 좋아요, false이면 싫어요
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 }

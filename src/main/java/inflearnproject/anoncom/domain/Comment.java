@@ -66,4 +66,7 @@ public class Comment extends BaseTimeEntity{
     }
 
 
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 }

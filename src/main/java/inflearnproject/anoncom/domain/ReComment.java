@@ -48,4 +48,8 @@ public class ReComment extends BaseTimeEntity {
     public void delete(){
         this.deleted = true;
     }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 }

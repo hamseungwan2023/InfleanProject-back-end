@@ -2,6 +2,7 @@ package inflearnproject.anoncom.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,5 +84,9 @@ public class Post extends BaseTimeEntity{
 
     public void addView(){
         this.views++;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }
