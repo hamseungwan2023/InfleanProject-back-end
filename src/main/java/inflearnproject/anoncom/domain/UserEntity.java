@@ -59,6 +59,7 @@ public class UserEntity extends BaseTimeEntity{
     @OneToMany(mappedBy = "user")
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
+    private boolean isActive;
     public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto){
         this.nickname = reqUserJoinFormDto.getNickname();
         this.username = reqUserJoinFormDto.getUsername();
@@ -66,6 +67,7 @@ public class UserEntity extends BaseTimeEntity{
         this.email = reqUserJoinFormDto.getEmail();
         this.location = reqUserJoinFormDto.getLocation();
         this.info = reqUserJoinFormDto.getInfo();
+        this.isActive = true;
     }
 
     public void changeToBCryptPassword(String bcryptPassword) {
@@ -82,5 +84,9 @@ public class UserEntity extends BaseTimeEntity{
 
     public void updateRank(){
         this.rank = this.posts.size();
+    }
+
+    public void setActiveFalse() {
+        this.isActive = false;
     }
 }

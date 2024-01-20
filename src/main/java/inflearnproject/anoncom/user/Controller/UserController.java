@@ -103,7 +103,6 @@ public class UserController {
         UserEntity user = userService.findUser(loginDto.getUsername(),loginDto.getPassword());
         List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
-
         String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
         String refreshToken = jwtTokenizer.createRefreshToken(user.getId(), user.getEmail(), user.getUsername(), roles);
 

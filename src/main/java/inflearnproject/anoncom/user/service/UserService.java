@@ -4,6 +4,7 @@ import inflearnproject.anoncom.domain.*;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
+import inflearnproject.anoncom.user.exception.NotActiveUser;
 import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,9 @@ public class UserService {
         if(!bCryptPasswordEncoder.matches(password,user.getPassword())){
             throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
         }
+        if(!user.isActive()){
+            throw new NotActiveUser("해당 계정은 비활성화(삭제)된 상태입니다.");
+        }
         return user;
     }
 
@@ -66,23 +70,7 @@ public class UserService {
         }
 
         if(bCryptPasswordEncoder.matches(userDeleteFormDto.getPassword(), user.getPassword())){
-            for (Post post : user.getPosts()) {
-                post.setUser(null);
-            }
-            for (PostReaction postReaction : user.getPostReactions()) {
-                postReaction.setUser(null);
-            }
-            for (ReComment reComment : user.getReComments()) {
-                reComment.setUser(null);
-            }
-            for (Comment comment : user.getComments()) {
-                comment.setUser(null);
-            }
-            for (CommentReaction commentReaction : user.getCommentReactions()) {
-                commentReaction.setUser(null);
-            }
-
-            userRepository.delete(user);
+            user.setActiveFalse();
         }
     }
 
