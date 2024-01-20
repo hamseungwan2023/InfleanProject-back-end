@@ -19,10 +19,10 @@ public class ResReCommentDto {
     private int rank; //대댓글 작성자 랭크
     private LocalDateTime createdAt; //대댓글 작성 날짜
     private String content; //대댓글 내용
-    private boolean deleted;
+    private boolean isDelete;
     @QueryProjection
     public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, Long writerId,
-                           String writerNickname, int rank, LocalDateTime createdAt, String content,boolean deleted) {
+                           String writerNickname, int rank, LocalDateTime createdAt, String content,boolean isDelete) {
         this.id = id;
         this.parentCommentId = parentCommentId;
         this.parentCommentNickname = parentCommentNickname;
@@ -31,6 +31,6 @@ public class ResReCommentDto {
         this.rank = rank;
         this.createdAt = createdAt;
         this.content = content;
-        this.deleted = deleted;
+        this.isDelete = isDelete;
     }
 }
