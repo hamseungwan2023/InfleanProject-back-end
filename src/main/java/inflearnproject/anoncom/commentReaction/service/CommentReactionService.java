@@ -64,7 +64,7 @@ public class CommentReactionService {
 
     public void isAlreadyReactionExists(Long memberId, Long commentId){
         if(commentReactionRepository.existsByUserIdAndCommentId(memberId, commentId)){
-            throw new AlreadyReactionExistsException("이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.");
+            throw new AlreadyReactionExistsException("이미 좋아요/싫어요한 댓글에 좋아요/싫어요를 할 수 없습니다.");
         }
     }
 }
