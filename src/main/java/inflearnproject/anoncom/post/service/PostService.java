@@ -29,6 +29,7 @@ public class PostService {
 
     public void savePost(UserEntity user, Post post){
         post.putUser(user);
+        post.putLocation(user.getLocation());
         postRepository.save(post);
         user.updateRank();
     }
