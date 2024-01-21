@@ -62,7 +62,7 @@ public class PostController {
     }
 
     /**
-     카테고리에 따라 게시글들을 보여주는 메서드
+     카테고리에 따라 모든 게시글들을 보여주는 메서드
      */
     @GetMapping("/api/postList/{category}")
     public ResponseEntity<PagingPost> getPostsByCategory(@PathVariable("category") String category,@RequestParam(value = "page", defaultValue = "0") int page){
@@ -92,6 +92,36 @@ public class PostController {
         int currentPage = postsByCategory.getNumber();
         int totalPage = postsByCategory.getTotalPages();
         List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+    }
+
+    /**
+     * 지역에 해당되는 모든 게시글들 보여주기
+     */
+    @GetMapping("/api/posts/{location}")
+    public ResponseEntity<PagingPost> getPostsByLocation(@PathVariable("location") String location,@RequestParam(value = "page", defaultValue = "0") int page){
+
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> postsByLocation = postService.findPostsByLocation(location,pageable);
+        int currentPage = postsByLocation.getNumber();
+        int totalPage = postsByLocation.getTotalPages();
+        List<ResPostDto> dtos = postsByLocation.stream().map(ResPostDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+    }
+
+    /**
+     * 지역과 카테고리에 해당되는 모든 게시글들 보여주기
+     */
+    @GetMapping("/api/posts/{location}/{category}")
+    public ResponseEntity<PagingPost> getPostsByLocationAndCategory(@PathVariable("location") String location,
+                                                                    @PathVariable("category") String category,
+                                                                    @RequestParam(value = "page", defaultValue = "0") int page){
+
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> postsByLocationAndCategory = postService.findPostsByLocationAndCategory(location,category,pageable);
+        int currentPage = postsByLocationAndCategory.getNumber();
+        int totalPage = postsByLocationAndCategory.getTotalPages();
+        List<ResPostDto> dtos = postsByLocationAndCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
     }
 }

@@ -68,4 +68,12 @@ public class PostService {
         }
         postRepository.delete(post);
     }
+
+    public Page<Post> findPostsByLocation(String location, Pageable pageable) {
+        return postRepository.findPostsByLocation(location,pageable);
+    }
+
+    public Page<Post> findPostsByLocationAndCategory(String location, String category, Pageable pageable) {
+        return postRepository.findPostsByLocationAndCategory(location,category,pageable);
+    }
 }
