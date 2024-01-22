@@ -8,9 +8,7 @@ public class PostSearchCondition {
 
     private String category;
 
-    @Min(2)
     private String content;
 
-    @Min(2)
     private String title;
 }

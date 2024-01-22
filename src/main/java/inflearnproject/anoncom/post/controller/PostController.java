@@ -61,19 +61,19 @@ public class PostController {
         return ResponseEntity.ok().body("ok");
     }
 
-    /**
-     카테고리에 따라 모든 게시글들을 보여주는 메서드
-     */
-    @GetMapping("/api/postList/{category}")
-    public ResponseEntity<PagingPost> getPostsByCategory(@PathVariable("category") String category,@RequestParam(value = "page", defaultValue = "0") int page){
-
-        Pageable pageable = PageRequest.of(page, defaultPageSize);
-        Page<Post> postsByCategory = postService.findPostsByCategory(category,pageable);
-        int currentPage = postsByCategory.getNumber();
-        int totalPage = postsByCategory.getTotalPages();
-        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
-    }
+//    /**
+//     카테고리에 따라 모든 게시글들을 보여주는 메서드
+//     */
+//    @GetMapping("/api/postList/{category}")
+//    public ResponseEntity<PagingPost> getPostsByCategory(@PathVariable("category") String category,@RequestParam(value = "page", defaultValue = "0") int page){
+//
+//        Pageable pageable = PageRequest.of(page, defaultPageSize);
+//        Page<Post> postsByCategory = postService.findPostsByCategory(category,pageable);
+//        int currentPage = postsByCategory.getNumber();
+//        int totalPage = postsByCategory.getTotalPages();
+//        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
+//        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+//    }
     /**
      * postId에 해당되는 게시글 하나의 상세 정보를 보여주는 메서드
      */
@@ -85,10 +85,11 @@ public class PostController {
     }
 
     @GetMapping("/api/postList")
-    public ResponseEntity<PagingPost> getPosts(@RequestParam(value = "page", defaultValue = "0") int page){
+    public ResponseEntity<PagingPost> getPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                               @ModelAttribute(value = "findPostContent") PostSearchCondition cond){
 
         Pageable pageable = PageRequest.of(page, defaultPageSize);
-        Page<Post> postsByCategory = postService.findPosts(pageable);
+        Page<Post> postsByCategory = postService.findPostsByCondByDSL(cond,pageable);
         int currentPage = postsByCategory.getNumber();
         int totalPage = postsByCategory.getTotalPages();
         List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());

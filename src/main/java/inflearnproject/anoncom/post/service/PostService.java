@@ -53,12 +53,12 @@ public class PostService {
         return postRepository.findPostByCategory(category,pageable);
     }
 
-    public Page<Post> findPosts(Pageable pageable){
-        return postRepository.findPosts(pageable);
+    public Page<Post> findPosts(PostSearchCondition cond,Pageable pageable){
+        return postDSLRepository.findPostsByCondition(cond,pageable);
     }
 
-    public List<ResAddPostDto> findPostsByCondByDSL(PostSearchCondition condition){
-        return postDSLRepository.findPostsByCond(condition);
+    public Page<Post> findPostsByCondByDSL(PostSearchCondition condition,Pageable pageable){
+        return postDSLRepository.findPostsByCondition(condition,pageable);
     }
 
     public void delete(Long userId, Long postId) {

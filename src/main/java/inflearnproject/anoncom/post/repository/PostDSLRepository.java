@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.post.repository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import inflearnproject.anoncom.domain.Post;
@@ -10,10 +11,14 @@ import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.post.dto.QResAddPostDto;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 import static inflearnproject.anoncom.domain.QPost.post;
 import static inflearnproject.anoncom.domain.QUserEntity.*;
@@ -30,25 +35,31 @@ public class PostDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ResAddPostDto> findPostsByCond(PostSearchCondition cond){
-        return queryFactory
-                .select(new QResAddPostDto(
-                        post.id.as("postId"),
-                        post.title,
-                        post.category,
-                        post.createdAt,
-                        userEntity.id,
-                        post.finalLike,
-                        post.content
-                ))
+
+    public Page<Post> findPostsByCondition(PostSearchCondition cond, Pageable pageable){
+        List<Post> posts = queryFactory
+                .select(post)
                 .from(post)
-                .join(post.user, userEntity)
+                .leftJoin(post.comments).fetchJoin()
                 .where(
                         titleEq(cond.getTitle()),
-                        categoryEq(cond.getCategory()),
-                        contentEq(cond.getContent())
+                        contentEq(cond.getContent()),
+                        categoryEq(cond.getCategory())
                 )
                 .fetch();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(post.count())
+                        .from(post)
+                        .where(
+                                titleEq(cond.getTitle()),
+                                contentEq(cond.getContent())
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(posts, pageable, total);
     }
 
     private BooleanExpression titleEq(String title){
