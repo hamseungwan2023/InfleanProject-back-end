@@ -50,6 +50,8 @@ public class PostDSLRepository {
                         locationEq(cond.getLocation()),
                         titleContentEq(cond.getTitleContent())
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         long total = Optional.ofNullable(
