@@ -41,6 +41,7 @@ public class PostDSLRepository {
                 .select(post)
                 .from(post)
                 .leftJoin(post.comments).fetchJoin()
+                .leftJoin(post.user).fetchJoin()
                 .where(
                         titleEq(cond.getTitle()),
                         contentEq(cond.getContent()),
