@@ -61,19 +61,6 @@ public class PostController {
         return ResponseEntity.ok().body("ok");
     }
 
-//    /**
-//     카테고리에 따라 모든 게시글들을 보여주는 메서드
-//     */
-//    @GetMapping("/api/postList/{category}")
-//    public ResponseEntity<PagingPost> getPostsByCategory(@PathVariable("category") String category,@RequestParam(value = "page", defaultValue = "0") int page){
-//
-//        Pageable pageable = PageRequest.of(page, defaultPageSize);
-//        Page<Post> postsByCategory = postService.findPostsByCategory(category,pageable);
-//        int currentPage = postsByCategory.getNumber();
-//        int totalPage = postsByCategory.getTotalPages();
-//        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-//        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
-//    }
     /**
      * postId에 해당되는 게시글 하나의 상세 정보를 보여주는 메서드
      */
@@ -89,11 +76,7 @@ public class PostController {
                                                @ModelAttribute(value = "findPostContent") PostSearchCondition cond){
 
         Pageable pageable = PageRequest.of(page, defaultPageSize);
-        Page<Post> postsByCategory = postService.findPostsByCondByDSL(cond,pageable);
-        int currentPage = postsByCategory.getNumber();
-        int totalPage = postsByCategory.getTotalPages();
-        List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+        return getPagingPostResponseEntity(cond, pageable);
     }
 
     /**
@@ -106,26 +89,16 @@ public class PostController {
 
         Pageable pageable = PageRequest.of(page, defaultPageSize);
         cond.setLocation(location);
-        Page<Post> postsByCategory = postService.findPostsByCondByDSL(cond,pageable);
+        return getPagingPostResponseEntity(cond, pageable);
+    }
+
+    private ResponseEntity<PagingPost> getPagingPostResponseEntity(PostSearchCondition cond, Pageable pageable) {
+        Page<Post> postsByCategory = postService.findPostsByCondByDSL(cond, pageable);
         int currentPage = postsByCategory.getNumber();
         int totalPage = postsByCategory.getTotalPages();
         List<ResPostDto> dtos = postsByCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
+        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage, totalPage));
     }
 
-//    /**
-//     * 지역과 카테고리에 해당되는 모든 게시글들 보여주기
-//     */
-//    @GetMapping("/api/posts/{location}/{category}")
-//    public ResponseEntity<PagingPost> getPostsByLocationAndCategory(@PathVariable("location") String location,
-//                                                                    @PathVariable("category") String category,
-//                                                                    @RequestParam(value = "page", defaultValue = "0") int page){
-//
-//        Pageable pageable = PageRequest.of(page, defaultPageSize);
-//        Page<Post> postsByLocationAndCategory = postService.findPostsByLocationAndCategory(location,category,pageable);
-//        int currentPage = postsByLocationAndCategory.getNumber();
-//        int totalPage = postsByLocationAndCategory.getTotalPages();
-//        List<ResPostDto> dtos = postsByLocationAndCategory.stream().map(ResPostDto::new).collect(Collectors.toList());
-//        return ResponseEntity.ok().body(new PagingPost(dtos, currentPage,totalPage));
-//    }
+
 }
