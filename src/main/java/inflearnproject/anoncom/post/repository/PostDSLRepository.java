@@ -2,6 +2,7 @@ package inflearnproject.anoncom.post.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.QPost;
@@ -46,7 +47,8 @@ public class PostDSLRepository {
                         titleEq(cond.getTitle()),
                         contentEq(cond.getContent()),
                         categoryEq(cond.getCategory()),
-                        locationEq(cond.getLocation())
+                        locationEq(cond.getLocation()),
+                        titleContentEq(cond.getTitleContent())
                 )
                 .fetch();
 
@@ -58,7 +60,8 @@ public class PostDSLRepository {
                                 titleEq(cond.getTitle()),
                                 contentEq(cond.getContent()),
                                 categoryEq(cond.getCategory()),
-                                locationEq(cond.getLocation())
+                                locationEq(cond.getLocation()),
+                                titleContentEq(cond.getTitleContent())
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -67,7 +70,7 @@ public class PostDSLRepository {
     }
 
     private BooleanExpression titleEq(String title){
-        return hasText(title) ? post.title.contains(title) : null;
+        return hasText(title) ? post.title.contains(title) :  Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression categoryEq(String category){
@@ -75,10 +78,14 @@ public class PostDSLRepository {
     }
 
     private BooleanExpression contentEq(String content){
-        return hasText(content) ? post.content.contains(content) : null;
+        return hasText(content) ? post.content.contains(content) :  Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression locationEq(String location){
         return hasText(location) ? post.location.eq(location) : null;
+    }
+
+    private BooleanExpression titleContentEq(String titleContent){
+        return titleEq(titleContent).or(contentEq(titleContent));
     }
 }

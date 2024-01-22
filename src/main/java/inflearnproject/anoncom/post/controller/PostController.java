@@ -71,24 +71,16 @@ public class PostController {
         return ResponseEntity.ok().body(resPostDetailDto);
     }
 
-    @GetMapping("/api/postList")
-    public ResponseEntity<PagingPost> getPosts(@RequestParam(value = "page", defaultValue = "0") int page,
-                                               @ModelAttribute(value = "findPostContent") PostSearchCondition cond){
-
-        Pageable pageable = PageRequest.of(page, defaultPageSize);
-        return getPagingPostResponseEntity(cond, pageable);
-    }
 
     /**
      * 지역에 해당되는 모든 게시글들 보여주기
      */
-    @GetMapping("/api/postList/{location}")
+    @GetMapping("/api/postList")
     public ResponseEntity<PagingPost> getPostsByLocation(@PathVariable("location") String location,
                                                          @ModelAttribute(value = "findPostContent") PostSearchCondition cond,
                                                          @RequestParam(value = "page", defaultValue = "0") int page){
 
         Pageable pageable = PageRequest.of(page, defaultPageSize);
-        cond.setLocation(location);
         return getPagingPostResponseEntity(cond, pageable);
     }
 
