@@ -23,7 +23,7 @@ public class ResAddPostDto {
     private Long userId;
     private int finalLike;
     private String content;
-
+    private String location;
     public static ResAddPostDto buildResPostDto(Long userId, Post post){
         ResAddPostDto dto = ResAddPostDto.builder()
                 .id(post.getId())
@@ -33,6 +33,7 @@ public class ResAddPostDto {
                 .userId(userId)
                 .finalLike(post.getUserLike() - post.getUserDisLike())
                 .content(post.getContent())
+                .location(post.getLocation())
                 .build();
         return dto;
     }

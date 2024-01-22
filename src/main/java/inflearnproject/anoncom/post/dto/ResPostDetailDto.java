@@ -28,7 +28,7 @@ public class ResPostDetailDto {
 
     private String content;
     private int contentCount;
-
+    private String location;
     public static ResPostDetailDto buildResPostDetailDto(Post post){
         return ResPostDetailDto.builder()
                 .id(post.getId())
@@ -45,6 +45,7 @@ public class ResPostDetailDto {
                 .finalLike(post.getFinalLike())
                 .content(post.getContent())
                 .contentCount(post.getComments().size())
+                .location(post.getLocation())
                 .build();
     }
 }
