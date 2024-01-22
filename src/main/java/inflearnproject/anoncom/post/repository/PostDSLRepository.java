@@ -45,7 +45,8 @@ public class PostDSLRepository {
                 .where(
                         titleEq(cond.getTitle()),
                         contentEq(cond.getContent()),
-                        categoryEq(cond.getCategory())
+                        categoryEq(cond.getCategory()),
+                        locationEq(cond.getLocation())
                 )
                 .fetch();
 
@@ -55,7 +56,9 @@ public class PostDSLRepository {
                         .from(post)
                         .where(
                                 titleEq(cond.getTitle()),
-                                contentEq(cond.getContent())
+                                contentEq(cond.getContent()),
+                                categoryEq(cond.getCategory()),
+                                locationEq(cond.getLocation())
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -73,5 +76,9 @@ public class PostDSLRepository {
 
     private BooleanExpression contentEq(String content){
         return hasText(content) ? post.content.contains(content) : null;
+    }
+
+    private BooleanExpression locationEq(String location){
+        return hasText(location) ? post.location.eq(location) : null;
     }
 }

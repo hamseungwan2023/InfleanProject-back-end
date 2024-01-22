@@ -11,4 +11,6 @@ public class PostSearchCondition {
     private String content;
 
     private String title;
+
+    private String location;
 }

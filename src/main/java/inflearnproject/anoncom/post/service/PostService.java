@@ -61,6 +61,7 @@ public class PostService {
         return postDSLRepository.findPostsByCondition(condition,pageable);
     }
 
+
     public void delete(Long userId, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostException(NO_POST_MESSAGE));
         if (!post.isOwnedBy(userId)){
