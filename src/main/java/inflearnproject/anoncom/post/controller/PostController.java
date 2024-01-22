@@ -76,7 +76,7 @@ public class PostController {
      * 지역에 해당되는 모든 게시글들 보여주기
      */
     @GetMapping("/api/postList")
-    public ResponseEntity<PagingPost> getPostsByLocation(@PathVariable("location") String location,
+    public ResponseEntity<PagingPost> getPostsByLocation(
                                                          @ModelAttribute(value = "findPostContent") PostSearchCondition cond,
                                                          @RequestParam(value = "page", defaultValue = "0") int page){
 
