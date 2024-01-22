@@ -1,8 +1,12 @@
 package inflearnproject.anoncom.post.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.QPost;
@@ -15,6 +19,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +33,9 @@ import static org.springframework.util.StringUtils.*;
 @Repository
 public class PostDSLRepository {
 
+    public static final String ORDER_BY_CREATED_AT = "createdDate";
+    public static final String ORDER_BY_FINAL_LIKE = "finalLike";
+
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
@@ -38,7 +46,7 @@ public class PostDSLRepository {
 
 
     public Page<Post> findPostsByCondition(PostSearchCondition cond, Pageable pageable){
-        List<Post> posts = queryFactory
+        JPAQuery<Post> query = queryFactory
                 .select(post)
                 .from(post)
                 .leftJoin(post.comments).fetchJoin()
@@ -49,7 +57,15 @@ public class PostDSLRepository {
                         categoryEq(cond.getCategory()),
                         locationEq(cond.getLocation()),
                         titleContentEq(cond.getTitleContent())
-                )
+                );
+
+        if (cond.getOrderBy().equals(ORDER_BY_CREATED_AT)) {
+            query.orderBy(post.createdAt.desc());
+        } else if (cond.getOrderBy().equals(ORDER_BY_FINAL_LIKE)) {
+            query.orderBy(post.finalLike.desc());
+        }
+
+        List<Post> posts = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
