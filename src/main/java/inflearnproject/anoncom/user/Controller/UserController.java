@@ -180,4 +180,10 @@ public class UserController {
 
         return ResponseEntity.ok().headers(headers).body(rawImageData);
     }
+
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestBody ReqUserUpdateDto userUpdateDto){
+        userService.updateUser(userDto.getEmail(),userUpdateDto);
+        return ResponseEntity.ok().body("ok");
+    }
 }

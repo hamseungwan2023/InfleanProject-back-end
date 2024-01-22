@@ -4,6 +4,7 @@ import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.exception.NotActiveUser;
 import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
+import inflearnproject.anoncom.user.exception.WrongPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,10 @@ public class ExceptionUserController {
 
     @ExceptionHandler(NotActiveUser.class)
     public ResponseEntity<ErrorDTO> handleNotActiveUser(NotActiveUser exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<ErrorDTO> handleWrongPasswordException(WrongPasswordException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 }

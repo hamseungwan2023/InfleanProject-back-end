@@ -2,18 +2,23 @@ package inflearnproject.anoncom.user.service;
 
 import inflearnproject.anoncom.domain.*;
 import inflearnproject.anoncom.role.repository.RoleRepository;
+import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.exception.NotActiveUser;
 import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
+import inflearnproject.anoncom.user.exception.WrongPasswordException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.util.StringUtils.*;
 
 @Transactional
 @Service
@@ -102,5 +107,21 @@ public class UserService {
     @Transactional(readOnly = true)
     public Optional<UserEntity> findUserEntityById(Long memberId){
         return userRepository.findById(memberId);
+    }
+
+    public void updateUser(String email, ReqUserUpdateDto userDto) {
+        UserEntity user = userRepository.findByEmail(email);
+
+        if(!hasText(userDto.getNewPassword())){
+            user.updateNickname(userDto.getNickname());
+        }else{
+            if(hasText(userDto.getPassword()) && bCryptPasswordEncoder.matches(userDto.getPassword(), user.getPassword())){
+                user.updateNickname(userDto.getNickname());
+                user.changeToBCryptPassword(bCryptPasswordEncoder.encode(userDto.getNewPassword()));
+            }else{
+                throw new WrongPasswordException("비밀번호가 일치하지 않습니다.");
+            }
+        }
+
     }
 }

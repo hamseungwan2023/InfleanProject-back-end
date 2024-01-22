@@ -89,4 +89,8 @@ public class UserEntity extends BaseTimeEntity{
     public void setActiveFalse() {
         this.isActive = false;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
