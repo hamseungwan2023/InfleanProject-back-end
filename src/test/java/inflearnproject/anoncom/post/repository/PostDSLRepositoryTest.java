@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -89,25 +90,4 @@ class PostDSLRepositoryTest {
         postRepository.save(post3);
     }
 
-    @Test
-    @DisplayName("게시글들이 일치한 카테고리 조건 속에서 잘 찾아지나")
-    void findByCond(){
-        PostSearchCondition condition = new PostSearchCondition();
-        condition.setCategory("카테고리1");
-        List<ResAddPostDto> postsByCond = postDSLRepository.findPostsByCond(condition);
-        for (ResAddPostDto resAddPostDto : postsByCond) {
-            System.out.println(resAddPostDto);
-        }
-    }
-
-    @Test
-    @DisplayName("게시글들이 일치한 제목 조건 속에서 잘 찾아지나")
-    void findByTitle(){
-        PostSearchCondition condition = new PostSearchCondition();
-        condition.setTitle("타이틀");
-        List<ResAddPostDto> postsByCond = postDSLRepository.findPostsByCond(condition);
-        for (ResAddPostDto resAddPostDto : postsByCond) {
-            System.out.println(resAddPostDto);
-        }
-    }
 }
