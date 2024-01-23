@@ -20,6 +20,7 @@ public class ResPostDto {
     private int rank;
     private int finalLike;
     private int contentCount;
+    private String location;
     public ResPostDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
@@ -30,5 +31,6 @@ public class ResPostDto {
         this.rank = post.getUser().getRank();
         this.finalLike = post.getFinalLike();
         this.contentCount = post.getComments().size();
+        this.location = post.getLocation();
     }
 }
