@@ -29,15 +29,17 @@ public class Note extends BaseCreatedEntity{
 
     private String content;
 
-    private boolean isReceiverRead; // 수신자 읽음 여부
+    private boolean isReceiverRead = false; // 수신자 읽음 여부
 
-    private boolean isSenderDelete; //발신자 삭제 여부
+    private boolean isSenderDelete = false; //발신자 삭제 여부
 
-    private boolean isReceiverDelete; //수신자 삭제 여부
+    private boolean isReceiverDelete = false; //수신자 삭제 여부
 
-    private boolean isSpam; //스팸 여부
+    private boolean isSpam = false; //스팸 여부
 
-    private boolean isDeclaration; //신고 여부
+    private boolean isDeclaration = false; //신고 여부
 
-    private boolean isKeep; //보관 여부
+    private boolean isKeep = false; //보관 여부
+
+
 }
