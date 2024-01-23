@@ -59,10 +59,12 @@ public class PostDSLRepository {
                         titleContentEq(cond.getTitleContent())
                 );
 
-        if (cond.getOrderBy().equals(ORDER_BY_CREATED_AT)) {
-            query.orderBy(post.createdAt.desc());
-        } else if (cond.getOrderBy().equals(ORDER_BY_FINAL_LIKE)) {
-            query.orderBy(post.finalLike.desc());
+        if(hasText(cond.getOrderBy())){
+            if (cond.getOrderBy().equals(ORDER_BY_CREATED_AT)) {
+                query.orderBy(post.createdAt.desc());
+            } else if (cond.getOrderBy().equals(ORDER_BY_FINAL_LIKE)) {
+                query.orderBy(post.finalLike.desc());
+            }
         }
 
         List<Post> posts = query
