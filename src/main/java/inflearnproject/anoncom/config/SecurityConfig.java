@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(httpRequests -> httpRequests
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers( "/user/signup","/user/login","/user/refreshToken").permitAll()
+                        .requestMatchers(GET,"/api/postList/**").permitAll()
+                        .requestMatchers(GET,"/api/commentList/{postId}").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .apply(authenticationManagerConfig);
