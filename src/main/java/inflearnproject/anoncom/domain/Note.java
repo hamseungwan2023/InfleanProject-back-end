@@ -42,4 +42,7 @@ public class Note extends BaseCreatedEntity{
     private boolean isKeep = false; //보관 여부
 
 
+    public void senderDelete(){
+        this.isSenderDelete = true;
+    }
 }

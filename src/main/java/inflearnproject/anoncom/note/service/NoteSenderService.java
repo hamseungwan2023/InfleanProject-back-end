@@ -2,6 +2,7 @@ package inflearnproject.anoncom.note.service;
 
 import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
@@ -34,5 +35,14 @@ public class NoteSenderService {
                 .content(content)
                 .build();
         noteRepository.save(note);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteNote(Long deleteNoteId) {
+        Note note = noteRepository.findById(deleteNoteId).orElseThrow(
+                () -> new NoSuchNoteException(String.valueOf(deleteNoteId))
+        );
+
+        note.senderDelete();
     }
 }
