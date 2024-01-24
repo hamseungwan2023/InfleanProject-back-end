@@ -25,8 +25,14 @@ public class NoteController {
     }
 
     @DeleteMapping("/api/sendNoteDelete")
-    public ResponseEntity<List<Long>> deleteNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto){
-        List<Long> erroredList = noteService.deleteNote(noteDto);
+    public ResponseEntity<List<Long>> deleteSendNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto){
+        List<Long> erroredList = noteService.deleteSendNote(noteDto);
+        return ResponseEntity.ok().body(erroredList);
+    }
+
+    @DeleteMapping("/api/receiveNoteDelete")
+    public ResponseEntity<List<Long>> deleteReceiveNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto){
+        List<Long> erroredList = noteService.deleteReceiveNote(noteDto);
         return ResponseEntity.ok().body(erroredList);
     }
 }

@@ -33,16 +33,30 @@ public class NoteService {
         return erroredList;
     }
 
-    public List<Long> deleteNote(NoteDeleteDto noteDto) {
+    public List<Long> deleteSendNote(NoteDeleteDto noteDto) {
         List<Long> deletedList = new ArrayList<>();
         for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
             try{
-                noteSenderService.deleteNote(deleteNoteId);
+                noteSenderService.deleteSendNote(deleteNoteId);
             }catch (NoSuchNoteException e){
                 long errorId = Long.parseLong(e.getMessage());
                 deletedList.add(errorId);
             }
         }
         return deletedList;
+    }
+
+    public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {
+        List<Long> deletedList = new ArrayList<>();
+        for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
+            try{
+                noteSenderService.deleteReceiveNote(deleteNoteId);
+            }catch (NoSuchNoteException e){
+                long errorId = Long.parseLong(e.getMessage());
+                deletedList.add(errorId);
+            }
+        }
+        return deletedList;
+
     }
 }

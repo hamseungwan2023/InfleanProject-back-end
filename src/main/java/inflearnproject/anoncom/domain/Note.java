@@ -45,4 +45,8 @@ public class Note extends BaseCreatedEntity{
     public void senderDelete(){
         this.isSenderDelete = true;
     }
+
+    public void receiverDelete() {
+        this.isReceiverDelete = true;
+    }
 }

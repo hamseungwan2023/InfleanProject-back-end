@@ -38,11 +38,29 @@ public class NoteSenderService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deleteNote(Long deleteNoteId) {
-        Note note = noteRepository.findById(deleteNoteId).orElseThrow(
-                () -> new NoSuchNoteException(String.valueOf(deleteNoteId))
-        );
+    public void deleteSendNote(Long deleteNoteId) {
+        Note note = findNoteById(deleteNoteId);
 
         note.senderDelete();
+        deleteIfAllTrue(note);
+    }
+
+    public void deleteReceiveNote(Long deleteNoteId) {
+        Note note = findNoteById(deleteNoteId);
+
+        note.receiverDelete();
+        deleteIfAllTrue(note);
+    }
+
+    private Note findNoteById(Long deleteNoteId) {
+        return noteRepository.findById(deleteNoteId).orElseThrow(
+                () -> new NoSuchNoteException(String.valueOf(deleteNoteId))
+        );
+    }
+
+    private void deleteIfAllTrue(Note note){
+        if(note.isSenderDelete() && note.isReceiverDelete()){
+            noteRepository.delete(note);
+        }
     }
 }
