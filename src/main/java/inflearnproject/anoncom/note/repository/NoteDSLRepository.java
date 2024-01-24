@@ -1,15 +1,11 @@
 package inflearnproject.anoncom.note.repository;
 
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import inflearnproject.anoncom.domain.Note;
-import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.QNote;
+import inflearnproject.anoncom.note.dto.NoteSendedShowDto;
 import inflearnproject.anoncom.note.dto.NoteShowDto;
+import inflearnproject.anoncom.note.dto.QNoteSendedShowDto;
 import inflearnproject.anoncom.note.dto.QNoteShowDto;
-import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +27,7 @@ public class NoteDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public Page<NoteShowDto> findNotes(Long receiverId, Pageable pageable){
+    public Page<NoteShowDto> findReceivedNotes(Long receiverId, Pageable pageable){
         JPAQuery<NoteShowDto> query = queryFactory
                 .select(new QNoteShowDto(note.id,
                         note.sender.id,
@@ -65,4 +61,37 @@ public class NoteDSLRepository {
         return new PageImpl<>(notes, pageable, total);
     }
 
+    public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {
+        JPAQuery<NoteSendedShowDto> query = queryFactory
+                .select(new QNoteSendedShowDto(note.id,
+                        note.receiver.id,
+                        note.receiver.nickname,
+                        note.content,
+                        note.createdAt,
+                        note.createdAt,
+                        note.isReceiverRead))
+                .from(note)
+                .leftJoin(note.sender)
+                .where(
+                        note.sender.id.eq(senderId)
+                );
+
+
+        List<NoteSendedShowDto> notes = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(note.count())
+                        .from(note)
+                        .where(
+                                note.sender.id.eq(senderId)
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(notes, pageable, total);
+    }
 }

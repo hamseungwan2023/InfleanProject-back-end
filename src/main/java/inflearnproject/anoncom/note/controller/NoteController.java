@@ -1,14 +1,13 @@
 package inflearnproject.anoncom.note.controller;
 
-import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.note.dto.NoteAddDto;
 import inflearnproject.anoncom.note.dto.NoteDeleteDto;
+import inflearnproject.anoncom.note.dto.NoteSendedShowDto;
 import inflearnproject.anoncom.note.dto.NoteShowDto;
 import inflearnproject.anoncom.note.service.NoteService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,7 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
-
+    private final int pageSize = 5;
     @PostMapping("/api/noteWrite")
     public ResponseEntity<List<String>> sendNote(@IfLogin LoginUserDto userDto, @RequestBody NoteAddDto noteDto){
         List<String> erroredList = noteService.addNote(userDto, noteDto);
@@ -42,12 +41,18 @@ public class NoteController {
         return ResponseEntity.ok().body(erroredList);
     }
 
-    @GetMapping("/api/noteReadList")
-    public ResponseEntity<?> showReceiverNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
-        int pageSize = 5;
+    @GetMapping("/api/noteReadReceivedList")
+    public ResponseEntity<Page<NoteShowDto>> showReceiverNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
+
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<NoteShowDto> notesDto = noteService.findNotes(userDto.getMemberId(), pageable);
+        Page<NoteShowDto> notesDto = noteService.findReceivedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
     }
 
+    @GetMapping("/api/noteReadSendedList")
+    public ResponseEntity<Page<NoteSendedShowDto>> showSendNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
+        return ResponseEntity.ok().body(notesDto);
+    }
 }
