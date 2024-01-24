@@ -124,4 +124,9 @@ public class UserService {
         }
 
     }
+
+    public List<String> searchUser(String nickname){
+        String nicknameAdded = "%" + nickname + "%";
+        return userRepository.findNicknamesByNickname(nicknameAdded);
+    }
 }

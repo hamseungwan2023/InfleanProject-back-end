@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -25,4 +26,7 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     String findProfileImgById(@Param("id") Long id);
 
     Optional<UserEntity> findByNickname(String nickname);
+
+    @Query("select u.nickname from UserEntity u where u.nickname LIKE :nickname")
+    List<String> findNicknamesByNickname(@Param("nickname") String nickname);
 }

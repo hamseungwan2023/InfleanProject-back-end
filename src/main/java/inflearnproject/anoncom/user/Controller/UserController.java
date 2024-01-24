@@ -4,6 +4,7 @@ import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.error.ErrorDTO;
+import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
@@ -185,5 +186,12 @@ public class UserController {
     public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestBody ReqUserUpdateDto userUpdateDto){
         userService.updateUser(userDto.getEmail(),userUpdateDto);
         return ResponseEntity.ok().body("ok");
+    }
+
+    @GetMapping("/api/search")
+    public ResponseEntity<?> searchUser(@IfLogin LoginUserDto userDto,
+                                        @ModelAttribute(value = "keyword") String keyword){
+        List<String> nicknamesByNickname = userService.searchUser(keyword);
+        return ResponseEntity.ok().body(nicknamesByNickname);
     }
 }
