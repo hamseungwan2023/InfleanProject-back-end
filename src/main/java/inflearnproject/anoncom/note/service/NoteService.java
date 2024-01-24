@@ -1,11 +1,16 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.note.dto.NoteAddDto;
 import inflearnproject.anoncom.note.dto.NoteDeleteDto;
+import inflearnproject.anoncom.note.dto.NoteShowDto;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
+import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +23,7 @@ import java.util.List;
 public class NoteService {
 
     private final NoteSenderService noteSenderService;
-
+    private final NoteDSLRepository noteDSLRepository;
     //TODO : BATCHSIZE로 나중에 일괄처리 해보기
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -57,6 +62,9 @@ public class NoteService {
             }
         }
         return deletedList;
+    }
 
+    public Page<NoteShowDto> findNotes(Long receiverId, Pageable pageable){
+        return noteDSLRepository.findNotes(receiverId,pageable);
     }
 }
