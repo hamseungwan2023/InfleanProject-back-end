@@ -58,4 +58,8 @@ public class Note extends BaseCreatedEntity{
     public void spamTrue() {
         this.isSpam = true;
     }
+
+    public void receiverReadTrue() {
+        this.isReceiverRead = true;
+    }
 }

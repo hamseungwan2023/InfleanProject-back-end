@@ -1,10 +1,12 @@
 package inflearnproject.anoncom.note.controller;
 
+import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.service.NoteService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +61,13 @@ public class NoteController {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
+    }
+
+    @GetMapping("/api/noteRead/{noteId}")
+    public ResponseEntity<NoteDetailDto> showNoteDetail(@IfLogin LoginUserDto userDto, @PathVariable("noteId") Long noteId){
+        Note note = noteService.findById(noteId);
+        NoteDetailDto noteDetailDto = new NoteDetailDto(note);
+        return ResponseEntity.ok().body(noteDetailDto);
     }
 
     @PostMapping("/api/keepNote")

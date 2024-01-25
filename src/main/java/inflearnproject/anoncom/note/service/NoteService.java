@@ -1,8 +1,10 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
+import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class NoteService {
 
     private final NoteSenderService noteSenderService;
     private final NoteDSLRepository noteDSLRepository;
+    private final NoteRepository noteRepository;
     //TODO : BATCHSIZE로 나중에 일괄처리 해보기
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -94,5 +97,13 @@ public class NoteService {
             }
         }
         return spamList;
+    }
+
+    public Note findById(Long noteId) {
+        Note note = noteRepository.findById(noteId).orElseThrow(
+                () -> new NoSuchNoteException("해당 쪽지는 존재하지 않습니다.")
+        );
+        note.receiverReadTrue();
+        return note;
     }
 }
