@@ -77,4 +77,12 @@ public class NoteSenderService {
         );
         note.spamTrue();
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void declareNote(Long declareNoteId) {
+        Note note = noteRepository.findById(declareNoteId).orElseThrow(
+                () -> new NoSuchNoteException(String.valueOf(declareNoteId))
+        );
+        note.delcareTrue();
+    }
 }

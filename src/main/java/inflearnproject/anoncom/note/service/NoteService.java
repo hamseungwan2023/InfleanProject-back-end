@@ -106,4 +106,17 @@ public class NoteService {
         note.receiverReadTrue();
         return note;
     }
+
+    public List<Long> declareNote(NoteDeclareDto noteDeclareDto) {
+        List<Long> declareList = new ArrayList<>();
+        for (Long declareNoteId : noteDeclareDto.getDeclareNotes()) {
+            try{
+                noteSenderService.declareNote(declareNoteId);
+            }catch (NoSuchNoteException e){
+                long errorId = Long.parseLong(e.getMessage());
+                declareList.add(errorId);
+            }
+        }
+        return declareList;
+    }
 }

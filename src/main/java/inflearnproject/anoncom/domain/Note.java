@@ -62,4 +62,8 @@ public class Note extends BaseCreatedEntity{
     public void receiverReadTrue() {
         this.isReceiverRead = true;
     }
+
+    public void delcareTrue() {
+        this.isDeclaration = true;
+    }
 }
