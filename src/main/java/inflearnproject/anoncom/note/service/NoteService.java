@@ -1,9 +1,6 @@
 package inflearnproject.anoncom.note.service;
 
-import inflearnproject.anoncom.note.dto.NoteAddDto;
-import inflearnproject.anoncom.note.dto.NoteDeleteDto;
-import inflearnproject.anoncom.note.dto.NoteSendedShowDto;
-import inflearnproject.anoncom.note.dto.NoteShowDto;
+import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
@@ -64,8 +61,8 @@ public class NoteService {
         return deletedList;
     }
 
-    public Page<NoteShowDto> findReceivedNotes(Long receiverId, Pageable pageable){
-        return noteDSLRepository.findReceivedNotes(receiverId,pageable);
+    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond,Pageable pageable){
+        return noteDSLRepository.findReceivedNotes(receiverId,cond, pageable);
     }
 
     public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {

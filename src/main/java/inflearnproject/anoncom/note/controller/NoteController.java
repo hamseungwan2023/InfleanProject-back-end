@@ -1,9 +1,6 @@
 package inflearnproject.anoncom.note.controller;
 
-import inflearnproject.anoncom.note.dto.NoteAddDto;
-import inflearnproject.anoncom.note.dto.NoteDeleteDto;
-import inflearnproject.anoncom.note.dto.NoteSendedShowDto;
-import inflearnproject.anoncom.note.dto.NoteShowDto;
+import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.service.NoteService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
@@ -41,14 +38,21 @@ public class NoteController {
         return ResponseEntity.ok().body(erroredList);
     }
 
+    /**
+     * 받은 쪽지함 보여주기
+     */
     @GetMapping("/api/noteReadReceivedList")
-    public ResponseEntity<Page<NoteShowDto>> showReceiverNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
+    public ResponseEntity<Page<NoteShowDto>> showReceiverNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page,
+                                                               @ModelAttribute(value = "cond") NoteSearchCond cond){
 
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<NoteShowDto> notesDto = noteService.findReceivedNotes(userDto.getMemberId(), pageable);
+        Page<NoteShowDto> notesDto = noteService.findReceivedNotes(userDto.getMemberId(), cond,pageable);
         return ResponseEntity.ok().body(notesDto);
     }
 
+    /**
+     * 내가 보낸 쪽지들 보여주기
+     */
     @GetMapping("/api/noteReadSendedList")
     public ResponseEntity<Page<NoteSendedShowDto>> showSendNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
         Pageable pageable = PageRequest.of(page, pageSize);
