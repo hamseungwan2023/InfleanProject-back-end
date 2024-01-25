@@ -167,9 +167,9 @@ public class UserController {
     }
 
     @GetMapping("/load-profile")
-    public ResponseEntity<?> loadProfile(@IfLogin UserEntity userEntity) throws IOException {
+    public ResponseEntity<?> loadProfile(@IfLogin LoginUserDto userDto) throws IOException {
 
-        String profilePath = userService.getProfilePath(userEntity.getId());
+        String profilePath = userService.getProfilePath(userDto.getMemberId());
 
         String fullPath = uploadRootPath + File.separator + profilePath;
         File targetFile = new File(fullPath);
