@@ -60,4 +60,10 @@ public class NoteController {
         Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
     }
+
+    @PostMapping("/api/keepNote")
+    public ResponseEntity<List<Long>> keepNotes(@IfLogin LoginUserDto userDto,@RequestBody NoteKeepDto noteKeepDto){
+        List<Long> keepNotes = noteService.keepNote(noteKeepDto);
+        return ResponseEntity.ok().body(keepNotes);
+    }
 }

@@ -68,4 +68,17 @@ public class NoteService {
     public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {
         return noteDSLRepository.findSendedNotes(senderId, pageable);
     }
+
+    public List<Long> keepNote(NoteKeepDto noteKeepDto) {
+        List<Long> keepList = new ArrayList<>();
+        for (Long noteKeepId : noteKeepDto.getNoteKeeps()) {
+            try{
+                noteSenderService.keepNote(noteKeepId);
+            }catch (NoSuchNoteException e){
+                long errorId = Long.parseLong(e.getMessage());
+                keepList.add(errorId);
+            }
+        }
+        return keepList;
+    }
 }

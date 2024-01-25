@@ -55,7 +55,10 @@ public class NoteDSLRepository {
                         .select(note.count())
                         .from(note)
                         .where(
-                                note.receiver.id.eq(receiverId)
+                                note.receiver.id.eq(receiverId),
+                                isSpamEq(cond.getIsSpam()),
+                                isKeepEq(cond.getIsKeep()),
+                                isReceiveDeleteEq(cond.getIsReceiverDelete())
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -86,7 +89,8 @@ public class NoteDSLRepository {
                 .from(note)
                 .leftJoin(note.sender)
                 .where(
-                        note.sender.id.eq(senderId)
+                        note.sender.id.eq(senderId),
+                        note.isSenderDelete.eq(false)
                 );
 
 
@@ -100,7 +104,8 @@ public class NoteDSLRepository {
                         .select(note.count())
                         .from(note)
                         .where(
-                                note.sender.id.eq(senderId)
+                                note.sender.id.eq(senderId),
+                                note.isSenderDelete.eq(false)
                         )
                         .fetchOne()
         ).orElse(0L);

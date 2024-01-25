@@ -63,4 +63,11 @@ public class NoteSenderService {
             noteRepository.delete(note);
         }
     }
+
+    public void keepNote(Long noteKeepId) {
+        Note note = noteRepository.findById(noteKeepId).orElseThrow(
+                () -> new NoSuchNoteException(String.valueOf(noteKeepId))
+        );
+        note.keepTrue();
+    }
 }
