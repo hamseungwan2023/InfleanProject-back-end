@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,7 +43,6 @@ public class Note extends BaseCreatedEntity{
 
     private boolean isKeep = false; //보관 여부
 
-
     public void senderDelete(){
         this.isSenderDelete = true;
     }
@@ -52,5 +53,9 @@ public class Note extends BaseCreatedEntity{
 
     public void keepTrue() {
         this.isKeep = true;
+    }
+
+    public void spamTrue() {
+        this.isSpam = true;
     }
 }

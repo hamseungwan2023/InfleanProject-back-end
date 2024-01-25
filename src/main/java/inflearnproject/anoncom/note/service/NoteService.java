@@ -81,4 +81,18 @@ public class NoteService {
         }
         return keepList;
     }
+
+    public List<Long> spamNote(NoteSpamDto noteSpamDto) {
+
+        List<Long> spamList = new ArrayList<>();
+        for (Long noteSpamId : noteSpamDto.getSpamNotes()) {
+            try{
+                noteSenderService.spamNote(noteSpamId);
+            }catch (NoSuchNoteException e){
+                long errorId = Long.parseLong(e.getMessage());
+                spamList.add(errorId);
+            }
+        }
+        return spamList;
+    }
 }

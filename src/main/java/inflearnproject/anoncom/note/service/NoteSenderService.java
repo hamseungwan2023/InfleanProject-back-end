@@ -44,7 +44,7 @@ public class NoteSenderService {
         note.senderDelete();
         deleteIfAllTrue(note);
     }
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteReceiveNote(Long deleteNoteId) {
         Note note = findNoteById(deleteNoteId);
 
@@ -63,11 +63,18 @@ public class NoteSenderService {
             noteRepository.delete(note);
         }
     }
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void keepNote(Long noteKeepId) {
         Note note = noteRepository.findById(noteKeepId).orElseThrow(
                 () -> new NoSuchNoteException(String.valueOf(noteKeepId))
         );
         note.keepTrue();
+    }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void spamNote(Long noteSpamId) {
+        Note note = noteRepository.findById(noteSpamId).orElseThrow(
+                () -> new NoSuchNoteException(String.valueOf(noteSpamId))
+        );
+        note.spamTrue();
     }
 }

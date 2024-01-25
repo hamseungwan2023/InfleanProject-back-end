@@ -27,6 +27,7 @@ public class NoteDSLRepository {
     }
 
     public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond,Pageable pageable){
+
         JPAQuery<NoteShowDto> query = queryFactory
                 .select(new QNoteShowDto(note.id,
                         note.sender.id,
@@ -39,9 +40,7 @@ public class NoteDSLRepository {
                 .leftJoin(note.sender)
                 .where(
                         note.receiver.id.eq(receiverId),
-                        isSpamEq(cond.getIsSpam()),
-                        isKeepEq(cond.getIsKeep()),
-                        isReceiveDeleteEq(cond.getIsReceiverDelete())
+                        isCondEq(cond)
                 );
 
 
@@ -56,14 +55,22 @@ public class NoteDSLRepository {
                         .from(note)
                         .where(
                                 note.receiver.id.eq(receiverId),
-                                isSpamEq(cond.getIsSpam()),
-                                isKeepEq(cond.getIsKeep()),
-                                isReceiveDeleteEq(cond.getIsReceiverDelete())
+                                isCondEq(cond)
                         )
                         .fetchOne()
         ).orElse(0L);
 
         return new PageImpl<>(notes, pageable, total);
+    }
+
+    private BooleanExpression isCondEq(NoteSearchCond cond){
+        if(cond.getIsSpam() != null){
+            return note.isSpam.eq(true);
+        }
+        if(cond.getIsKeep() != null){
+            return note.isKeep.eq(true);
+        }
+        return note.isSpam.isFalse().and(note.isKeep.isFalse()).and(note.isReceiverDelete.isFalse());
     }
 
     private BooleanExpression isSpamEq(Boolean spam) {
