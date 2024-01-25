@@ -54,7 +54,8 @@ public class NoteController {
      * 내가 보낸 쪽지들 보여주기
      */
     @GetMapping("/api/noteReadSendedList")
-    public ResponseEntity<Page<NoteSendedShowDto>> showSendNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page){
+    public ResponseEntity<Page<NoteSendedShowDto>> showSendNotes(@IfLogin LoginUserDto userDto,@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                 @ModelAttribute(value = "cond") NoteSearchCond cond){
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
