@@ -1,5 +1,7 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
+import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
@@ -19,6 +21,8 @@ public class NoteSenderService {
 
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
+    private final DeclareNoteRepository declareNoteRepository;
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendNoteToReceiver(LoginUserDto userDto, String receiverNickname, String content) {
         // 쪽지 전송 로직
@@ -83,6 +87,9 @@ public class NoteSenderService {
         Note note = noteRepository.findById(declareNoteId).orElseThrow(
                 () -> new NoSuchNoteException(String.valueOf(declareNoteId))
         );
+        DeclareNote declareNote = DeclareNote.builder()
+                        .note(note).build();
+        declareNoteRepository.save(declareNote);
         note.delcareTrue();
     }
 }
