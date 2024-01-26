@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.email;
+package inflearnproject.anoncom.email.service;
 
 import inflearnproject.anoncom.domain.EmailVerification;
 import inflearnproject.anoncom.email.repository.EmailVerificationRepository;

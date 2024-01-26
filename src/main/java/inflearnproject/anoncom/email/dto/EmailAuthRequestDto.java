@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.email;
+package inflearnproject.anoncom.email.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;

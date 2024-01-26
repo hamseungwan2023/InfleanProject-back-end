@@ -1,5 +1,7 @@
-package inflearnproject.anoncom.email;
+package inflearnproject.anoncom.email.controller;
 
+import inflearnproject.anoncom.email.dto.EmailAuthRequestDto;
+import inflearnproject.anoncom.email.service.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
