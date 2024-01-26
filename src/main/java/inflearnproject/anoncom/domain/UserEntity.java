@@ -111,4 +111,8 @@ public class UserEntity extends BaseTimeEntity{
     public void blockFalse(){
         this.isBlocked = false;
     }
+
+    public void setRandomPassword(String password){
+        this.password = password;
+    }
 }

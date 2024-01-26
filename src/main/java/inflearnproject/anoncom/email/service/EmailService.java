@@ -1,17 +1,21 @@
 package inflearnproject.anoncom.email.service;
 
 import inflearnproject.anoncom.domain.EmailVerification;
+import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.email.dto.EmailAuthRequestDto;
+import inflearnproject.anoncom.email.dto.EmailResetPasswordDto;
 import inflearnproject.anoncom.email.dto.EmailVerificationDto;
 import inflearnproject.anoncom.email.exception.NotSameCodeException;
 import inflearnproject.anoncom.email.exception.UnknownMailException;
 import inflearnproject.anoncom.email.repository.EmailVerificationRepository;
+import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final EmailVerificationRepository emailVerificationRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private String authNum; //랜덤 인증 코드
 
@@ -35,7 +40,7 @@ public class EmailService {
 
 
     //랜덤 인증 코드 생성
-    public void createCode() {
+    public String createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
@@ -54,13 +59,13 @@ public class EmailService {
                     break;
             }
         }
-        authNum = key.toString();
+        return key.toString();
     }
 
     //메일 양식 작성
     public MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
 
-        createCode(); //인증 코드 생성
+        authNum  = createCode(); //인증 코드 생성
         String setFrom = username; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
         String toEmail = email; //받는 사람
         String title = "AnonCom 인증 번호"; //제목
@@ -115,5 +120,21 @@ public class EmailService {
             throw new NotSameCodeException("코드가 일치하지 않습니다");
         }
         return userRepository.findByEmail(emailVerificationDto.getEmail()).getUsername();
+    }
+
+    public String resetPassword(EmailResetPasswordDto emailResetPasswordDto){
+        String codeByEmail = emailVerificationRepository.findCodeByEmail(emailResetPasswordDto.getEmail());
+        if(!codeByEmail.equals(emailResetPasswordDto.getCode())){
+            throw new NotSameCodeException("코드가 일치하지 않습니다");
+        }
+        UserEntity user = userRepository.findByEmail(emailResetPasswordDto.getEmail());
+        if(!user.getUsername().equals(emailResetPasswordDto.getUsername())){
+            throw new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다");
+        }
+        String randomPassword = createCode();
+        String encodedRandomPw = passwordEncoder.encode(randomPassword);
+        user.setRandomPassword(encodedRandomPw);
+
+        return randomPassword;
     }
 }

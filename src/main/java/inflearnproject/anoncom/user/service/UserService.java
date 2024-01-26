@@ -50,7 +50,7 @@ public class UserService {
         if(!user.isActive()){
             throw new NotActiveUser("해당 계정은 비활성화(삭제)된 상태입니다.");
         }
-        if(user.getIsBlocked()){
+        if(user.getIsBlocked() != null && user.getIsBlocked()){
             LocalDateTime blockUntil = user.getBlockUntil();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
             String formattedDate = blockUntil.format(formatter);

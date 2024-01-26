@@ -1,10 +1,12 @@
 package inflearnproject.anoncom.email.controller;
 
 import inflearnproject.anoncom.email.dto.EmailAuthRequestDto;
+import inflearnproject.anoncom.email.dto.EmailResetPasswordDto;
 import inflearnproject.anoncom.email.dto.EmailVerificationDto;
 import inflearnproject.anoncom.email.service.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,8 +34,14 @@ public class EmailController {
     }
 
     @PostMapping("/email/findId")
-    public ResponseEntity<?> findUserName(@RequestBody EmailVerificationDto emailVerificationDto){
+    public ResponseEntity<String> findUserName(@RequestBody EmailVerificationDto emailVerificationDto){
         String username = emailService.verificateUserId(emailVerificationDto);
         return ResponseEntity.ok().body(username);
+    }
+
+    @PostMapping("/email/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody EmailResetPasswordDto emailResetPasswordDto){
+        String newPassword = emailService.resetPassword(emailResetPasswordDto);
+        return ResponseEntity.ok().body(newPassword);
     }
 }

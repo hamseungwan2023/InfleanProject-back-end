@@ -4,6 +4,7 @@ import inflearnproject.anoncom.email.exception.NotSameCodeException;
 import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.post.controller.PostController;
 import inflearnproject.anoncom.post.exception.NoPostException;
+import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,11 @@ public class ExceptionEmailController {
 
     @ExceptionHandler(NotSameCodeException.class)
     public ResponseEntity<ErrorDTO> handleNotSameCodeException(NotSameCodeException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(NoUserEntityException.class)
+    public ResponseEntity<ErrorDTO> handleNoUserEntityException(NoUserEntityException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 }
