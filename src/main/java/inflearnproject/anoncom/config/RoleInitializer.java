@@ -5,13 +5,22 @@ import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.HashSet;
+import java.util.Optional;
 
 @Configuration
+@RequiredArgsConstructor
 public class RoleInitializer {
 
+    private final PasswordEncoder passwordEncoder;
     @Bean
     public CommandLineRunner initRoles(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
@@ -29,10 +38,19 @@ public class RoleInitializer {
             }
 
             if(!userRepository.existsByUsername("adminUser")){
-                UserEntity user = new UserEntity();
-                user.setAdminInfo();
-                user.addRole(roleRepository.findById(2L).get());
+                String nickname = "adminNick";
+                String password = "adminPass";
+                String username = "adminUser";
 
+                UserEntity user = UserEntity.builder()
+                        .nickname(nickname)
+                        .password(passwordEncoder.encode(password))
+                        .username(username)
+                        .roles(new HashSet<>())
+                        .isActive(true).build();
+
+                Optional<Role> userRole = roleRepository.findByName("ROLE_ADMIN");
+                user.addRole(userRole.get());
                 userRepository.save(user);
             }
         };

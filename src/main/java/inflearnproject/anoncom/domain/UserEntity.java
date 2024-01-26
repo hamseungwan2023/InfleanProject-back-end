@@ -94,10 +94,10 @@ public class UserEntity extends BaseTimeEntity{
         this.nickname = nickname;
     }
 
-    public void setAdminInfo(){
-        this.nickname = "adminNick";
-        this.password = "adminPass";
-        this.username = "adminUser";
+    public void setAdminInfo(String nickname, String password, String username){
+        this.nickname = nickname;
+        this.password = password;
+        this.username = username;
 
     }
 }
