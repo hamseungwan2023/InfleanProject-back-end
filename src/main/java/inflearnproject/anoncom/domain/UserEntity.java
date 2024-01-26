@@ -1,9 +1,11 @@
 package inflearnproject.anoncom.domain;
 
 import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +62,13 @@ public class UserEntity extends BaseTimeEntity{
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
     private boolean isActive;
+
+    @Column(nullable = true)
+    private LocalDateTime blockUntil;
+
+    @Column(nullable = true)
+    private Boolean isBlocked;
+
     public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto){
         this.nickname = reqUserJoinFormDto.getNickname();
         this.username = reqUserJoinFormDto.getUsername();
@@ -94,10 +103,12 @@ public class UserEntity extends BaseTimeEntity{
         this.nickname = nickname;
     }
 
-    public void setAdminInfo(String nickname, String password, String username){
-        this.nickname = nickname;
-        this.password = password;
-        this.username = username;
+    public void blockUser() {
+        this.isBlocked = true;
+        this.blockUntil = LocalDateTime.now().plusDays(7);
+    }
 
+    public void blockFalse(){
+        this.isBlocked = false;
     }
 }

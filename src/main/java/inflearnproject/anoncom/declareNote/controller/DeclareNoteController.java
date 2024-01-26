@@ -1,18 +1,17 @@
 package inflearnproject.anoncom.declareNote.controller;
 
 import inflearnproject.anoncom.declareNote.dto.DeclareShowDto;
+import inflearnproject.anoncom.declareNote.dto.DeclareUserDto;
 import inflearnproject.anoncom.declareNote.service.DeclareNoteService;
 import inflearnproject.anoncom.domain.DeclareNote;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,5 +33,11 @@ public class DeclareNoteController {
         List<DeclareShowDto> dtos = declareNotes.stream().map(DeclareShowDto::new).toList();
 
         return ResponseEntity.ok().body(dtos);
+    }
+
+    @PostMapping("/declareUser")
+    public ResponseEntity<?> adminDeclareUser(@RequestBody DeclareUserDto declareUserDto){
+        declareNoteService.declareUser(declareUserDto);
+        return ResponseEntity.ok().body("ok");
     }
 }
