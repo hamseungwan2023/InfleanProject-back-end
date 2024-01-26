@@ -1,10 +1,12 @@
 package inflearnproject.anoncom.email.service;
 
 import inflearnproject.anoncom.domain.EmailVerification;
+import inflearnproject.anoncom.email.dto.EmailAuthRequestDto;
 import inflearnproject.anoncom.email.dto.EmailVerificationDto;
 import inflearnproject.anoncom.email.exception.NotSameCodeException;
 import inflearnproject.anoncom.email.exception.UnknownMailException;
 import inflearnproject.anoncom.email.repository.EmailVerificationRepository;
+import inflearnproject.anoncom.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class EmailService {
 	//의존성 주입을 통해서 필요한 객체를 가져온다.
     private final JavaMailSender emailSender;
     private final EmailVerificationRepository emailVerificationRepository;
-
+    private final UserRepository userRepository;
 
     private String authNum; //랜덤 인증 코드
 
@@ -61,7 +63,7 @@ public class EmailService {
         createCode(); //인증 코드 생성
         String setFrom = username; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
         String toEmail = email; //받는 사람
-        String title = "AnonCom 회원가입 인증 번호"; //제목
+        String title = "AnonCom 인증 번호"; //제목
 
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
@@ -105,5 +107,13 @@ public class EmailService {
             throw new NotSameCodeException("코드가 일치하지 않습니다");
         }
         return true;
+    }
+
+    public String verificateUserId(EmailVerificationDto emailVerificationDto){
+        String codeByEmail = emailVerificationRepository.findCodeByEmail(emailVerificationDto.getEmail());
+        if(!codeByEmail.equals(emailVerificationDto.getCode())){
+            throw new NotSameCodeException("코드가 일치하지 않습니다");
+        }
+        return userRepository.findByEmail(emailVerificationDto.getEmail()).getUsername();
     }
 }

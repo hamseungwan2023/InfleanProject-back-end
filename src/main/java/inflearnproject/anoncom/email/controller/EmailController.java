@@ -18,16 +18,22 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/login/mailConfirm")
+    @PostMapping("/email/mailConfirm")
     public ResponseEntity<String> mailConfirm(@RequestBody EmailAuthRequestDto emailDto) {
 
         String authCode = emailService.sendEmail(emailDto.getEmail());
         return ResponseEntity.ok().body(authCode);
     }
 
-    @PostMapping("/login/mailVerification")
+    @PostMapping("/email/mailVerification")
     public ResponseEntity<Boolean> mailVerification(@RequestBody EmailVerificationDto emailVerificationDto){
         boolean verificate = emailService.verificate(emailVerificationDto);
         return ResponseEntity.ok().body(verificate);
+    }
+
+    @PostMapping("/email/findId")
+    public ResponseEntity<?> findUserName(@RequestBody EmailVerificationDto emailVerificationDto){
+        String username = emailService.verificateUserId(emailVerificationDto);
+        return ResponseEntity.ok().body(username);
     }
 }
