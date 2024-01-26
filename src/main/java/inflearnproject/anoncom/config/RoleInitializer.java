@@ -2,7 +2,9 @@ package inflearnproject.anoncom.config;
 
 
 import inflearnproject.anoncom.domain.Role;
+import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.role.repository.RoleRepository;
+import inflearnproject.anoncom.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class RoleInitializer {
 
     @Bean
-    public CommandLineRunner initRoles(RoleRepository roleRepository) {
+    public CommandLineRunner initRoles(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
             if (roleRepository.count() == 0) { // role 테이블에 데이터가 없을 경우
                 Role userRole = new Role();
@@ -25,6 +27,15 @@ public class RoleInitializer {
                 roleRepository.save(userRole);
                 roleRepository.save(adminRole);
             }
+
+            if(!userRepository.existsByUsername("adminUser")){
+                UserEntity user = new UserEntity();
+                user.setAdminInfo();
+                user.addRole(roleRepository.findById(2L).get());
+
+                userRepository.save(user);
+            }
         };
     }
+
 }

@@ -93,4 +93,11 @@ public class UserEntity extends BaseTimeEntity{
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void setAdminInfo(){
+        this.nickname = "adminNick";
+        this.password = "adminPass";
+        this.username = "adminUser";
+
+    }
 }
