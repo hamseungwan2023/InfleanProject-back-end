@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .authorizeHttpRequests(httpRequests -> httpRequests
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers( "/login/mailConfirm","/user/signup","/user/login","/user/refreshToken").permitAll()
+                        .requestMatchers( "/login/mailConfirm","/login/mailVerification","/user/signup","/user/login","/user/refreshToken").permitAll()
                         .requestMatchers(GET,"/api/postList/**","/api/postDetail/**").permitAll()
                         .requestMatchers(GET,"/api/commentList/**").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))

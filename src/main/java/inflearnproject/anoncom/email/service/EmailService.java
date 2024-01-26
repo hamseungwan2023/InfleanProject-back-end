@@ -1,6 +1,9 @@
 package inflearnproject.anoncom.email.service;
 
 import inflearnproject.anoncom.domain.EmailVerification;
+import inflearnproject.anoncom.email.dto.EmailVerificationDto;
+import inflearnproject.anoncom.email.exception.NotSameCodeException;
+import inflearnproject.anoncom.email.exception.UnknownMailException;
 import inflearnproject.anoncom.email.repository.EmailVerificationRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -70,10 +73,15 @@ public class EmailService {
     }
 
     //실제 메일 전송
-    public String sendEmail(String toEmail) throws MessagingException, UnsupportedEncodingException {
+    public String sendEmail(String toEmail){
     
         //메일전송에 필요한 정보 설정
-        MimeMessage emailForm = createEmailForm(toEmail);
+        MimeMessage emailForm = null;
+        try {
+            emailForm = createEmailForm(toEmail);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new UnknownMailException(e.getMessage());
+        }
         //실제 메일 전송
         emailSender.send(emailForm);
 
@@ -89,5 +97,13 @@ public class EmailService {
         String htmlContent = "<h1>인증 코드</h1>"
                 + "<p>귀하의 인증 코드는: <strong>" + code + "</strong> 입니다.</p>";
         return htmlContent;
+    }
+
+    public boolean verificate(EmailVerificationDto emailVerificationDto) {
+        String codeByEmail = emailVerificationRepository.findCodeByEmail(emailVerificationDto.getEmail());
+        if(!codeByEmail.equals(emailVerificationDto.getCode())){
+            throw new NotSameCodeException("코드가 일치하지 않습니다");
+        }
+        return true;
     }
 }
