@@ -4,10 +4,7 @@ import inflearnproject.anoncom.domain.*;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
-import inflearnproject.anoncom.user.exception.NoUserEntityException;
-import inflearnproject.anoncom.user.exception.NotActiveUser;
-import inflearnproject.anoncom.user.exception.SameInfoUserEntityException;
-import inflearnproject.anoncom.user.exception.WrongPasswordException;
+import inflearnproject.anoncom.user.exception.*;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +49,12 @@ public class UserService {
         }
         if(!user.isActive()){
             throw new NotActiveUser("해당 계정은 비활성화(삭제)된 상태입니다.");
+        }
+        if(user.getIsBlocked()){
+            LocalDateTime blockUntil = user.getBlockUntil();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+            String formattedDate = blockUntil.format(formatter);
+            throw new BlockedUserException("해당 계정은 관리자에 의해 정지 상태입니다. 정지 기한은 " + formattedDate + "까지입니다.");
         }
         return user;
     }

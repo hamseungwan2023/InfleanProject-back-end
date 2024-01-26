@@ -23,7 +23,6 @@ public class UserBlockScheduler {
         List<UserEntity> usersToUnblock = userRepository.findAllByIsBlockedTrueAndBlockUntilBefore(LocalDateTime.now());
         for (UserEntity user : usersToUnblock) {
             user.blockFalse();
-
         }
     }
 }
