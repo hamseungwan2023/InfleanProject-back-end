@@ -154,7 +154,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk());
-        assertNull(refreshTokenRepository.findRefreshTokenByUserEntityId(1L));
+        assertNull(refreshTokenRepository.findRefreshTokenByUserEntityId(user.getId()));
     }
 
     @Test
