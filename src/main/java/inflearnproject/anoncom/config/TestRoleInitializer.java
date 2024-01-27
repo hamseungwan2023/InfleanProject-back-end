@@ -1,6 +1,5 @@
 package inflearnproject.anoncom.config;
 
-
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.role.repository.RoleRepository;
@@ -10,21 +9,20 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashSet;
 import java.util.Optional;
 
 @Configuration
 @RequiredArgsConstructor
-@Profile("local")
-public class RoleInitializer {
+@Profile("test")
+public class TestRoleInitializer {
 
     private final PasswordEncoder passwordEncoder;
+
     @Bean
-    public CommandLineRunner initRoles(RoleRepository roleRepository, UserRepository userRepository) {
+    public CommandLineRunner testInitRoles(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
             if (roleRepository.count() == 0) { // role 테이블에 데이터가 없을 경우
                 Role userRole = new Role();
@@ -39,23 +37,7 @@ public class RoleInitializer {
                 roleRepository.save(adminRole);
             }
 
-            if(!userRepository.existsByUsername("adminUser")){
-                String nickname = "adminNick";
-                String password = "adminPass";
-                String username = "adminUser";
-
-                UserEntity user = UserEntity.builder()
-                        .nickname(nickname)
-                        .password(passwordEncoder.encode(password))
-                        .username(username)
-                        .roles(new HashSet<>())
-                        .isActive(true).build();
-
-                Optional<Role> userRole = roleRepository.findByName("ROLE_ADMIN");
-                user.addRole(userRole.get());
-                userRepository.save(user);
-            }
         };
-    }
 
+    }
 }

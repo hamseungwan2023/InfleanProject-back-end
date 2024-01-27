@@ -1,14 +1,32 @@
 spring:
+  profiles:
+    active: test
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: c3392303@gmail.com
+    password: fgzlikjemekxhywi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connection-timeout: 5000
+          timeout: 5000
+          write-timeout: 5000
+    auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
   data:
     web:
       pageable:
         default-page-size: 20
         max-page-size: 2000
-# datasource:
-# url: jdbc:h2:mem:testdb
-# username: sa
-# password:
-# driver-class-name: org.h2.Driver
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver
 # jpa:
 # hibernate:
 # ddl-auto: create

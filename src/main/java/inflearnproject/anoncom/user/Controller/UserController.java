@@ -190,7 +190,7 @@ public class UserController {
 
     @GetMapping("/api/search")
     public ResponseEntity<?> searchUser(@IfLogin LoginUserDto userDto,
-                                        @ModelAttribute(value = "keyword") String keyword){
+                                        @RequestParam(value = "keyword",required = false) String keyword){
         List<String> nicknamesByNickname = userService.searchUser(keyword);
         return ResponseEntity.ok().body(nicknamesByNickname);
     }
