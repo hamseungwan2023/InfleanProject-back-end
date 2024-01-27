@@ -12,6 +12,7 @@ import inflearnproject.anoncom.user.dto.ResUserLoginDto;
 import inflearnproject.anoncom.user.dto.UserFormDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,11 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @AfterEach
+    void after(){
+        userRepository.deleteAll();
+        refreshTokenRepository.deleteAll();
+    }
     @Test
     @WithMockUser
     @DisplayName("회원가입이 잘 되어서 username, password로 회원이 잘 찾아지고, 닉네임까지 일치하는지 확인")
@@ -122,7 +128,6 @@ class UserControllerTest {
         assertNotNull(dto.getRefreshToken());
         assertNotNull(dto.getMemberId());
         assertNotNull(dto.getMemberId());
-        assertEquals(dto.getMemberId(),1L);
         assertEquals(dto.getRank(),0);
 
         RefreshToken refreshTokenByUserEntityId = refreshTokenRepository.findRefreshTokenByUserEntityId(1L);
@@ -131,7 +136,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "username")
-    @DisplayName("회원 로그인 잘 되었나 확인 - rank, accessToken refreshToken memberId값 가져와야함")
+    @DisplayName("회원 로그아웃 잘 되었나 확인")
     void user_logout() throws Exception {
         String jsonRequests = "{\"username\":\"username\", \"password\":\"password\"}";
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/user/login")
@@ -141,9 +146,9 @@ class UserControllerTest {
                 .andReturn();
         //로그인 완료
 
-
-        RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByUserEntityId(1L);
-
+        UserEntity user = userRepository.findByUsername("username");
+        RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByUserEntityId(user.getId());
+        System.out.println("refreshToken.getTokenValue() = " + refreshToken.getTokenValue());
         String jsonRequest = "{\"refreshToken\":\"" + refreshToken.getTokenValue() + "\"}";
         mockMvc.perform(MockMvcRequestBuilders.delete("/user/logout")
                         .contentType(MediaType.APPLICATION_JSON)
