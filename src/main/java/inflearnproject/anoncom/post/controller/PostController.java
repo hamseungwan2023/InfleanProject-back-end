@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.*;
 import static inflearnproject.anoncom.post.dto.ResAddPostDto.buildResPostDto;
-import static inflearnproject.anoncom.post.dto.ResPostDetailDto.buildResPostDetailDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,7 +66,7 @@ public class PostController {
     @GetMapping("/api/postDetail/{postId}")
     public ResponseEntity<ResPostDetailDto> getPost(@PathVariable Long postId){
         Post post = postService.findPostById(postId);
-        ResPostDetailDto resPostDetailDto = buildResPostDetailDto(post);
+        ResPostDetailDto resPostDetailDto = new ResPostDetailDto(post);
         return ResponseEntity.ok().body(resPostDetailDto);
     }
 

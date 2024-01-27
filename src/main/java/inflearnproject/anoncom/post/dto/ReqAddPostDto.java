@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +33,9 @@ public class ReqAddPostDto {
                 .userLike(0)
                 .userDisLike(0)
                 .views(0)
+                .comments(new ArrayList<>())
+                .reComments(new ArrayList<>())
+                .postReactions(new ArrayList<>())
                 .build();
     }
 }
