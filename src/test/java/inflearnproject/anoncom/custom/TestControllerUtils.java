@@ -2,6 +2,8 @@ package inflearnproject.anoncom.custom;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import inflearnproject.anoncom.comment.repository.CommentRepository;
+import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import inflearnproject.anoncom.user.dto.ResUserLoginDto;
 import org.springframework.http.MediaType;
@@ -52,5 +54,17 @@ public class TestControllerUtils {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ResAddPostDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResAddPostDto>() {});
         return dto.getId();
+    }
+
+    public static Long addComment(MockMvc mockMvc, Long postId, String accessToken, CommentRepository commentRepository) throws Exception {
+        String jsonRequest = "{\"content\":\"댓글\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/commentWrite/" + postId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+        return commentRepository.findAll().get(0).getId();
     }
 }

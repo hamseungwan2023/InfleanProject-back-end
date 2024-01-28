@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +48,11 @@ class PostControllerTest {
     private Long postId;
     @BeforeEach
     void before() throws Exception{
+        List<UserEntity> all = userRepository.findAll();
+        System.out.println("zz");
+        for (UserEntity userEntity : all) {
+            System.out.println(userEntity);
+        }
         signupAndLoginUser();
         addPost();
     }
