@@ -77,4 +77,20 @@ public class TestControllerUtils {
                 .andExpect(status().isOk());
         return reCommentRepository.findAll().get(0).getId();
     }
+
+    public static void increasePostLike(MockMvc mockMvc,Long postId, String accessToken) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/increasePostLike/" + postId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    public static void increasePostDisLike(MockMvc mockMvc,Long postId,String accessToken) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/decreasePostLike/" + postId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
 }
