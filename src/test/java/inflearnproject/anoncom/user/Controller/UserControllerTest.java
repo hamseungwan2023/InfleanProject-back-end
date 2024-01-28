@@ -2,13 +2,11 @@ package inflearnproject.anoncom.user.Controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import inflearnproject.anoncom.custom.TestUtils;
+import inflearnproject.anoncom.custom.TestControllerUtils;
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.UserEntity;
-import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
-import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.dto.ResUserLoginDto;
 import inflearnproject.anoncom.user.dto.UserFormDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
@@ -21,23 +19,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -69,7 +62,7 @@ class UserControllerTest {
     void before() throws Exception{
         // JSON 데이터를 문자열로 준비
         String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestUtils.signUpUser(mockMvc,jsonRequest);
+        TestControllerUtils.signUpUser(mockMvc,jsonRequest);
     }
 
     @AfterEach

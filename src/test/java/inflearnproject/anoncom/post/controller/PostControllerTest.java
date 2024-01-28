@@ -3,24 +3,20 @@ package inflearnproject.anoncom.post.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inflearnproject.anoncom.custom.MockMvcUTF;
-import inflearnproject.anoncom.custom.TestUtils;
+import inflearnproject.anoncom.custom.TestControllerUtils;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.dto.PagingPost;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import inflearnproject.anoncom.post.dto.ResPostDetailDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
-import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
-import inflearnproject.anoncom.user.dto.ResUserLoginDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,14 +144,14 @@ class PostControllerTest {
 
     private void signupAndLoginUser() throws Exception {
         String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestUtils.signUpUser(mockMvc,signupReQuest);
+        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
-        accessToken = TestUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
     }
 
     private void addPost() throws Exception {
         String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠\", \"category\":\"카테고리\"}";
-        postId = TestUtils.addPostReturnPostId(mockMvc,objectMapper,accessToken,jsonRequest);
+        postId = TestControllerUtils.addPostReturnPostId(mockMvc,objectMapper,accessToken,jsonRequest);
     }
 
     private void addPostDifferentCategory() throws Exception {

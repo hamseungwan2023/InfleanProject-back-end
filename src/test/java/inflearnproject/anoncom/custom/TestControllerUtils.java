@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TestUtils {
+public class TestControllerUtils {
 
     public static void signUpUser(MockMvc mockMvc,String jsonRequest) throws Exception {
 

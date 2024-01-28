@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static inflearnproject.anoncom.custom.TestServiceUtils.addPost;
+import static inflearnproject.anoncom.custom.TestServiceUtils.addUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -40,27 +42,8 @@ class PostServiceTest {
 
     @BeforeEach
     void addUserPost() {
-        user = UserEntity.builder()
-                .email("1@naver.com")
-                .username("username")
-                .nickname("nickname")
-                .password("password")
-                .roles(new HashSet<>())
-                .location("seoul")
-                .isActive(true)
-                .posts(new ArrayList<>())
-                .build();
-        userService.joinUser(user);
-
-        post = Post.builder()
-                .title("제목")
-                .category("카테고리")
-                .content("컨텐츠")
-                .userLike(0)
-                .userDisLike(0)
-                .views(0)
-                .build();
-        postService.savePost(user, post);
+        user = addUser(userService);
+        post = addPost(user,postService);
     }
 
     @Test

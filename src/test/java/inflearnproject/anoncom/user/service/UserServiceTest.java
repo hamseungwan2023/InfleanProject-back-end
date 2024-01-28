@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 
+import static inflearnproject.anoncom.custom.TestServiceUtils.addUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -31,16 +32,7 @@ class UserServiceTest {
     private UserEntity user;
     @BeforeEach
     void before(){
-        user = UserEntity.builder()
-                .email("1@naver.com")
-                .username("username")
-                .nickname("nickname")
-                .password("password")
-                .roles(new HashSet<>())
-                .location("seoul")
-                .isActive(true)
-                .build();
-        userService.joinUser(user);
+        user = addUser(userService);
     }
 
     @Test
