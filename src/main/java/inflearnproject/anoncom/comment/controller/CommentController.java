@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -41,6 +42,7 @@ public class CommentController {
                 .userLike(0)
                 .userDisLike(0)
                 .content(reqAddPatchCommentDto.getContent())
+                .reComments(new ArrayList<>())
                 .deleted(false)
                 .build();
         commentService.saveComment(comment,user,post);
