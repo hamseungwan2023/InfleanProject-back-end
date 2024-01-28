@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.custom;
 
 import inflearnproject.anoncom.comment.service.CommentService;
+import inflearnproject.anoncom.commentReaction.service.CommentReactionService;
 import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.ReComment;
@@ -79,6 +80,14 @@ public class TestServiceUtils {
    }
 
     public static void decreasePostReaction(PostReactionService postReactionService,Long memberId, Long postId){
-        postReactionService.increaseLike(memberId,postId);
+        postReactionService.increaseDisLike(memberId,postId);
+    }
+
+    public static void increaseReCommentReaction(CommentReactionService commentReactionService,Long memberId,Long commentId){
+        commentReactionService.increaseLike(memberId, commentId);
+    }
+
+    public static void decreaseReCommentReaction(CommentReactionService commentReactionService,Long memberId,Long commentId){
+        commentReactionService.increaseDisLike(memberId,commentId);
     }
 }
