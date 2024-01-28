@@ -16,7 +16,7 @@ public class ReCommentController {
 
     @PostMapping("/api/replyCommentWrite/{commentId}")
     public void addReplyComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @RequestBody ReqAddReCommentDto reqAddReCommentDto){
-        reCommentService.addReComment(userDto,commentId,reqAddReCommentDto);
+        reCommentService.addReComment(userDto,commentId,reqAddReCommentDto.getContent());
     }
 
     @PatchMapping("/api/replyCommentCorrect/{replyCommentId}")

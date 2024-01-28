@@ -41,6 +41,11 @@ public class ReComment extends BaseTimeEntity {
         this.comment = comment;
     }
 
+    public void addComment(Comment comment){
+        this.comment = comment;
+        comment.getReComments().add(this);
+    }
+
     public void updateContent(String content){
         this.content = content;
     }

@@ -23,7 +23,7 @@ public class ReCommentService {
     private final ReCommentRepository reCommentRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    public void addReComment(LoginUserDto userDto, Long commentId, ReqAddReCommentDto reqAddReCommentDto){
+    public ReComment addReComment(LoginUserDto userDto, Long commentId, String content){
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         Comment comment = commentRepository.findCommentById(commentId);
         Post post = comment.getPost();
@@ -31,10 +31,11 @@ public class ReCommentService {
                 post(post)
                 .user(user)
                 .comment(comment)
-                .content(reqAddReCommentDto.getContent())
+                .content(content)
                 .deleted(false)
                 .build();
-        reCommentRepository.save(recomment);
+        recomment.addComment(comment);
+        return reCommentRepository.save(recomment);
     }
 
     public void patchComment(LoginUserDto userDto,Long reCommentId,ReqAddReCommentDto reqAddReCommentDto){

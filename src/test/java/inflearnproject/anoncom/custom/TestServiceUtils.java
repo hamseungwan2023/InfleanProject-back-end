@@ -3,8 +3,11 @@ package inflearnproject.anoncom.custom;
 import inflearnproject.anoncom.comment.service.CommentService;
 import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
+import inflearnproject.anoncom.domain.ReComment;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.service.PostService;
+import inflearnproject.anoncom.reComment.dto.ReqAddReCommentDto;
+import inflearnproject.anoncom.reComment.service.ReCommentService;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.service.UserService;
 
@@ -57,9 +60,16 @@ public class TestServiceUtils {
                .userLike(0)
                .userDisLike(0)
                .content("댓글입니다.")
+               .reComments(new ArrayList<>())
                .deleted(false)
                .build();
        commentService.saveComment(comment,user,post);
        return comment;
+   }
+
+   public static ReComment addReComment(Post post, UserEntity user, Comment comment, ReCommentService reCommentService){
+       String content  = "대댓글입니다.";
+
+       return reCommentService.addReComment(buildUserDto(user),comment.getId(),content);
    }
 }
