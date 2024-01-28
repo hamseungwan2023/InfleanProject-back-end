@@ -1,11 +1,15 @@
 package inflearnproject.anoncom.postReaction.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.custom.MockMvcUTF;
 import inflearnproject.anoncom.custom.TestControllerUtils;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.ReComment;
+import inflearnproject.anoncom.post.dto.PagingPost;
+import inflearnproject.anoncom.post.dto.ResPostDetailDto;
+import inflearnproject.anoncom.post.dto.ResPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.reComment.repository.ReCommentRepository;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,6 +108,25 @@ class PostReactionControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("게시글 상세 목록 중 추천수, 비추천수, 최종 추천 수까지 잘 불러와지나 확인")
+    void get_posts() throws Exception {
+        loginUser2();
+
+        increasePostDisLike(mockMvc,postId,accessToken);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/postDetail/" + postId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        Post post = postRepository.findById(postId).get();
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ResPostDetailDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResPostDetailDto>() {});
+        assertEquals(dto.getFinalLike(),-1);
+        assertEquals(dto.getLike(),0);
+        assertEquals(dto.getDislike(),1);
     }
 
 
