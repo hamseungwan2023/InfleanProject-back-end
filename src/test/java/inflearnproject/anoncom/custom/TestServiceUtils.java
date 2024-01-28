@@ -6,6 +6,7 @@ import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.ReComment;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.service.PostService;
+import inflearnproject.anoncom.postReaction.service.PostReactionService;
 import inflearnproject.anoncom.reComment.dto.ReqAddReCommentDto;
 import inflearnproject.anoncom.reComment.service.ReCommentService;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
@@ -67,9 +68,17 @@ public class TestServiceUtils {
        return comment;
    }
 
-   public static ReComment addReComment(Post post, UserEntity user, Comment comment, ReCommentService reCommentService){
+   public static ReComment addReComment(UserEntity user, Comment comment, ReCommentService reCommentService){
        String content  = "대댓글입니다.";
 
        return reCommentService.addReComment(buildUserDto(user),comment.getId(),content);
    }
+
+   public static void increasePostReaction(PostReactionService postReactionService,Long memberId, Long postId){
+        postReactionService.increaseLike(memberId,postId);
+   }
+
+    public static void decreasePostReaction(PostReactionService postReactionService,Long memberId, Long postId){
+        postReactionService.increaseLike(memberId,postId);
+    }
 }

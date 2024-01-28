@@ -1,6 +1,5 @@
-package inflearnproject.anoncom.reComment.service;
+package inflearnproject.anoncom.postReaction.service;
 
-import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.comment.service.CommentService;
 import inflearnproject.anoncom.domain.Comment;
@@ -9,8 +8,9 @@ import inflearnproject.anoncom.domain.ReComment;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
-import inflearnproject.anoncom.reComment.dto.ReqAddReCommentDto;
+import inflearnproject.anoncom.postReaction.exception.NotIncreaseLikeSelfException;
 import inflearnproject.anoncom.reComment.repository.ReCommentRepository;
+import inflearnproject.anoncom.reComment.service.ReCommentService;
 import inflearnproject.anoncom.user.service.UserService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 import static inflearnproject.anoncom.custom.TestServiceUtils.*;
+import static inflearnproject.anoncom.custom.TestServiceUtils.addReComment;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ReCommentServiceTest {
+class PostReactionServiceTest {
 
     @Autowired
     PostService postService;
@@ -48,6 +47,8 @@ class ReCommentServiceTest {
     ReCommentService reCommentService;
     @Autowired
     ReCommentRepository reCommentRepository;
+    @Autowired
+    PostReactionService postReactionService;
 
     private UserEntity user;
     private Post post;
@@ -62,42 +63,35 @@ class ReCommentServiceTest {
     }
 
     @Test
-    @DisplayName("대댓글이 잘 작성되었나 확인, 댓글의 댓글(대댓글)의 사이즈가 1이 나오는지 확인")
-    void add_reComment_success(){
-        assertNotNull(reCommentRepository.findById(recomment.getId()));
-        assertEquals(comment.getReComments().size(),1);
+    @DisplayName("게시글 작성한 본인이 아닌 다른 사용자가 게시글을 좋아요 할 시 게시글의 userLike 필드가 1 증가한다")
+    void increasePostReaction_success(){
+        UserEntity user2 = signUpUser2();
+        postReactionService.increaseLike(user2.getId(),post.getId());
+        assertEquals(post.getUserLike(),1);
+        assertEquals(post.getFinalLike(),1);
     }
 
     @Test
-    @DisplayName("대댓글이 잘 수정되나 확인하기")
-    void update_reComment_success(){
-        ReqAddReCommentDto dto = new ReqAddReCommentDto("새대댓글");
-        reCommentService.patchComment(buildUserDto(user),recomment.getId(),dto);
-
-        assertEquals(reCommentRepository.findById(recomment.getId()).get().getContent(),"새대댓글");
+    @DisplayName("자신이 작성한 게시글에 좋아요를 누를 시 에러가 발생")
+    void increase_postReaction_error(){
+        assertThrows(NotIncreaseLikeSelfException.class, () -> postReactionService.increaseLike(user.getId(),post.getId()));
     }
 
     @Test
-    @DisplayName("계정이 다른 사용자가 대댓글을 수정하려고 하면 에러가 발생")
-    void update_reComment_fail(){
-        ReqAddReCommentDto dto = new ReqAddReCommentDto("새대댓글");
-        assertThrows(NotSameUserException.class, () -> reCommentService.patchComment(buildUserDto(signUpUser2()),recomment.getId(),dto));
+    @DisplayName("게시글 작성한 본인이 아닌 다른 사용자가 게시글을 싫어요 할 시 게시글의 userdisLike 필드가 1 증가한다")
+    void increase_postReaction_disLike_success(){
+        UserEntity user2 = signUpUser2();
+        postReactionService.increaseDisLike(user2.getId(),post.getId());
+        assertEquals(post.getUserDisLike(),1);
+        assertEquals(post.getFinalLike(),-1);
+
     }
 
     @Test
-    @DisplayName("대댓글을 삭제하려고 하면 delete 필드가 true로 변경된다")
-    void delete_reComment_success(){
-        reCommentService.deleteReComment(buildUserDto(user),recomment.getId());
-        assertTrue(recomment.isDeleted());
+    @DisplayName("자신이 작성한 게시글에 싫어요를 누를 시 에러가 발생")
+    void increase_postReaction_disLike_fail(){
+        assertThrows(NotIncreaseLikeSelfException.class, () -> postReactionService.increaseDisLike(user.getId(),post.getId()));
     }
-
-    @Test
-    @DisplayName("계정이 다른 사용자가 대댓글을 삭제하려고 하면 에러가 발생")
-    void delete_reComment_fail(){
-        assertThrows(NotSameUserException.class, () -> reCommentService.deleteReComment(buildUserDto(signUpUser2()),recomment.getId()));
-    }
-
-
 
     private UserEntity signUpUser2() {
         UserEntity user2 = UserEntity.builder()
