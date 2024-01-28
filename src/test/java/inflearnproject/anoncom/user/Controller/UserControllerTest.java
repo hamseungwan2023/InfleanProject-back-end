@@ -2,6 +2,7 @@ package inflearnproject.anoncom.user.Controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import inflearnproject.anoncom.custom.TestUtils;
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
@@ -68,15 +69,7 @@ class UserControllerTest {
     void before() throws Exception{
         // JSON 데이터를 문자열로 준비
         String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-
-        // MockMultipartFile을 사용하여 multipart 요청을 준비
-        MockMultipartFile jsonFile = new MockMultipartFile("reqUserJoinFormDto", "", "application/json", jsonRequest.getBytes());
-
-        // MockMvc를 사용하여 multipart/form-data 요청을 보냄
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/user/signup")
-                        .file(jsonFile)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk());
+        TestUtils.signUpUser(mockMvc,jsonRequest);
     }
 
     @AfterEach
