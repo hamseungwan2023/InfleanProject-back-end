@@ -93,4 +93,20 @@ public class TestControllerUtils {
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk());
     }
+
+    public static void addIncreaseLikeComment(MockMvc mockMvc, Long commentId, String accessToken) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/increaseCommentLike/" + commentId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    public static void addIncreaseDisLikeComment(MockMvc mockMvc, Long commentId, String accessToken) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/decreaseCommentLike/" + commentId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
 }
