@@ -9,6 +9,8 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.domain.QComment.*;
 import static inflearnproject.anoncom.domain.QReComment.*;
@@ -24,9 +26,9 @@ public class ReCommentDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ResReCommentDto> findReCommentsByPost(Long postId,Long commentId){
-        return queryFactory.
-                select(new QResReCommentDto(
+    public Map<Long, List<ResReCommentDto>> findReCommentsByPost(Long postId, List<Long> commentIds) {
+        List<ResReCommentDto> reComments = queryFactory
+                .select(new QResReCommentDto(
                         reComment.id,
                         reComment.comment.id,
                         reComment.comment.user.nickname,
@@ -37,10 +39,12 @@ public class ReCommentDSLRepository {
                         reComment.createdAt,
                         reComment.content,
                         reComment.deleted
-                )).from(reComment)
-                .join(reComment.comment, comment)
-                .where(reComment.post.id.eq(postId),
-                        reComment.comment.id.eq(commentId))
+                ))
+                .from(reComment)
+                .where(reComment.post.id.eq(postId), reComment.comment.id.in(commentIds))
                 .fetch();
+
+        // 대댓글을 부모 댓글 ID별로 그룹화
+        return reComments.stream().collect(Collectors.groupingBy(reComment -> reComment.getParentCommentId()));
     }
 }

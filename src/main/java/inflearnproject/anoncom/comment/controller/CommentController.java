@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,13 +53,16 @@ public class CommentController {
     }
 
     @GetMapping("/api/commentList/{postId}")
-    public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId){
+    public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId) {
         List<ResCommentDto> comments = commentService.findComments(postId);
-        for (ResCommentDto comment : comments) {
-            Long commentId = comment.getId();
-            List<ResReCommentDto> reCommentsByPost = reCommentDSLRepository.findReCommentsByPost(postId,commentId);
-            comment.setReplyCommentList(reCommentsByPost);
-        }
+        List<Long> commentIds = comments.stream().map(ResCommentDto::getId).collect(Collectors.toList());
+
+        // 모든 대댓글을 한 번에 조회
+        Map<Long, List<ResReCommentDto>> reCommentsMap = reCommentDSLRepository.findReCommentsByPost(postId, commentIds);
+
+        // 각 댓글에 대댓글 매핑
+        comments.forEach(comment -> comment.setReplyCommentList(reCommentsMap.get(comment.getId())));
+
         return ResponseEntity.ok().body(comments);
     }
 
