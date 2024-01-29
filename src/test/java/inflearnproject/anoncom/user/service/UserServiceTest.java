@@ -143,7 +143,7 @@ class UserServiceTest {
     @DisplayName("닉네임 일부를 입력할 시 그 일부를 포함한 닉네임들이 찾아진다")
     void searchUser(){
         String nick = "nick";
-        List<String> nicknames = userService.searchUser(nick);
+        List<String> nicknames = userService.searchUser(nick,user.getId());
         assertEquals(nicknames.size(),1);
 
         UserEntity user2 = UserEntity.builder()
@@ -157,7 +157,7 @@ class UserServiceTest {
                 .build();
         userService.joinUser(user2);
 
-        List<String> nicknames2 = userService.searchUser(nick);
+        List<String> nicknames2 = userService.searchUser(nick,user.getId());
         assertEquals(nicknames2.size(),2);
     }
 }

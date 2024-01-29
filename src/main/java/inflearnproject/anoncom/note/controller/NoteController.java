@@ -78,7 +78,7 @@ public class NoteController {
 
     @PostMapping("/api/spamNote")
     public ResponseEntity<List<Long>> spamNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteSpamDto noteSpamDto){
-        List<Long> spamNotes = noteService.spamNote(noteSpamDto);
+        List<Long> spamNotes = noteService.spamNote(userDto.getMemberId(),noteSpamDto);
         return ResponseEntity.ok().body(spamNotes);
     }
 

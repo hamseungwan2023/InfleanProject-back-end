@@ -28,8 +28,8 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
     Optional<UserEntity> findByNickname(String nickname);
 
-    @Query("select u.nickname from UserEntity u where u.nickname LIKE :nickname")
-    List<String> findNicknamesByNickname(@Param("nickname") String nickname);
+    @Query("select u.nickname from UserEntity u where u.nickname LIKE :nickname and u.id not in (select s.declared.id from Spam s where s.declaring.id = :declaringId)")
+    List<String> findNicknamesByNickname(@Param("nickname") String nickname, @Param("declaringId") Long userId);
 
     List<UserEntity> findAllByIsBlockedTrueAndBlockUntilBefore(LocalDateTime time);
 }

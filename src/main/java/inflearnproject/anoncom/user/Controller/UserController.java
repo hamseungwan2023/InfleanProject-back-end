@@ -191,7 +191,7 @@ public class UserController {
     @GetMapping("/api/search")
     public ResponseEntity<?> searchUser(@IfLogin LoginUserDto userDto,
                                         @RequestParam(value = "keyword",required = false) String keyword){
-        List<String> nicknamesByNickname = userService.searchUser(keyword);
+        List<String> nicknamesByNickname = userService.searchUser(keyword,userDto.getMemberId());
         return ResponseEntity.ok().body(nicknamesByNickname);
     }
 }

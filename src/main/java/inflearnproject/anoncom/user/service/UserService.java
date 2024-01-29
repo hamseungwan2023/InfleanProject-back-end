@@ -130,8 +130,8 @@ public class UserService {
 
     }
 
-    public List<String> searchUser(String nickname){
+    public List<String> searchUser(String nickname,Long userId){
         String nicknameAdded = "%" + nickname + "%";
-        return userRepository.findNicknamesByNickname(nicknameAdded);
+        return userRepository.findNicknamesByNickname(nicknameAdded,userId);
     }
 }
