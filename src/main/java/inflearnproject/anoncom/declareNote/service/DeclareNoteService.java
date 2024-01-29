@@ -22,7 +22,7 @@ public class DeclareNoteService {
     private final UserRepository userRepository;
 
     public Page<DeclareNote> showAll(Pageable pageable){
-        return declareNoteRepository.findAll(pageable);
+        return declareNoteRepository.findAllWithDetails(pageable);
     }
 
     public void declareUser(DeclareUserDto declareUserDto) {
