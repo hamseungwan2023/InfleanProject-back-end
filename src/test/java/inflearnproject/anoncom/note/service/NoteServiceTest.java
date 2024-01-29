@@ -8,6 +8,7 @@ import inflearnproject.anoncom.note.dto.NoteDeleteDto;
 import inflearnproject.anoncom.note.dto.NoteSpamDto;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
@@ -46,6 +47,9 @@ class NoteServiceTest {
     NoteServiceForTest noteServiceForTest;
     @Autowired
     DeclareNoteRepository declareNoteRepository;
+    @Autowired
+    SpamRepository spamRepository;
+
     private UserEntity user;
     @BeforeEach
     void before(){
@@ -120,7 +124,7 @@ class NoteServiceTest {
         spamIds.add(noteId);
         noteSpamDto.setSpamNotes(spamIds);
 
-        noteServiceForTest.spamNote(noteSpamDto);
+        noteServiceForTest.spamNote(user.getId(),noteSpamDto);
         assertTrue(noteRepository.findAll().get(0).isSpam());
     }
 
@@ -138,5 +142,17 @@ class NoteServiceTest {
         noteServiceForTest.declareNote(noteDeclareDto);
         assertTrue(noteRepository.findAll().get(0).isDeclaration());
         assertEquals(declareNoteRepository.findAll().size(),1);
+    }
+
+    @Test
+    @DisplayName("스팸처리하면 차단 레포지토리에 데이터가 증가하나 확인")
+    void add_spam(){
+        NoteSpamDto noteSpamDto = new NoteSpamDto();
+        List<Long> spamNotes = new ArrayList<>();
+        Long noteId = noteRepository.findAll().get(0).getId();
+        spamNotes.add(noteId);
+        noteSpamDto.setSpamNotes(spamNotes);
+        noteServiceForTest.spamNote(user.getId(),noteSpamDto);
+        assertEquals(spamRepository.findAll().size(),1);
     }
 }

@@ -3,10 +3,12 @@ package inflearnproject.anoncom.note.service;
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
 import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
+import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,8 @@ public class NoteSendServiceForTest {
     private  NoteRepository noteRepository;
     @Autowired
     private  DeclareNoteRepository declareNoteRepository;
-
+    @Autowired
+    private SpamRepository spamRepository;
 
     public void sendNoteToReceiver(LoginUserDto userDto, String receiverNickname, String content) {
         // 쪽지 전송 로직
@@ -78,10 +81,19 @@ public class NoteSendServiceForTest {
         note.keepTrue();
     }
 
-    public void spamNote(Long noteSpamId) {
+    public void spamNote(Long userId,Long noteSpamId) {
         Note note = noteRepository.findById(noteSpamId).orElseThrow(
                 () -> new NoSuchNoteException(String.valueOf(noteSpamId))
         );
+        UserEntity declaring = userRepository.findById(userId).get();
+        UserEntity declared = noteRepository.findById(noteSpamId).get().getSender();
+        Spam spam = Spam.builder()
+                .declaring(declaring)
+                .declared(declared)
+                .build();
+        if(spamRepository.findByDeclaringAndDeclared(declaring,declared).isEmpty()){
+            spamRepository.save(spam);
+        }
         note.spamTrue();
     }
 
