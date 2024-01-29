@@ -1,8 +1,11 @@
 package inflearnproject.anoncom.user.service;
 
 import inflearnproject.anoncom.domain.*;
+import inflearnproject.anoncom.note.dto.NoteSpamDto;
+import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
+import inflearnproject.anoncom.user.dto.DeleteSpamDto;
 import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.*;
@@ -15,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +33,7 @@ public class UserService {
     private final PasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
     private final SpamRepository spamRepository;
+    private final UserSpamService userSpamService;
 
     @Transactional(readOnly = true)
     public List<UserEntity> allUsers(){
@@ -141,5 +146,19 @@ public class UserService {
         UserEntity declaring = userRepository.findById(memberId).get();
 
         return spamRepository.findAllByDeclaring(declaring);
+    }
+
+    public List<Long> deleteSpamNote(DeleteSpamDto deleteSpamDto) {
+
+        List<Long> deleteSpams = new ArrayList<>();
+        for (Long deleteSpamId : deleteSpamDto.getDeleteSpamIds()) {
+            try{
+                userSpamService.deleteSpam(deleteSpamId);
+            }catch (NoSuchNoteException e){
+                long errorId = Long.parseLong(e.getMessage());
+                deleteSpams.add(errorId);
+            }
+        }
+        return deleteSpams;
     }
 }
