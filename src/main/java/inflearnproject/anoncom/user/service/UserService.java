@@ -2,6 +2,7 @@ package inflearnproject.anoncom.user.service;
 
 import inflearnproject.anoncom.domain.*;
 import inflearnproject.anoncom.role.repository.RoleRepository;
+import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.*;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
+    private final SpamRepository spamRepository;
 
     @Transactional(readOnly = true)
     public List<UserEntity> allUsers(){
@@ -133,5 +135,11 @@ public class UserService {
     public List<String> searchUser(String nickname,Long userId){
         String nicknameAdded = "%" + nickname + "%";
         return userRepository.findNicknamesByNickname(nicknameAdded,userId);
+    }
+
+    public List<Spam> searchSpamUser(Long memberId) {
+        UserEntity declaring = userRepository.findById(memberId).get();
+
+        return spamRepository.findAllByDeclaring(declaring);
     }
 }

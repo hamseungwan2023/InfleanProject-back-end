@@ -2,6 +2,7 @@ package inflearnproject.anoncom.user.Controller;
 
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.Role;
+import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
@@ -194,4 +195,12 @@ public class UserController {
         List<String> nicknamesByNickname = userService.searchUser(keyword,userDto.getMemberId());
         return ResponseEntity.ok().body(nicknamesByNickname);
     }
+
+    @GetMapping("/api/spamUsers")
+    public ResponseEntity<List<SpamUsersDto>> searchSpamUsers(@IfLogin LoginUserDto userDto){
+        List<Spam> spams = userService.searchSpamUser(userDto.getMemberId());
+        List<SpamUsersDto> list = spams.stream().map(spam -> new SpamUsersDto(spam.getDeclared().getNickname())).toList();
+        return ResponseEntity.ok().body(list);
+    }
+
 }

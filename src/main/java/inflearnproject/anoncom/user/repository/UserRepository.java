@@ -32,4 +32,5 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     List<String> findNicknamesByNickname(@Param("nickname") String nickname, @Param("declaringId") Long userId);
 
     List<UserEntity> findAllByIsBlockedTrueAndBlockUntilBefore(LocalDateTime time);
+
 }
