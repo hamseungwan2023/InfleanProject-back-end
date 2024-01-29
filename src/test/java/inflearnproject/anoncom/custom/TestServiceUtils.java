@@ -40,6 +40,20 @@ public class TestServiceUtils {
         userService.joinUser(user);
         return user;
     }
+    public static UserEntity addAnotherUser(UserService userService,int i){
+        UserEntity user = UserEntity.builder()
+                .email(i + "@naver.com")
+                .username("username" + i)
+                .nickname("nickname" + i)
+                .password("password")
+                .roles(new HashSet<>())
+                .location("seoul")
+                .isActive(true)
+                .posts(new ArrayList<>())
+                .build();
+        userService.joinUser(user);
+        return user;
+    }
 
     public static Post addPost(UserEntity user,PostService postService){
         Post post = Post.builder()
@@ -90,4 +104,5 @@ public class TestServiceUtils {
     public static void decreaseReCommentReaction(CommentReactionService commentReactionService,Long memberId,Long commentId){
         commentReactionService.increaseDisLike(memberId,commentId);
     }
+
 }
