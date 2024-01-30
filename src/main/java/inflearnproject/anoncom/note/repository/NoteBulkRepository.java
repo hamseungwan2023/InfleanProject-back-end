@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.user.repository;
+package inflearnproject.anoncom.note.repository;
 
 import inflearnproject.anoncom.domain.Note;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class UserBulkRepository {
+public class NoteBulkRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

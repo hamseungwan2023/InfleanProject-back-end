@@ -4,11 +4,10 @@ import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
+import inflearnproject.anoncom.note.repository.NoteBulkRepository;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
-import inflearnproject.anoncom.user.exception.NoUserEntityException;
-import inflearnproject.anoncom.user.repository.UserBulkRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,7 +29,7 @@ public class NoteService {
     private final NoteDSLRepository noteDSLRepository;
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
-    private final UserBulkRepository userBulkRepository;
+    private final NoteBulkRepository noteBulkRepository;
 
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
@@ -63,7 +62,7 @@ public class NoteService {
                 .collect(Collectors.toList());
 
         if (!notesToSave.isEmpty()) {
-            userBulkRepository.batchInsertNotes(notesToSave);  // 일괄 저장
+            noteBulkRepository.batchInsertNotes(notesToSave);  // 일괄 저장
         }
 
         return erroredList;
@@ -72,9 +71,9 @@ public class NoteService {
     public List<Long> deleteSendNote(NoteDeleteDto noteDto) {
         List<Long> deletedList = new ArrayList<>();
         for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try{
+            try {
                 noteSenderService.deleteSendNote(deleteNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 deletedList.add(errorId);
             }
@@ -85,9 +84,9 @@ public class NoteService {
     public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {
         List<Long> deletedList = new ArrayList<>();
         for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try{
+            try {
                 noteSenderService.deleteReceiveNote(deleteNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 deletedList.add(errorId);
             }
@@ -95,8 +94,8 @@ public class NoteService {
         return deletedList;
     }
 
-    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond,Pageable pageable){
-        return noteDSLRepository.findReceivedNotes(receiverId,cond, pageable);
+    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable) {
+        return noteDSLRepository.findReceivedNotes(receiverId, cond, pageable);
     }
 
     public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {
@@ -106,9 +105,9 @@ public class NoteService {
     public List<Long> keepNote(NoteKeepDto noteKeepDto) {
         List<Long> keepList = new ArrayList<>();
         for (Long noteKeepId : noteKeepDto.getNoteKeeps()) {
-            try{
+            try {
                 noteSenderService.keepNote(noteKeepId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 keepList.add(errorId);
             }
@@ -120,9 +119,9 @@ public class NoteService {
 
         List<Long> spamList = new ArrayList<>();
         for (Long noteSpamId : noteSpamDto.getSpamNotes()) {
-            try{
-                noteSenderService.spamNote(userId,noteSpamId);
-            }catch (NoSuchNoteException e){
+            try {
+                noteSenderService.spamNote(userId, noteSpamId);
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 spamList.add(errorId);
             }
@@ -141,9 +140,9 @@ public class NoteService {
     public List<Long> declareNote(NoteDeclareDto noteDeclareDto) {
         List<Long> declareList = new ArrayList<>();
         for (Long declareNoteId : noteDeclareDto.getDeclareNotes()) {
-            try{
+            try {
                 noteSenderService.declareNote(declareNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 declareList.add(errorId);
             }
