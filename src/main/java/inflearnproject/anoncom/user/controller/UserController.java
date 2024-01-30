@@ -11,6 +11,7 @@ import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.spam.service.SpamService;
 import inflearnproject.anoncom.user.dto.*;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
@@ -43,10 +44,12 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+    private final SpamService spamService;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+
     @GetMapping
-    public ResponseEntity<List<UserFormDto>> allUsers(){
+    public ResponseEntity<List<UserFormDto>> allUsers() {
         List<UserEntity> userEntities = userService.allUsers();
         List<UserFormDto> dtos = userEntities.stream().map(user -> new UserFormDto(user.getNickname())).toList();
         return ResponseEntity.ok().body(dtos);
@@ -54,10 +57,18 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> join(@Valid @RequestPart("reqUserJoinFormDto") ReqUserJoinFormDto reqUserJoinFormDto,
-                                  @RequestPart(value = "profileImg",required = false) MultipartFile profileImg) {
+                                  @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
 
         try {
-            UserEntity userEntity = new UserEntity(reqUserJoinFormDto);
+            UserEntity userEntity = UserEntity.builder()
+                    .nickname(reqUserJoinFormDto.getNickname())
+                    .username(reqUserJoinFormDto.getUsername())
+                    .password(reqUserJoinFormDto.getPassword())
+                    .email(reqUserJoinFormDto.getEmail())
+                    .location(reqUserJoinFormDto.getLocation())
+                    .info(reqUserJoinFormDto.getInfo())
+                    .isActive(true)
+                    .build();
 
             ifProfileImgNotNull(profileImg, userEntity);
             UserEntity createdUserEntity = userService.joinUser(userEntity);
@@ -66,20 +77,20 @@ public class UserController {
 
             return ResponseEntity.ok().body(res);
 
-        }catch(RuntimeException | IOException e){
+        } catch (RuntimeException | IOException e) {
             return ResponseEntity.badRequest().body(new ErrorDTO(e.getMessage()));
         }
 
     }
 
     private void ifProfileImgNotNull(MultipartFile profileImg, UserEntity userEntity) throws IOException {
-        if(profileImg != null){
-            userService.setImage(profileImg,userEntity);
+        if (profileImg != null) {
+            userService.setImage(profileImg, userEntity);
         }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody UserDeleteFormDto userDeleteFormDto){
+    public ResponseEntity<?> delete(@RequestBody UserDeleteFormDto userDeleteFormDto) {
         userService.deleteUser(userDeleteFormDto);
         return ResponseEntity.ok().build();
     }
@@ -90,7 +101,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResUserLoginDto> login(@RequestBody ReqUserLoginDto loginDto) {
 
-        UserEntity user = userService.findUser(loginDto.getUsername(),loginDto.getPassword());
+        UserEntity user = userService.findUser(loginDto.getUsername(), loginDto.getPassword());
         List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
         String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
@@ -101,7 +112,7 @@ public class UserController {
         refreshTokenEntity.setTokenValue(refreshToken);
         refreshTokenEntity.setUserEntityId(user.getId());
         System.out.println("refreshTokenEntity.getUserEntityId() = " + refreshTokenEntity.getUserEntityId());
-        refreshTokenService.addRefreshToken(refreshTokenEntity,user.getId());
+        refreshTokenService.addRefreshToken(refreshTokenEntity, user.getId());
 
         ResUserLoginDto loginResponse = ResUserLoginDto.builder()
                 .accessToken(accessToken)
@@ -124,6 +135,7 @@ public class UserController {
 
     /**
      * accessToken의 만료시간이 현재시간을 지나면 이 메서드를 호출하게 만들어서 refreshToken을 통해 accessToken을 재발급받음
+     *
      * @return
      */
     @PostMapping("/refreshToken")
@@ -133,12 +145,12 @@ public class UserController {
         RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenValue).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getTokenValue());
 
-        Long memberId = Long.valueOf((Integer)claims.get("memberId"));
+        Long memberId = Long.valueOf((Integer) claims.get("memberId"));
 
         UserEntity userEntity = userService.findUserEntityById(memberId).orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다"));
 
 
-        List roles =  (List) claims.get("roles");
+        List roles = (List) claims.get("roles");
         String email = claims.getSubject();
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, email, userEntity.getUsername(), roles);
@@ -149,7 +161,7 @@ public class UserController {
                 .memberId(userEntity.getId())
                 .nickname(userEntity.getUsername())
                 .build();
-        return  ResponseEntity.ok().body(loginResponse);
+        return ResponseEntity.ok().body(loginResponse);
     }
 
     @GetMapping("/load-profile")
@@ -159,7 +171,7 @@ public class UserController {
 
         String fullPath = uploadRootPath + File.separator + profilePath;
         File targetFile = new File(fullPath);
-        if(!targetFile.exists()) return ResponseEntity.notFound().build();
+        if (!targetFile.exists()) return ResponseEntity.notFound().build();
         byte[] rawImageData = FileCopyUtils.copyToByteArray(targetFile);
 
         HttpHeaders headers = new HttpHeaders();
@@ -170,34 +182,34 @@ public class UserController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestPart("userUpdateDto") ReqUserUpdateDto userUpdateDto
-            ,@RequestPart(value = "profileImg",required = false) MultipartFile profileImg){
+            , @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
 
-        userService.updateUser(userDto.getEmail(),userUpdateDto,profileImg);
+        userService.updateUser(userDto.getEmail(), userUpdateDto, profileImg);
         return ResponseEntity.ok().body("ok");
     }
 
     @GetMapping("/api/search")
     public ResponseEntity<?> searchUser(@IfLogin LoginUserDto userDto,
-                                        @RequestParam(value = "keyword",required = false) String keyword){
-        List<String> nicknamesByNickname = userService.searchUser(keyword,userDto.getMemberId());
+                                        @RequestParam(value = "keyword", required = false) String keyword) {
+        List<String> nicknamesByNickname = userService.searchUser(keyword, userDto.getMemberId());
         return ResponseEntity.ok().body(nicknamesByNickname);
     }
 
     @GetMapping("/api/spamUsers")
-    public ResponseEntity<List<SpamUsersDto>> searchSpamUsers(@IfLogin LoginUserDto userDto){
-        List<Spam> spams = userService.searchSpamUser(userDto.getMemberId());
-        List<SpamUsersDto> list = spams.stream().map(spam -> new SpamUsersDto(spam.getDeclared().getId(),spam.getDeclared().getNickname())).toList();
+    public ResponseEntity<List<SpamUsersDto>> searchSpamUsers(@IfLogin LoginUserDto userDto) {
+        List<Spam> spams = spamService.searchSpamUser(userDto.getMemberId());
+        List<SpamUsersDto> list = spams.stream().map(spam -> new SpamUsersDto(spam.getDeclared().getId(), spam.getDeclared().getNickname())).toList();
         return ResponseEntity.ok().body(list);
     }
 
     @DeleteMapping("/api/spamUser")
-    public ResponseEntity<List<Long>> DeleteSpamUsers(@IfLogin LoginUserDto userDto,@RequestBody DeleteSpamDto deleteSpamDto){
-        List<Long> fails = userService.deleteSpamNote(deleteSpamDto);
+    public ResponseEntity<List<Long>> DeleteSpamUsers(@IfLogin LoginUserDto userDto, @RequestBody DeleteSpamDto deleteSpamDto) {
+        List<Long> fails = spamService.deleteSpamNote(deleteSpamDto);
         return ResponseEntity.ok().body(fails);
     }
 
     @GetMapping("/api/userDetail")
-    public ResponseEntity<UserDetailDto> userDetail(@IfLogin LoginUserDto userDto){
+    public ResponseEntity<UserDetailDto> userDetail(@IfLogin LoginUserDto userDto) {
         UserEntity user = userService.findUserDetail(userDto.getMemberId());
         UserDetailDto userDetailDto = new UserDetailDto(user);
         return ResponseEntity.ok().body(userDetailDto);

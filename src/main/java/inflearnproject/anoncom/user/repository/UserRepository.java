@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public interface UserRepository extends JpaRepository<UserEntity,Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByUsername(String username);
 
@@ -34,4 +34,11 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     List<UserEntity> findAllByIsBlockedTrueAndBlockUntilBefore(LocalDateTime time);
 
     List<UserEntity> findByNicknameIn(List<String> receiverNicknames);
+    
+    @Query("SELECT u FROM UserEntity u WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail")
+    Optional<UserEntity> findByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail);
+
+    @Query("SELECT COUNT(u) > 0 FROM UserEntity u WHERE u.email = :email OR u.nickname = :nickname OR u.username = :username")
+    boolean existsUserEntity(@Param("email") String email, @Param("nickname") String nickname, @Param("username") String username);
+
 }

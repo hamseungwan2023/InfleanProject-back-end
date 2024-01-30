@@ -1,7 +1,6 @@
 package inflearnproject.anoncom.domain;
 
 import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,26 +11,31 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@NoArgsConstructor @AllArgsConstructor
-@Builder @Getter
-@ToString(of = {"id","email","nickname","username","password","roles"})
-public class UserEntity extends BaseTimeEntity{
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@ToString(of = {"id", "email", "nickname", "username", "password", "roles"})
+public class UserEntity extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String nickname;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String location;
 
     private String info;
@@ -40,36 +44,40 @@ public class UserEntity extends BaseTimeEntity{
 
     private int rank;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<PostReaction> postReactions = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<ReComment> reComments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
     private boolean isActive;
 
-    @Column(nullable = true)
     private LocalDateTime blockUntil;
 
-    @Column(nullable = true)
     private Boolean isBlocked;
 
-    public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto){
+    public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto) {
         this.nickname = reqUserJoinFormDto.getNickname();
         this.username = reqUserJoinFormDto.getUsername();
         this.password = reqUserJoinFormDto.getPassword();
@@ -87,11 +95,11 @@ public class UserEntity extends BaseTimeEntity{
         roles.add(role);
     }
 
-    public void setProfileImg(String profileImg){
+    public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
 
-    public void updateRank(){
+    public void updateRank() {
         this.rank = this.posts.size();
     }
 
@@ -108,11 +116,11 @@ public class UserEntity extends BaseTimeEntity{
         this.blockUntil = LocalDateTime.now().plusDays(7);
     }
 
-    public void blockFalse(){
+    public void blockFalse() {
         this.isBlocked = false;
     }
 
-    public void setRandomPassword(String password){
+    public void setRandomPassword(String password) {
         this.password = password;
     }
 }
