@@ -3,7 +3,6 @@ package inflearnproject.anoncom.post.controller;
 import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.post.exception.NoPostException;
-import inflearnproject.anoncom.user.Controller.UserController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

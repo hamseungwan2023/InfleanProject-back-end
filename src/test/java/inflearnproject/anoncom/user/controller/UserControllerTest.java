@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.user.Controller;
+package inflearnproject.anoncom.user.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

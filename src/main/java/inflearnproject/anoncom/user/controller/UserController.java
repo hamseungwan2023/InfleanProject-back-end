@@ -1,11 +1,10 @@
-package inflearnproject.anoncom.user.Controller;
+package inflearnproject.anoncom.user.controller;
 
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.error.ErrorDTO;
-import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
@@ -17,7 +16,6 @@ import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
 import inflearnproject.anoncom.user.util.FileUploadUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController

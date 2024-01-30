@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.user.Controller;
+package inflearnproject.anoncom.user.controller;
 
 import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.user.exception.*;
