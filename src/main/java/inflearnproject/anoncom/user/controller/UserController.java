@@ -93,12 +93,10 @@ public class UserController {
         Long memberId = Long.valueOf((Integer) claims.get("memberId"));
         UserEntity userEntity = userService.findUserEntityById(memberId);
 
-
         List roles = (List) claims.get("roles");
         String email = claims.getSubject();
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, email, userEntity.getUsername(), roles);
-
         ResUserLoginDto loginResponse = refreshTokenService.buildLoginedInfo(refreshTokenValue, accessToken, userEntity);
         return ResponseEntity.ok().body(loginResponse);
     }
