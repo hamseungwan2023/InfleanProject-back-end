@@ -191,4 +191,8 @@ public class UserService {
         }
         return deleteSpams;
     }
+
+    public UserEntity findUserDetail(Long memberId) {
+        return userRepository.findById(memberId).get();
+    }
 }

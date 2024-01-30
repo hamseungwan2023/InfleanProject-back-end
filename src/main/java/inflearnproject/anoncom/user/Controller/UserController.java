@@ -202,4 +202,11 @@ public class UserController {
         return ResponseEntity.ok().body(fails);
     }
 
+    @GetMapping("/api/userDetail")
+    public ResponseEntity<UserDetailDto> userDetail(@IfLogin LoginUserDto userDto){
+        UserEntity user = userService.findUserDetail(userDto.getMemberId());
+        UserDetailDto userDetailDto = new UserDetailDto(user);
+        return ResponseEntity.ok().body(userDetailDto);
+    }
+
 }
