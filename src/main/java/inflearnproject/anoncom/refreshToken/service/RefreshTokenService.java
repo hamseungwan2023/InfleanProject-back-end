@@ -18,8 +18,11 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken addRefreshToken(RefreshToken refreshToken,Long userId) {
         RefreshToken findRefreshToken = refreshTokenRepository.findRefreshTokenByUserEntityId(userId);
+        if(findRefreshToken == null){
+            return refreshTokenRepository.save(refreshToken);
+        }
         findRefreshToken.setTokenValue(refreshToken.getTokenValue());
-        return findRefreshToken;
+        return null;
     }
 
     @Transactional
