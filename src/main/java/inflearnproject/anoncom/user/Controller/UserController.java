@@ -103,6 +103,7 @@ public class UserController {
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setTokenValue(refreshToken);
         refreshTokenEntity.setUserEntityId(user.getId());
+        System.out.println("refreshTokenEntity.getUserEntityId() = " + refreshTokenEntity.getUserEntityId());
         refreshTokenService.addRefreshToken(refreshTokenEntity,user.getId());
 
         ResUserLoginDto loginResponse = ResUserLoginDto.builder()
@@ -126,17 +127,13 @@ public class UserController {
 
     /**
      * accessToken의 만료시간이 현재시간을 지나면 이 메서드를 호출하게 만들어서 refreshToken을 통해 accessToken을 재발급받음
-     * @param refreshTokenDto
      * @return
      */
     @PostMapping("/refreshToken")
-    public ResponseEntity<ResUserLoginDto> requestRefresh(@IfLogin LoginUserDto userDto, @RequestBody RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<ResUserLoginDto> requestRefresh(@RequestHeader("refreshToken") String refreshTokenValue) {
 
-        UserEntity user = userRepository.findByEmail(userDto.getEmail());
-        RefreshToken refreshTokenByUserEntityId = refreshTokenRepository.findRefreshTokenByUserEntityId(user.getId());
-        refreshTokenDto.setRefreshToken(refreshTokenByUserEntityId.getTokenValue());
 
-        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenDto.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
+        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenValue).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getTokenValue());
 
         Long memberId = Long.valueOf((Integer)claims.get("memberId"));
@@ -151,7 +148,7 @@ public class UserController {
 
         ResUserLoginDto loginResponse = ResUserLoginDto.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshTokenDto.getRefreshToken())
+                .refreshToken(refreshTokenValue)
                 .memberId(userEntity.getId())
                 .nickname(userEntity.getUsername())
                 .build();

@@ -17,10 +17,9 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken addRefreshToken(RefreshToken refreshToken,Long userId) {
-        if(!refreshTokenRepository.existsByUserEntityId(userId)){
-            return refreshTokenRepository.save(refreshToken);
-        }
-        return null;
+        RefreshToken findRefreshToken = refreshTokenRepository.findRefreshTokenByUserEntityId(userId);
+        findRefreshToken.setTokenValue(refreshToken.getTokenValue());
+        return findRefreshToken;
     }
 
     @Transactional
