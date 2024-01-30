@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.buildPost;
+import static inflearnproject.anoncom.user.exception.ExceptionMessage.NOT_SAME_USER;
 import static inflearnproject.anoncom.user.exception.ExceptionMessage.NO_POST_MESSAGE;
 
 @Service
@@ -41,8 +42,14 @@ public class PostService {
         return post;
     }
 
-    public Post update(Long postId, ReqAddPostDto postDto) {
+    public Post update(LoginUserDto userDto, Long postId, ReqAddPostDto postDto) {
+        UserEntity user = userRepository.findByEmail(userDto.getEmail());
         Post post = findPostById(postId);
+
+        if (!user.getId().equals(post.getUser().getId())) {
+            throw new NotSameUserException(NOT_SAME_USER);
+        }
+
         post.updateValues(postDto.getTitle(), postDto.getCategory(), postDto.getContent());
         return post;
     }

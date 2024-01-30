@@ -45,7 +45,7 @@ public class PostController {
     @PatchMapping("/api/postCorrect/{postId}")
     public ResponseEntity<?> updatePost(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId,
                                         @RequestBody ReqAddPostDto postDto) {
-        postService.update(postId, postDto);
+        postService.update(userDto, postId, postDto);
         return ResponseEntity.ok().body("ok");
     }
 

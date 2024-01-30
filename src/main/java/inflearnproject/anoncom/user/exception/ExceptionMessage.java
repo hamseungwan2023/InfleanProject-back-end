@@ -11,5 +11,5 @@ public abstract class ExceptionMessage {
     public static final String DIFFERENT_PASSWORD = "비밀번호가 일치하지 않습니다.";
     public static final String UNKNOWN_IMAGE_UPLOAD_ERROR = "이미지 업로드 중 문제가 발생했습니다.";
     public static final String BE_RIGHT_LENGTH = "글자 수와 형식에 맞게 작성해주십시오";
-
+    public static final String NOT_SAME_USER = "동일한 사용자가 아니기에 접근할 수 없습니다.";
 }
