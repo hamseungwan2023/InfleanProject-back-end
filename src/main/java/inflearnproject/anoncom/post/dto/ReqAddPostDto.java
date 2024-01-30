@@ -1,12 +1,12 @@
 package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 @NoArgsConstructor
@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReqAddPostDto {
 
-    @Min(2)
+    @Length(min = 2)
     private String title;
 
     @NotNull
     private String category;
 
-    @Min(10)
+    @Length(min = 10)
     private String content;
 
 

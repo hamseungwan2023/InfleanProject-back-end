@@ -58,7 +58,7 @@ class PostReactionControllerTest {
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
         accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
 
-        String postRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠\", \"category\":\"카테고리\"}";
+        String postRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리\"}";
         postId = addPostReturnPostId(mockMvc, objectMapper, accessToken, postRequest);
 
         String commentRequest = "{\"content\":\"댓글\"}";
