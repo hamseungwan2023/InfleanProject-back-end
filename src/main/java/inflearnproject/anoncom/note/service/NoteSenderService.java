@@ -27,7 +27,7 @@ public class NoteSenderService {
     private final SpamRepository spamRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void sendNoteToReceiver(LoginUserDto userDto, String receiverNickname, String content) {
+    public void sendNoteToReceiver(UserEntity sender, String receiverNickname, String content) {
         // 쪽지 전송 로직
         UserEntity receiver = userRepository.findByNickname(receiverNickname).orElseThrow(
                 () -> new NoUserEntityException(receiverNickname)
@@ -35,7 +35,6 @@ public class NoteSenderService {
         if(!receiver.isActive()){
             throw new NoUserEntityException(receiverNickname);
         }
-        UserEntity sender = userRepository.findByEmail(userDto.getEmail());
         Note note = Note.builder()
                 .receiver(receiver)
                 .sender(sender)

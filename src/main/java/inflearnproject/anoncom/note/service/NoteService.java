@@ -1,12 +1,15 @@
 package inflearnproject.anoncom.note.service;
 
 import inflearnproject.anoncom.domain.Note;
+import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
+import inflearnproject.anoncom.user.repository.UserBulkRepository;
+import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,17 +29,43 @@ public class NoteService {
     private final NoteSenderService noteSenderService;
     private final NoteDSLRepository noteDSLRepository;
     private final NoteRepository noteRepository;
+    private final UserRepository userRepository;
+    private final UserBulkRepository userBulkRepository;
+
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
-        for (String receiverNickname : noteDto.getReceiverNicknames()) {
-            try {
+        UserEntity sender = userRepository.findByEmail(userDto.getEmail());
 
-                noteSenderService.sendNoteToReceiver(userDto, receiverNickname, noteDto.getContent());
-            } catch (NoUserEntityException e) {
-                erroredList.add(e.getMessage());
+        // 모든 수신자를 한 번의 쿼리로 조회
+        List<String> receiverNicknames = noteDto.getReceiverNicknames();
+        List<UserEntity> receivers = userRepository.findByNicknameIn(receiverNicknames);
+
+        // 수신자가 없거나 비활성화된 경우 오류 목록에 추가
+        Set<String> activeReceiverNicknames = receivers.stream()
+                .filter(UserEntity::isActive)
+                .map(UserEntity::getNickname)
+                .collect(Collectors.toSet());
+        for (String receiverNickname : receiverNicknames) {
+            if (!activeReceiverNicknames.contains(receiverNickname)) {
+                erroredList.add(receiverNickname);
             }
         }
+
+        // 활성 수신자에 대한 쪽지 생성 및 저장
+        List<Note> notesToSave = receivers.stream()
+                .filter(UserEntity::isActive)
+                .map(receiver -> Note.builder()
+                        .receiver(receiver)
+                        .sender(sender)
+                        .content(noteDto.getContent())
+                        .build())
+                .collect(Collectors.toList());
+
+        if (!notesToSave.isEmpty()) {
+            userBulkRepository.batchInsertNotes(notesToSave);  // 일괄 저장
+        }
+
         return erroredList;
     }
 
