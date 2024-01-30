@@ -6,10 +6,7 @@ import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.custom.MockMvcUTF;
 import inflearnproject.anoncom.custom.TestControllerUtils;
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.ReComment;
-import inflearnproject.anoncom.post.dto.PagingPost;
 import inflearnproject.anoncom.post.dto.ResPostDetailDto;
-import inflearnproject.anoncom.post.dto.ResPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.reComment.repository.ReCommentRepository;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
@@ -28,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 
 import static inflearnproject.anoncom.custom.TestControllerUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -52,22 +49,23 @@ class PostReactionControllerTest {
     ReCommentRepository reCommentRepository;
 
     private Long postId;
+
     @BeforeEach
-    void before() throws Exception{
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
+    void before() throws Exception {
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
-        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
 
         String postRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠\", \"category\":\"카테고리\"}";
         postId = addPostReturnPostId(mockMvc, objectMapper, accessToken, postRequest);
 
         String commentRequest = "{\"content\":\"댓글\"}";
-        Long commentId = addComment(mockMvc,postId,accessToken,commentRepository,commentRequest);
+        Long commentId = addComment(mockMvc, postId, accessToken, commentRepository, commentRequest);
 
         String reCommentRequest = "{\"content\":\"대댓글\"}";
-        addReComment(mockMvc,commentId,reCommentRequest,accessToken,reCommentRepository);
+        addReComment(mockMvc, commentId, reCommentRequest, accessToken, reCommentRepository);
     }
 
     @Test
@@ -75,9 +73,9 @@ class PostReactionControllerTest {
     void add_increase_like_post_success() throws Exception {
         loginUser2();
 
-        increasePostLike(mockMvc,postId,accessToken);
+        increasePostLike(mockMvc, postId, accessToken);
         Post post = postRepository.findById(postId).get();
-        assertEquals(post.getUserLike(),1);
+        assertEquals(post.getUserLike(), 1);
     }
 
     @Test
@@ -95,9 +93,9 @@ class PostReactionControllerTest {
     void add_increase_disLike_post_success() throws Exception {
         loginUser2();
 
-        increasePostDisLike(mockMvc,postId,accessToken);
+        increasePostDisLike(mockMvc, postId, accessToken);
         Post post = postRepository.findById(postId).get();
-        assertEquals(post.getUserDisLike(),1);
+        assertEquals(post.getUserDisLike(), 1);
     }
 
     @Test
@@ -115,7 +113,7 @@ class PostReactionControllerTest {
     void get_posts() throws Exception {
         loginUser2();
 
-        increasePostDisLike(mockMvc,postId,accessToken);
+        increasePostDisLike(mockMvc, postId, accessToken);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/postDetail/" + postId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -123,18 +121,19 @@ class PostReactionControllerTest {
 
         Post post = postRepository.findById(postId).get();
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        ResPostDetailDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResPostDetailDto>() {});
-        assertEquals(dto.getFinalLike(),-1);
-        assertEquals(dto.getLike(),0);
-        assertEquals(dto.getDislike(),1);
+        ResPostDetailDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResPostDetailDto>() {
+        });
+        assertEquals(dto.getFinalLike(), -1);
+        assertEquals(dto.getLike(), 0);
+        assertEquals(dto.getDislike(), 1);
     }
 
 
     private void loginUser2() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
+        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username2\", \"password\":\"password2\"}";
-        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
     }
 }

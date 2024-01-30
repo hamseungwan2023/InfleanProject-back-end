@@ -60,30 +60,34 @@ class UserControllerTest {
 
     @Autowired
     JwtTokenizer jwtTokenizer;
+
     @BeforeEach
-    void before() throws Exception{
+    void before() throws Exception {
         // JSON 데이터를 문자열로 준비
-        String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,jsonRequest);
+        String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, jsonRequest);
     }
 
     @AfterEach
-    void after(){
+    void after() {
         userRepository.deleteAll();
         refreshTokenRepository.deleteAll();
     }
+
     @Test
     @WithMockUser
     @DisplayName("회원가입이 잘 되어서 username, password로 회원이 잘 찾아지고, 닉네임까지 일치하는지 확인")
     void signup_success() throws Exception {
+        System.out.println("bbbbbbbbbbbbbbbbb");
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/user"))
                 .andExpect(status().isOk())
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
 
         // 응답 내용을 원하는 DTO 리스트 타입으로 변환
-        List<UserFormDto> userFormDtos = objectMapper.readValue(contentAsString,new TypeReference<>() {});
-        assertEquals(userFormDtos.size(),1);
+        List<UserFormDto> userFormDtos = objectMapper.readValue(contentAsString, new TypeReference<>() {
+        });
+        assertEquals(userFormDtos.size(), 1);
         assertThat(userFormDtos).extracting("nickname").containsExactly("nickname");
     }
 
@@ -111,12 +115,13 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        ResUserLoginDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResUserLoginDto>() {});
+        ResUserLoginDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResUserLoginDto>() {
+        });
         assertNotNull(dto.getAccessToken());
         assertNotNull(dto.getRefreshToken());
         assertNotNull(dto.getMemberId());
         assertNotNull(dto.getMemberId());
-        assertEquals(dto.getRank(),0);
+        assertEquals(dto.getRank(), 0);
 
         RefreshToken refreshTokenByUserEntityId = refreshTokenRepository.findRefreshTokenByUserEntityId(1L);
         System.out.println(refreshTokenByUserEntityId);
@@ -149,7 +154,7 @@ class UserControllerTest {
     @DisplayName("유저의 닉네임이 잘 변경되나 확인")
     void updateUserTest() throws Exception {
         List<String> roles = new ArrayList<>(List.of("ROLE_USER"));
-        String accessToken = jwtTokenizer.createAccessToken(1L,"1@naver.com","nickname",roles);
+        String accessToken = jwtTokenizer.createAccessToken(1L, "1@naver.com", "nickname", roles);
         System.out.println("accessToken = " + accessToken);
 
         String jsonRequests = "{\"nickname\":\"nickname2\"}";
@@ -157,7 +162,7 @@ class UserControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("userUpdateDto", "", "application/json", jsonRequests.getBytes());
 
         // MockMvc를 사용하여 multipart/form-data 요청을 보냄
-        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,"/user/update")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, "/user/update")
                         .file(jsonFile)
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -170,17 +175,18 @@ class UserControllerTest {
     @WithMockUser(username = "username")
     void searchUser() throws Exception {
         List<String> roles = new ArrayList<>(List.of("ROLE_USER"));
-        String accessToken = jwtTokenizer.createAccessToken(1L,"1@naver.com","nickname",roles);
+        String accessToken = jwtTokenizer.createAccessToken(1L, "1@naver.com", "nickname", roles);
         System.out.println("accessToken = " + accessToken);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/user/api/search")
-                .header("Authorization", "Bearer " + accessToken)
-                        .param("keyword","nick"))
+                        .header("Authorization", "Bearer " + accessToken)
+                        .param("keyword", "nick"))
                 .andExpect(status().isOk())
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        List<String> list = objectMapper.readValue(contentAsString,new TypeReference<>() {});
-        assertEquals(list.size(),1);
+        List<String> list = objectMapper.readValue(contentAsString, new TypeReference<>() {
+        });
+        assertEquals(list.size(), 1);
     }
 
 }

@@ -1,33 +1,29 @@
 package inflearnproject.anoncom.comment.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.custom.MockMvcUTF;
 import inflearnproject.anoncom.custom.TestControllerUtils;
-import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
-import jdk.swing.interop.SwingInterOpUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static inflearnproject.anoncom.custom.TestControllerUtils.addComment;
 import static inflearnproject.anoncom.custom.TestControllerUtils.addPostReturnPostId;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -47,19 +43,20 @@ class CommentControllerTest {
     private String accessToken;
     @Autowired
     CommentRepository commentRepository;
+
     @BeforeEach
-    void before() throws Exception{
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
+    void before() throws Exception {
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
-        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
 
         String postRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠\", \"category\":\"카테고리\"}";
         Long postId = addPostReturnPostId(mockMvc, objectMapper, accessToken, postRequest);
 
         String commentRequest = "{\"content\":\"댓글\"}";
-        Long commentId = addComment(mockMvc,postId,accessToken,commentRepository,commentRequest);
+        Long commentId = addComment(mockMvc, postId, accessToken, commentRepository, commentRequest);
     }
 
     @Test
@@ -69,8 +66,8 @@ class CommentControllerTest {
         Post post = postRepository.findAll().get(0);
 
         Post findPost = postRepository.findById(post.getId()).get();
-        assertEquals(findPost.getComments().get(0).getContent(),"댓글");
-        assertEquals(findPost.getComments().size(),1);
+        assertEquals(findPost.getComments().get(0).getContent(), "댓글");
+        assertEquals(findPost.getComments().size(), 1);
     }
 
     @Test
@@ -88,8 +85,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk());
 
         Post findPost = postRepository.findById(post.getId()).get();
-        assertEquals(findPost.getComments().get(0).getContent(),"댓글2");
-        assertEquals(findPost.getComments().size(),1);
+        assertEquals(findPost.getComments().get(0).getContent(), "댓글2");
+        assertEquals(findPost.getComments().size(), 1);
     }
 
     @Test

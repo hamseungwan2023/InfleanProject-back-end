@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 
 import static inflearnproject.anoncom.custom.TestControllerUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -46,31 +46,32 @@ class CommentReactionControllerTest {
     ReCommentRepository reCommentRepository;
 
     private Long commentId;
+
     @BeforeEach
-    void before() throws Exception{
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
+    void before() throws Exception {
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
-        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
 
         String postRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠\", \"category\":\"카테고리\"}";
         Long postId = addPostReturnPostId(mockMvc, objectMapper, accessToken, postRequest);
 
         String commentRequest = "{\"content\":\"댓글\"}";
-        commentId = addComment(mockMvc,postId,accessToken,commentRepository,commentRequest);
+        commentId = addComment(mockMvc, postId, accessToken, commentRepository, commentRequest);
 
         String reCommentRequest = "{\"content\":\"대댓글\"}";
-        addReComment(mockMvc,commentId,reCommentRequest,accessToken,reCommentRepository);
+        addReComment(mockMvc, commentId, reCommentRequest, accessToken, reCommentRepository);
     }
 
     @Test
     @DisplayName("좋아요 버튼을 다른 유저가 클릭 시 댓글의 좋아요가 1 상승한다")
     void increase_comment_like() throws Exception {
         loginUser2();
-        addIncreaseLikeComment(mockMvc,commentId,accessToken);
+        addIncreaseLikeComment(mockMvc, commentId, accessToken);
         Comment findComment = commentRepository.findCommentById(commentId);
-        assertEquals(findComment.getUserLike(),1);
+        assertEquals(findComment.getUserLike(), 1);
     }
 
     @Test
@@ -87,9 +88,9 @@ class CommentReactionControllerTest {
     @DisplayName("싫어요 버튼을 다른 유저가 클릭 시 댓글의 싫어요가 1 상승한다")
     void increase_comment_disLike() throws Exception {
         loginUser2();
-        addIncreaseDisLikeComment(mockMvc,commentId,accessToken);
+        addIncreaseDisLikeComment(mockMvc, commentId, accessToken);
         Comment findComment = commentRepository.findCommentById(commentId);
-        assertEquals(findComment.getUserDisLike(),1);
+        assertEquals(findComment.getUserDisLike(), 1);
     }
 
     @Test
@@ -101,11 +102,12 @@ class CommentReactionControllerTest {
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNotFound());
     }
+
     private void loginUser2() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\"}";
-        TestControllerUtils.signUpUser(mockMvc,signupReQuest);
+        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"seoul\"}";
+        TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username2\", \"password\":\"password2\"}";
-        accessToken = TestControllerUtils.loginUser(mockMvc,objectMapper,loginRequest);
+        accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);
     }
 }
