@@ -38,4 +38,9 @@ public class ExceptionUserController {
     public ResponseEntity<ErrorDTO> handleBlockedUserException(BlockedUserException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
+
+    @ExceptionHandler(FailImageLoadingException.class)
+    public ResponseEntity<ErrorDTO> handleFailImageLoadingException(FailImageLoadingException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
 }

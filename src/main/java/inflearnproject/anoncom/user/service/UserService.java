@@ -10,24 +10,35 @@ import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.*;
 import inflearnproject.anoncom.user.repository.UserRepository;
+import inflearnproject.anoncom.user.util.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import static inflearnproject.anoncom.domain.QUserEntity.userEntity;
 import static org.springframework.util.StringUtils.*;
 
 @Transactional
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Value("${upload.path}")
+    private String uploadRootPath;
 
     private final UserRepository userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -121,8 +132,14 @@ public class UserService {
         return userRepository.findById(memberId);
     }
 
-    public void updateUser(String email, ReqUserUpdateDto userDto) {
+    public void updateUser(String email, ReqUserUpdateDto userDto, MultipartFile profileImg) {
         UserEntity user = userRepository.findByEmail(email);
+
+        try {
+            setImage(profileImg,user);
+        } catch (IOException e) {
+            throw new FailImageLoadingException("이미지 업로드 중 문제가 발생했습니다.");
+        }
 
         if(!hasText(userDto.getNewPassword())){
             user.updateNickname(userDto.getNickname());
@@ -134,7 +151,20 @@ public class UserService {
                 throw new WrongPasswordException("비밀번호가 일치하지 않습니다.");
             }
         }
+    }
 
+    public void setImage(MultipartFile profileImg, UserEntity user) throws IOException {
+        if(profileImg != null) {
+            String originalFilename = profileImg.getOriginalFilename();
+            String uploadFileName = UUID.randomUUID() + "_" + originalFilename;
+            String newUploadPath = FileUploadUtil.makeUploadDirectory(uploadRootPath);
+            File uploadFile = new File(newUploadPath + File.separator + uploadFileName);
+            profileImg.transferTo(uploadFile);
+            String savePath
+                    = newUploadPath.substring(uploadRootPath.length());
+
+            user.setProfileImg(savePath + File.separator + uploadFileName);
+        }
     }
 
     public List<String> searchUser(String nickname,Long userId){

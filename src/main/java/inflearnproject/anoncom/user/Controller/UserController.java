@@ -77,16 +77,7 @@ public class UserController {
 
     private void ifProfileImgNotNull(MultipartFile profileImg, UserEntity userEntity) throws IOException {
         if(profileImg != null){
-            String originalFilename = profileImg.getOriginalFilename();
-            String uploadFileName = UUID.randomUUID() + "_" + originalFilename;
-            String newUploadPath = FileUploadUtil.makeUploadDirectory(uploadRootPath);
-            File uploadFile = new File(newUploadPath + File.separator + uploadFileName);
-            profileImg.transferTo(uploadFile);
-            String savePath
-                    = newUploadPath.substring(uploadRootPath.length());
-
-            userEntity.setProfileImg(savePath + File.separator + uploadFileName);
-
+            userService.setImage(profileImg,userEntity);
         }
     }
 
@@ -184,8 +175,10 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestBody ReqUserUpdateDto userUpdateDto){
-        userService.updateUser(userDto.getEmail(),userUpdateDto);
+    public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestPart("userUpdateDto") ReqUserUpdateDto userUpdateDto
+            ,@RequestPart(value = "profileImg",required = false) MultipartFile profileImg){
+
+        userService.updateUser(userDto.getEmail(),userUpdateDto,profileImg);
         return ResponseEntity.ok().body("ok");
     }
 

@@ -24,7 +24,7 @@ public class NoteService {
     private final NoteSenderService noteSenderService;
     private final NoteDSLRepository noteDSLRepository;
     private final NoteRepository noteRepository;
-    //TODO : BATCHSIZE로 나중에 일괄처리 해보기
+
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
         for (String receiverNickname : noteDto.getReceiverNicknames()) {
