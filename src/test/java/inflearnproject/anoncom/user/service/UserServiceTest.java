@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
@@ -117,7 +118,8 @@ class UserServiceTest {
     void update_success1(){
         ReqUserUpdateDto dto = new ReqUserUpdateDto();
         dto.setNickname("nickname2");
-        userService.updateUser("1@naver.com",dto);
+        MultipartFile profileImg= null;
+        userService.updateUser("1@naver.com",dto,profileImg);
         assertNotNull(userRepository.findByNickname("nickname2"));
     }
 
@@ -127,14 +129,14 @@ class UserServiceTest {
         ReqUserUpdateDto dto = new ReqUserUpdateDto();
         dto.setNickname("nickname2");
         dto.setNewPassword("password1");
-
-        assertThrows(WrongPasswordException.class,() ->userService.updateUser("1@naver.com",dto));
+        MultipartFile profileImg= null;
+        assertThrows(WrongPasswordException.class,() ->userService.updateUser("1@naver.com",dto,profileImg));
 
         dto.setPassword("passwor");
-        assertThrows(WrongPasswordException.class,() ->userService.updateUser("1@naver.com",dto));
+        assertThrows(WrongPasswordException.class,() ->userService.updateUser("1@naver.com",dto,profileImg));
 
         dto.setPassword("password");
-        userService.updateUser("1@naver.com",dto);
+        userService.updateUser("1@naver.com",dto,profileImg);
         assertNotNull(userRepository.findByNickname("nickname2"));
         assertTrue(passwordEncoder.matches("password1",userRepository.findByNickname("nickname2").get().getPassword()));
     }

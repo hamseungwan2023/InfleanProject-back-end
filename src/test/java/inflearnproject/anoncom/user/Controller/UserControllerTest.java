@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -151,12 +153,15 @@ class UserControllerTest {
         System.out.println("accessToken = " + accessToken);
 
         String jsonRequests = "{\"nickname\":\"nickname2\"}";
-        mockMvc.perform(MockMvcRequestBuilders.patch("/user/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(jsonRequests))
-                .andExpect(status().isOk());
 
+        MockMultipartFile jsonFile = new MockMultipartFile("userUpdateDto", "", "application/json", jsonRequests.getBytes());
+
+        // MockMvc를 사용하여 multipart/form-data 요청을 보냄
+        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,"/user/update")
+                        .file(jsonFile)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk());
         assertNotNull(userRepository.findByNickname("nickname2"));
     }
 
