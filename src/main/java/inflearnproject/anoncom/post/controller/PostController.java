@@ -40,8 +40,6 @@ public class PostController {
         return ResponseEntity.ok().body(resAddPostDto);
     }
 
-    //TODO API URL 규칙에 맞게 나중에 수정하기
-
     @PatchMapping("/api/postCorrect/{postId}")
     public ResponseEntity<?> updatePost(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId,
                                         @RequestBody ReqAddPostDto postDto) {
@@ -49,16 +47,12 @@ public class PostController {
         return ResponseEntity.ok().body("ok");
     }
 
-
     @DeleteMapping("/api/postDelete/{postId}")
     public ResponseEntity<?> deletePost(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId) {
-        postService.delete(userDto.getMemberId(), postId);
+        postService.delete(userDto, postId);
         return ResponseEntity.ok().body("ok");
     }
 
-    /**
-     * postId에 해당되는 게시글 하나의 상세 정보를 보여주는 메서드
-     */
     @GetMapping("/api/postDetail/{postId}")
     public ResponseEntity<ResPostDetailDto> getPost(@PathVariable Long postId) {
         Post post = postService.findPostById(postId);
@@ -67,12 +61,9 @@ public class PostController {
     }
 
 
-    /**
-     * 지역에 해당되는 모든 게시글들 보여주기
-     */
     @GetMapping("/api/postList")
     public ResponseEntity<PagingPost> getPostsByLocation(
-            @ModelAttribute(value = "findPostContent") PostSearchCondition cond,
+            @Valid @ModelAttribute(value = "findPostContent") PostSearchCondition cond,
             @RequestParam(value = "page", defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, defaultPageSize);

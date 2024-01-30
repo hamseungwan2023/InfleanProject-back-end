@@ -10,7 +10,11 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConditionalNotBlank {
-    String message() default "The field must be either blank or between 8 and 20 characters in length";
+    String message() default "The field must be either blank or between default 8 and 20 characters in length";
+
+    int min() default 8;
+
+    int max() default 20;
 
     Class<?>[] groups() default {};
 

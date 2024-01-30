@@ -77,7 +77,7 @@ class PostServiceTest {
     @Test
     @DisplayName("동일한 userId를 가지고있을 시 삭제가 잘 되나")
     void post_delete_success() {
-        postService.delete(user.getId(), post.getId());
+        postService.delete(buildUserDto(user), post.getId());
         boolean flag = postRepository.existsById(post.getId());
         assertFalse(flag);
     }
@@ -98,7 +98,7 @@ class PostServiceTest {
                 .build();
         userService.joinUser(user2);
 
-        assertThrows(NotSameUserException.class, () -> postService.delete(user2.getId(), post.getId()));
+        assertThrows(NotSameUserException.class, () -> postService.delete(buildUserDto(user2), post.getId()));
     }
 
 

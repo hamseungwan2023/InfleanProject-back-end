@@ -43,10 +43,9 @@ public class PostService {
     }
 
     public Post update(LoginUserDto userDto, Long postId, ReqAddPostDto postDto) {
-        UserEntity user = userRepository.findByEmail(userDto.getEmail());
         Post post = findPostById(postId);
 
-        if (!user.getId().equals(post.getUser().getId())) {
+        if (!post.isOwnedBy(userDto.getMemberId())) {
             throw new NotSameUserException(NOT_SAME_USER);
         }
 
@@ -63,32 +62,16 @@ public class PostService {
         return post;
     }
 
-    public Page<Post> findPostsByCategory(String category, Pageable pageable) {
-        return postRepository.findPostByCategory(category, pageable);
-    }
-
-    public Page<Post> findPosts(PostSearchCondition cond, Pageable pageable) {
-        return postDSLRepository.findPostsByCondition(cond, pageable);
-    }
-
     public Page<Post> findPostsByCondByDSL(PostSearchCondition condition, Pageable pageable) {
         return postDSLRepository.findPostsByCondition(condition, pageable);
     }
 
-
-    public void delete(Long userId, Long postId) {
+    public void delete(LoginUserDto userDto, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostException(NO_POST_MESSAGE));
-        if (!post.isOwnedBy(userId)) {
-            throw new NotSameUserException("동일한 유저가 아니라서 삭제가 불가능합니다.");
+        if (!post.isOwnedBy(userDto.getMemberId())) {
+            throw new NotSameUserException(NOT_SAME_USER);
         }
         postRepository.delete(post);
     }
 
-    public Page<Post> findPostsByLocation(String location, Pageable pageable) {
-        return postRepository.findPostsByLocation(location, pageable);
-    }
-
-    public Page<Post> findPostsByLocationAndCategory(String location, String category, Pageable pageable) {
-        return postRepository.findPostsByLocationAndCategory(location, category, pageable);
-    }
 }

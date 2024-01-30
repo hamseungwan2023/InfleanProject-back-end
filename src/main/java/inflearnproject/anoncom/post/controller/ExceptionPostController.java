@@ -9,12 +9,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static inflearnproject.anoncom.user.exception.ExceptionMessage.BE_RIGHT_LENGTH;
+
 @RestControllerAdvice(assignableTypes = PostController.class)
 public class ExceptionPostController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("글자 수와 형식에 맞게 작성해주십시오"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(BE_RIGHT_LENGTH));
     }
 
     @ExceptionHandler(NoPostException.class)

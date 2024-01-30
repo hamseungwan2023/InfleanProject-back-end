@@ -4,9 +4,13 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class ConditionalNotBlankValidator implements ConstraintValidator<ConditionalNotBlank, String> {
+    private int min;
+    private int max;
 
     @Override
     public void initialize(ConditionalNotBlank constraintAnnotation) {
+        min = constraintAnnotation.min();
+        max = constraintAnnotation.max();
     }
 
     @Override
@@ -15,6 +19,6 @@ public class ConditionalNotBlankValidator implements ConstraintValidator<Conditi
             return true; // null을 허용합니다.
         }
         value = value.trim(); // 앞뒤 공백 제거
-        return value.isEmpty() || (value.length() >= 8 && value.length() <= 20);
+        return value.isEmpty() || (value.length() >= min && value.length() <= max);
     }
 }
