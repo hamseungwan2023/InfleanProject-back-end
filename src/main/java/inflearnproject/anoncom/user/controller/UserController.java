@@ -1,19 +1,15 @@
 package inflearnproject.anoncom.user.controller;
 
 import inflearnproject.anoncom.domain.RefreshToken;
-import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
-import inflearnproject.anoncom.error.ErrorDTO;
 import inflearnproject.anoncom.refreshToken.dto.RefreshTokenDto;
-import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.refreshToken.service.RefreshTokenService;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.spam.service.SpamService;
 import inflearnproject.anoncom.user.dto.*;
-import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
 import inflearnproject.anoncom.user.util.FileUploadUtil;
 import io.jsonwebtoken.Claims;
@@ -30,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,8 +40,7 @@ public class UserController {
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
     private final SpamService spamService;
-    private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+
 
     @GetMapping
     public ResponseEntity<List<UserFormDto>> allUsers() {
@@ -58,35 +52,16 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> join(@Valid @RequestPart("reqUserJoinFormDto") ReqUserJoinFormDto reqUserJoinFormDto,
                                   @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
+        UserEntity userEntity = userService.buildLoginUser(reqUserJoinFormDto);
 
-        try {
-            UserEntity userEntity = UserEntity.builder()
-                    .nickname(reqUserJoinFormDto.getNickname())
-                    .username(reqUserJoinFormDto.getUsername())
-                    .password(reqUserJoinFormDto.getPassword())
-                    .email(reqUserJoinFormDto.getEmail())
-                    .location(reqUserJoinFormDto.getLocation())
-                    .info(reqUserJoinFormDto.getInfo())
-                    .isActive(true)
-                    .build();
-
-            ifProfileImgNotNull(profileImg, userEntity);
-            UserEntity createdUserEntity = userService.joinUser(userEntity);
-            ResUserJoinFormDto res = ResUserJoinFormDto.builder().nickname(createdUserEntity.getNickname())
-                    .email(createdUserEntity.getEmail()).build();
-
-            return ResponseEntity.ok().body(res);
-
-        } catch (RuntimeException | IOException e) {
-            return ResponseEntity.badRequest().body(new ErrorDTO(e.getMessage()));
-        }
-
-    }
-
-    private void ifProfileImgNotNull(MultipartFile profileImg, UserEntity userEntity) throws IOException {
         if (profileImg != null) {
             userService.setImage(profileImg, userEntity);
         }
+
+        UserEntity createdUserEntity = userService.joinUser(userEntity);
+        ResUserJoinFormDto res = userService.buildJoinForm(createdUserEntity);
+
+        return ResponseEntity.ok().body(res);
     }
 
     @DeleteMapping("/delete")
@@ -95,59 +70,28 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 로그인을 하게되면 프론트엔드 쪽에서 accessToken localStorage에 저장
-     */
     @PostMapping("/login")
     public ResponseEntity<ResUserLoginDto> login(@RequestBody ReqUserLoginDto loginDto) {
-
-        UserEntity user = userService.findUser(loginDto.getUsername(), loginDto.getPassword());
-        List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-
-        String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
-        String refreshToken = jwtTokenizer.createRefreshToken(user.getId(), user.getEmail(), user.getUsername(), roles);
-
-        // RefreshToken을 DB에 저장한다. 성능 때문에 DB가 아니라 Redis에 저장하는 것이 좋다.
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setTokenValue(refreshToken);
-        refreshTokenEntity.setUserEntityId(user.getId());
-        System.out.println("refreshTokenEntity.getUserEntityId() = " + refreshTokenEntity.getUserEntityId());
-        refreshTokenService.addRefreshToken(refreshTokenEntity, user.getId());
-
-        ResUserLoginDto loginResponse = ResUserLoginDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .memberId(user.getId())
-                .nickname(user.getUsername())
-                .rank(user.getRank())
-                .build();
+        ResUserLoginDto loginResponse = refreshTokenService.login(loginDto);
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    /**
-     * 로그아웃 시 localStorage쪽의 refreshtoken, access토큰 모두 지우기
-     */
+
     @DeleteMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenDto refreshTokenDto) {
         refreshTokenService.deleteRefreshToken(refreshTokenDto.getRefreshToken());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    /**
-     * accessToken의 만료시간이 현재시간을 지나면 이 메서드를 호출하게 만들어서 refreshToken을 통해 accessToken을 재발급받음
-     *
-     * @return
-     */
+
     @PostMapping("/refreshToken")
-    public ResponseEntity<ResUserLoginDto> requestRefresh(@RequestHeader("refreshToken") String refreshTokenValue) {
+    public ResponseEntity<ResUserLoginDto> requestRefresh(@RequestHeader("Authorization") String refreshTokenValue) {
 
-
-        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenValue).orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
+        RefreshToken refreshToken = refreshTokenService.findRefreshToken(refreshTokenValue);
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken.getTokenValue());
 
         Long memberId = Long.valueOf((Integer) claims.get("memberId"));
-
-        UserEntity userEntity = userService.findUserEntityById(memberId).orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다"));
+        UserEntity userEntity = userService.findUserEntityById(memberId);
 
 
         List roles = (List) claims.get("roles");
@@ -155,14 +99,10 @@ public class UserController {
 
         String accessToken = jwtTokenizer.createAccessToken(memberId, email, userEntity.getUsername(), roles);
 
-        ResUserLoginDto loginResponse = ResUserLoginDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshTokenValue)
-                .memberId(userEntity.getId())
-                .nickname(userEntity.getUsername())
-                .build();
+        ResUserLoginDto loginResponse = refreshTokenService.buildLoginedInfo(refreshTokenValue, accessToken, userEntity);
         return ResponseEntity.ok().body(loginResponse);
     }
+
 
     @GetMapping("/load-profile")
     public ResponseEntity<?> loadProfile(@IfLogin LoginUserDto userDto) throws IOException {
@@ -181,7 +121,7 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @RequestPart("userUpdateDto") ReqUserUpdateDto userUpdateDto
+    public ResponseEntity<?> updateUser(@IfLogin LoginUserDto userDto, @Valid @RequestPart("userUpdateDto") ReqUserUpdateDto userUpdateDto
             , @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
 
         userService.updateUser(userDto.getEmail(), userUpdateDto, profileImg);
@@ -203,7 +143,7 @@ public class UserController {
     }
 
     @DeleteMapping("/api/spamUser")
-    public ResponseEntity<List<Long>> DeleteSpamUsers(@IfLogin LoginUserDto userDto, @RequestBody DeleteSpamDto deleteSpamDto) {
+    public ResponseEntity<List<Long>> DeleteSpamUsers(@RequestBody DeleteSpamDto deleteSpamDto) {
         List<Long> fails = spamService.deleteSpamNote(deleteSpamDto);
         return ResponseEntity.ok().body(fails);
     }

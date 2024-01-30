@@ -3,7 +3,9 @@ package inflearnproject.anoncom.user.service;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.role.repository.RoleRepository;
+import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
 import inflearnproject.anoncom.user.dto.ReqUserUpdateDto;
+import inflearnproject.anoncom.user.dto.ResUserJoinFormDto;
 import inflearnproject.anoncom.user.dto.UserDeleteFormDto;
 import inflearnproject.anoncom.user.exception.*;
 import inflearnproject.anoncom.user.repository.UserRepository;
@@ -92,13 +94,11 @@ public class UserService {
     }
 
     public void updateUser(String email, ReqUserUpdateDto userDto, MultipartFile profileImg) {
-        UserEntity user = userRepository.findByEmail(email);
-
-        try {
-            setImage(profileImg, user);
-        } catch (IOException e) {
-            throw new FailImageLoadingException(UNKNOWN_IMAGE_UPLOAD_ERROR);
+        if (userRepository.existsByNickname(userDto.getNickname())) {
+            throw new SameInfoUserEntityException(ALREADY_SAME_INFO_USER);
         }
+        UserEntity user = userRepository.findByEmail(email);
+        setImage(profileImg, user);
 
         if (!hasText(userDto.getNewPassword())) {
             user.updateNickname(userDto.getNickname());
@@ -112,13 +112,17 @@ public class UserService {
         }
     }
 
-    public void setImage(MultipartFile profileImg, UserEntity user) throws IOException {
+    public void setImage(MultipartFile profileImg, UserEntity user) {
         if (profileImg != null) {
             String originalFilename = profileImg.getOriginalFilename();
             String uploadFileName = UUID.randomUUID() + "_" + originalFilename;
             String newUploadPath = FileUploadUtil.makeUploadDirectory(uploadRootPath);
             File uploadFile = new File(newUploadPath + File.separator + uploadFileName);
-            profileImg.transferTo(uploadFile);
+            try {
+                profileImg.transferTo(uploadFile);
+            } catch (IOException e) {
+                throw new FailImageLoadingException(UNKNOWN_IMAGE_UPLOAD_ERROR);
+            }
             String savePath
                     = newUploadPath.substring(uploadRootPath.length());
 
@@ -133,8 +137,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserEntity> findUserEntityById(Long memberId) {
-        return userRepository.findById(memberId);
+    public UserEntity findUserEntityById(Long memberId) {
+        return userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
     }
 
     @Transactional(readOnly = true)
@@ -146,5 +150,22 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserEntity findUserDetail(Long memberId) {
         return userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
+    }
+
+    public UserEntity buildLoginUser(ReqUserJoinFormDto reqUserJoinFormDto) {
+        return UserEntity.builder()
+                .nickname(reqUserJoinFormDto.getNickname())
+                .username(reqUserJoinFormDto.getUsername())
+                .password(reqUserJoinFormDto.getPassword())
+                .email(reqUserJoinFormDto.getEmail())
+                .location(reqUserJoinFormDto.getLocation())
+                .info(reqUserJoinFormDto.getInfo())
+                .isActive(true)
+                .build();
+    }
+
+    public ResUserJoinFormDto buildJoinForm(UserEntity user) {
+        return ResUserJoinFormDto.builder().nickname(user.getNickname())
+                .email(user.getEmail()).build();
     }
 }
