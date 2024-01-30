@@ -2,7 +2,6 @@ package inflearnproject.anoncom.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +9,10 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder @Getter
-@ToString(of = {"id","title","category","content","user","userLike","userDisLike","views"})
-public class Post extends BaseTimeEntity{
+@Builder
+@Getter
+@ToString(of = {"id", "title", "category", "content", "user", "userLike", "userDisLike", "views"})
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +38,16 @@ public class Post extends BaseTimeEntity{
 
     private int views; //조회수
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ReComment> reComments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostReaction> postReactions = new ArrayList<>();
 
     private String location;
@@ -53,16 +56,12 @@ public class Post extends BaseTimeEntity{
     @Transient
     private int commentCount;
 
-    public int returnCommentCount() {
-        return comments.size();
-    }
-
-    public void putUser(UserEntity user){
+    public void putUser(UserEntity user) {
         this.user = user;
         user.getPosts().add(this);
     }
 
-    public void updateValues(String title, String category, String content){
+    public void updateValues(String title, String category, String content) {
         this.title = title;
         this.category = category;
         this.content = content;
@@ -72,19 +71,19 @@ public class Post extends BaseTimeEntity{
         return this.user != null && userId.equals(this.user.getId());
     }
 
-    public void addUserLike(){
+    public void addUserLike() {
         userLike++;
     }
 
-    public void addUserDisLike(){
+    public void addUserDisLike() {
         userDisLike++;
     }
 
-    public void buildFinalLike(){
+    public void buildFinalLike() {
         this.finalLike = userLike - userDisLike;
     }
 
-    public void addView(){
+    public void addView() {
         this.views++;
     }
 

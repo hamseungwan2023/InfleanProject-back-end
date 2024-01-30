@@ -100,7 +100,7 @@ public class UserEntity extends BaseTimeEntity {
     }
 
     public void updateRank() {
-        this.rank = this.posts.size();
+        this.rank = this.rank + 1;
     }
 
     public void setActiveFalse() {

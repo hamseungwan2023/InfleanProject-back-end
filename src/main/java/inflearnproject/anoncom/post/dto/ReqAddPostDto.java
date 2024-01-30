@@ -1,14 +1,12 @@
 package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.UserEntity;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
@@ -19,13 +17,14 @@ public class ReqAddPostDto {
     @Min(2)
     private String title;
 
+    @NotNull
     private String category;
 
     @Min(10)
     private String content;
 
 
-    public static Post buildPost(ReqAddPostDto postDto){
+    public static Post buildPost(ReqAddPostDto postDto) {
         return Post.builder()
                 .title(postDto.getTitle())
                 .category(postDto.getCategory())
@@ -33,9 +32,6 @@ public class ReqAddPostDto {
                 .userLike(0)
                 .userDisLike(0)
                 .views(0)
-                .comments(new ArrayList<>())
-                .reComments(new ArrayList<>())
-                .postReactions(new ArrayList<>())
                 .build();
     }
 }

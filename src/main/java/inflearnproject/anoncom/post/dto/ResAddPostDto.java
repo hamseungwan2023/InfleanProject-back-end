@@ -2,7 +2,6 @@ package inflearnproject.anoncom.post.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +23,8 @@ public class ResAddPostDto {
     private int finalLike;
     private String content;
     private String location;
-    public static ResAddPostDto buildResPostDto(Long userId, Post post){
+
+    public static ResAddPostDto buildResPostDto(Long userId, Post post) {
         ResAddPostDto dto = ResAddPostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -39,7 +39,7 @@ public class ResAddPostDto {
     }
 
     @QueryProjection
-    public ResAddPostDto(Long id, String title, String category, LocalDateTime createdAt, Long userId, int finalLike, String content){
+    public ResAddPostDto(Long id, String title, String category, LocalDateTime createdAt, Long userId, int finalLike, String content) {
         this.id = id;
         this.title = title;
         this.category = category;
