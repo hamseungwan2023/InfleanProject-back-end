@@ -6,7 +6,6 @@ import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.dto.DeleteSpamDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
-import inflearnproject.anoncom.user.service.UserSpamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,7 @@ public class SpamService {
 
     private final UserRepository userRepository;
     private final SpamRepository spamRepository;
-    private final UserSpamService userSpamService;
+    private final SpamUserService spamUserService;
 
     public List<Spam> searchSpamUser(Long memberId) {
         UserEntity declaring = userRepository.findById(memberId).get();
@@ -33,7 +32,7 @@ public class SpamService {
         List<Long> deleteSpams = new ArrayList<>();
         for (Long deleteSpamId : deleteSpamDto.getDeleteSpamIds()) {
             try {
-                userSpamService.deleteSpam(deleteSpamId);
+                spamUserService.deleteSpam(deleteSpamId);
             } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 deleteSpams.add(errorId);
