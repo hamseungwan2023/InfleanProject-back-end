@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_POST_MESSAGE;
+import static inflearnproject.anoncom.error.ExceptionMessage.*;
 
 @Service
 @Transactional
@@ -27,12 +27,9 @@ public class PostReactionService {
 
     public void increaseLike(Long memberId, Long postId) {
         isAlreadyReactionExists(memberId, postId);
-        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다"));
+        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostException(NO_POST_MESSAGE));
-        if (post.isOwnedBy(memberId)) {
-            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
-            throw new NotIncreaseLikeSelfException("자신이 작성한 게시글에는 좋아요를 할 수 없습니다.");
-        }
+        validSelfPost(memberId, post);
         PostReaction postReaction = PostReaction.builder()
                 .user(user)
                 .post(post)
@@ -45,12 +42,9 @@ public class PostReactionService {
 
     public void increaseDisLike(Long memberId, Long postId) {
         isAlreadyReactionExists(memberId, postId);
-        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다"));
+        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostException(NO_POST_MESSAGE));
-        if (post.isOwnedBy(memberId)) {
-            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
-            throw new NotIncreaseLikeSelfException("자신이 작성한 게시글에는 싫어요를 할 수 없습니다.");
-        }
+        validSelfPost(memberId, post);
         PostReaction postReaction = PostReaction.builder()
                 .user(user)
                 .post(post)
@@ -61,9 +55,16 @@ public class PostReactionService {
         postReactionRepository.save(postReaction);
     }
 
+    private void validSelfPost(Long memberId, Post post) {
+        if (post.isOwnedBy(memberId)) {
+            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
+            throw new NotIncreaseLikeSelfException(CANNOT_SELF_REACTION);
+        }
+    }
+
     public void isAlreadyReactionExists(Long memberId, Long postId) {
         if (postReactionRepository.existsByUserIdAndPostId(memberId, postId)) {
-            throw new AlreadyReactionExistsException("이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.");
+            throw new AlreadyReactionExistsException(CANNOT_REACTION_TWICE);
         }
     }
 }

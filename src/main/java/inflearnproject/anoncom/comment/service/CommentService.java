@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_COMMENT_ERROR;
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_COMMENT_MESSAGE;
 
 @Service
 @Transactional
@@ -79,7 +79,7 @@ public class CommentService {
     private Comment validAndGetComment(LoginUserDto userDto, Long commentId) {
         Comment comment = commentRepository.findCommentById(commentId);
         if (comment == null) {
-            throw new NoCommentException(NO_COMMENT_ERROR);
+            throw new NoCommentException(NO_COMMENT_MESSAGE);
         }
 
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
