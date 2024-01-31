@@ -3,11 +3,9 @@ package inflearnproject.anoncom.note.service;
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
 import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
-import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteRepository;
-import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
@@ -32,7 +30,7 @@ public class NoteSenderService {
         UserEntity receiver = userRepository.findByNickname(receiverNickname).orElseThrow(
                 () -> new NoUserEntityException(receiverNickname)
         );
-        if(!receiver.isActive()){
+        if (!receiver.isActive()) {
             throw new NoUserEntityException(receiverNickname);
         }
         Note note = Note.builder()
@@ -50,6 +48,7 @@ public class NoteSenderService {
         note.senderDelete();
         deleteIfAllTrue(note);
     }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteReceiveNote(Long deleteNoteId) {
         Note note = findNoteById(deleteNoteId);
@@ -64,11 +63,12 @@ public class NoteSenderService {
         );
     }
 
-    private void deleteIfAllTrue(Note note){
-        if(note.isSenderDelete() && note.isReceiverDelete()){
+    private void deleteIfAllTrue(Note note) {
+        if (note.isSenderDelete() && note.isReceiverDelete()) {
             noteRepository.delete(note);
         }
     }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void keepNote(Long noteKeepId) {
         Note note = noteRepository.findById(noteKeepId).orElseThrow(
@@ -76,22 +76,22 @@ public class NoteSenderService {
         );
         note.keepTrue();
     }
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void spamNote(Long userId,Long noteSpamId) {
-        Note note = noteRepository.findById(noteSpamId).orElseThrow(
-                () -> new NoSuchNoteException(String.valueOf(noteSpamId))
-        );
-        UserEntity declaring = userRepository.findById(userId).get();
-        UserEntity declared = noteRepository.findById(noteSpamId).get().getSender();
-        Spam spam = Spam.builder()
-                .declaring(declaring)
-                .declared(declared)
-                .build();
-        if(spamRepository.findByDeclaringAndDeclared(declaring,declared).isEmpty()){
-            spamRepository.save(spam);
-        }
-        note.spamTrue();
-    }
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    public void spamNote(Long userId,Long noteSpamId) {
+//        Note note = noteRepository.findById(noteSpamId).orElseThrow(
+//                () -> new NoSuchNoteException(String.valueOf(noteSpamId))
+//        );
+//        UserEntity declaring = userRepository.findById(userId).get();
+//        UserEntity declared = noteRepository.findById(noteSpamId).get().getSender();
+//        Spam spam = Spam.builder()
+//                .declaring(declaring)
+//                .declared(declared)
+//                .build();
+//        if(spamRepository.findByDeclaringAndDeclared(declaring,declared).isEmpty()){
+//            spamRepository.save(spam);
+//        }
+//        note.spamTrue();
+//    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void declareNote(Long declareNoteId) {
@@ -99,7 +99,7 @@ public class NoteSenderService {
                 () -> new NoSuchNoteException(String.valueOf(declareNoteId))
         );
         DeclareNote declareNote = DeclareNote.builder()
-                        .note(note).build();
+                .note(note).build();
         declareNoteRepository.save(declareNote);
         note.delcareTrue();
     }

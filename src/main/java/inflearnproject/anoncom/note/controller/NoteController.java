@@ -35,9 +35,9 @@ public class NoteController {
     }
 
     @DeleteMapping("/api/receiveNoteDelete")
-    public ResponseEntity<List<Long>> deleteReceiveNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
-        List<Long> erroredList = noteService.deleteReceiveNote(noteDto);
-        return ResponseEntity.ok().body(erroredList);
+    public ResponseEntity<?> deleteReceiveNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
+        noteService.deleteReceiveNote(noteDto);
+        return ResponseEntity.ok().body("ok");
     }
 
     /**
@@ -63,6 +63,7 @@ public class NoteController {
         return ResponseEntity.ok().body(notesDto);
     }
 
+    //TODO noteDetailDto 필드 추가하기
     @GetMapping("/api/noteRead/{noteId}")
     public ResponseEntity<NoteDetailDto> showNoteDetail(@IfLogin LoginUserDto userDto, @PathVariable("noteId") Long noteId) {
         Note note = noteService.findById(noteId);
@@ -71,15 +72,15 @@ public class NoteController {
     }
 
     @PostMapping("/api/keepNote")
-    public ResponseEntity<List<Long>> keepNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteKeepDto noteKeepDto) {
-        List<Long> keepNotes = noteService.keepNote(noteKeepDto);
-        return ResponseEntity.ok().body(keepNotes);
+    public ResponseEntity<?> keepNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteKeepDto noteKeepDto) {
+        noteService.keepNote(noteKeepDto);
+        return ResponseEntity.ok().body("ok");
     }
 
     @PostMapping("/api/spamNote")
-    public ResponseEntity<List<Long>> spamNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteSpamDto noteSpamDto) {
-        List<Long> spamNotes = noteService.spamNote(userDto.getMemberId(), noteSpamDto);
-        return ResponseEntity.ok().body(spamNotes);
+    public ResponseEntity<?> spamNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteSpamDto noteSpamDto) {
+        noteService.spamNote(userDto.getMemberId(), noteSpamDto);
+        return ResponseEntity.ok().body("ok");
     }
 
     @PostMapping("/api/declareNote")

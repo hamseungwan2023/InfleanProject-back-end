@@ -1,6 +1,5 @@
 package inflearnproject.anoncom.note.repository;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static inflearnproject.anoncom.domain.QNote.*;
+import static inflearnproject.anoncom.domain.QNote.note;
+
 @Repository
 public class NoteDSLRepository {
 
@@ -26,7 +26,7 @@ public class NoteDSLRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond,Pageable pageable){
+    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable) {
 
         JPAQuery<NoteShowDto> query = queryFactory
                 .select(new QNoteShowDto(note.id,
@@ -63,27 +63,16 @@ public class NoteDSLRepository {
         return new PageImpl<>(notes, pageable, total);
     }
 
-    private BooleanExpression isCondEq(NoteSearchCond cond){
-        if(cond.getIsSpam() != null){
+    private BooleanExpression isCondEq(NoteSearchCond cond) {
+        if (cond.getIsSpam() != null) {
             return note.isSpam.eq(true);
         }
-        if(cond.getIsKeep() != null){
+        if (cond.getIsKeep() != null) {
             return note.isKeep.eq(true);
         }
         return note.isSpam.isFalse().and(note.isKeep.isFalse()).and(note.isReceiverDelete.isFalse());
     }
 
-    private BooleanExpression isSpamEq(Boolean spam) {
-        return spam == null ? note.isSpam.isFalse() : note.isSpam.eq(spam);
-    }
-
-    private BooleanExpression isKeepEq(Boolean keep){
-        return keep == null ? note.isKeep.isFalse() : note.isKeep.eq(keep);
-    }
-
-    private BooleanExpression isReceiveDeleteEq(Boolean delete){
-        return delete == null ? note.isReceiverDelete.isFalse() : note.isReceiverDelete.eq(delete);
-    }
     public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {
         JPAQuery<NoteSendedShowDto> query = queryFactory
                 .select(new QNoteSendedShowDto(note.id,

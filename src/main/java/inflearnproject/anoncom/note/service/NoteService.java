@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.note.service;
 
 import inflearnproject.anoncom.domain.Note;
+import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.dto.*;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
@@ -8,7 +9,9 @@ import inflearnproject.anoncom.note.repository.NoteBulkRepository;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +33,7 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
     private final NoteBulkRepository noteBulkRepository;
+    private final SpamRepository spamRepository;
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -73,20 +77,13 @@ public class NoteService {
     public void deleteSendNote(NoteDeleteDto noteDto) {
         List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
         List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
-        noteRepository.bulkNoteDelete(noteIds);
+        noteRepository.bulkNoteSenderDelete(noteIds);
     }
 
-    public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {
-        List<Long> deletedList = new ArrayList<>();
-        for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try {
-                noteSenderService.deleteReceiveNote(deleteNoteId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                deletedList.add(errorId);
-            }
-        }
-        return deletedList;
+    public void deleteReceiveNote(NoteDeleteDto noteDto) {
+        List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
+        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
+        noteRepository.bulkNoteReceiverDelete(noteIds);
     }
 
     public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable) {
@@ -97,31 +94,42 @@ public class NoteService {
         return noteDSLRepository.findSendedNotes(senderId, pageable);
     }
 
-    public List<Long> keepNote(NoteKeepDto noteKeepDto) {
-        List<Long> keepList = new ArrayList<>();
-        for (Long noteKeepId : noteKeepDto.getNoteKeeps()) {
-            try {
-                noteSenderService.keepNote(noteKeepId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                keepList.add(errorId);
-            }
-        }
-        return keepList;
+    public void keepNote(NoteKeepDto noteKeepDto) {
+        List<Note> findNoteIds = noteRepository.findByIdIn(noteKeepDto.getNoteKeeps());
+        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
+        noteRepository.bulkNoteKeep(noteIds);
     }
 
-    public List<Long> spamNote(Long userId, NoteSpamDto noteSpamDto) {
+    public void spamNote(Long userId, NoteSpamDto noteSpamDto) {
 
-        List<Long> spamList = new ArrayList<>();
-        for (Long noteSpamId : noteSpamDto.getSpamNotes()) {
-            try {
-                noteSenderService.spamNote(userId, noteSpamId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                spamList.add(errorId);
+        List<Note> spamNotes = noteRepository.findByIdIn(noteSpamDto.getSpamNotes());
+
+        UserEntity declaring = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        // 스팸 선언된 노트의 발신자 ID set
+        Set<Long> senderIds = spamNotes.stream().map(note -> note.getSender().getId()).collect(Collectors.toSet());
+
+        // 이미 스팸으로 선언된 (선언자, 발신자) 쌍을 찾습니다.
+        List<Spam> existingSpams = spamRepository.findByDeclaringAndDeclaredIds(declaring.getId(), senderIds);
+        //스팸처리된 유저들의 id set
+        Set<Long> alreadyDeclaredSenderIds = existingSpams.stream().map(spam -> spam.getDeclared().getId()).collect(Collectors.toSet());
+
+        // 새로운 스팸 선언을 저장할 리스트
+        List<Spam> spamsToSave = new ArrayList<>();
+        for (Note note : spamNotes) {
+            UserEntity declared = note.getSender();
+            // 이미 스팸으로 선언되지 않은 경우에만 새 스팸 선언을 추가합니다.
+            if (!alreadyDeclaredSenderIds.contains(declared.getId())) {
+                Spam spam = Spam.builder()
+                        .declaring(declaring)
+                        .declared(declared)
+                        .build();
+                spamsToSave.add(spam);
             }
+            note.spamTrue(); // 노트를 스팸으로 표시합니다.
         }
-        return spamList;
+
+        // 새로운 스팸 선언을 데이터베이스에 저장합니다.
+        spamRepository.saveAll(spamsToSave);
     }
 
     public Note findById(Long noteId) {
