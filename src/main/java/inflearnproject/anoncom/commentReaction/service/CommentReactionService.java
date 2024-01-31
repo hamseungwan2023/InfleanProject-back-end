@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_COMMENT_MESSAGE;
+import static inflearnproject.anoncom.error.ExceptionMessage.*;
 
 @Service
 @Transactional
@@ -27,12 +27,9 @@ public class CommentReactionService {
 
     public void increaseLike(Long memberId, Long commentId) {
         isAlreadyReactionExists(memberId, commentId);
-        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다"));
+        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoCommentException(NO_COMMENT_MESSAGE));
-        if (comment.isOwnedBy(memberId)) {
-            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
-            throw new NotIncreaseLikeSelfException("자신이 작성한 댓글에는 좋아요를 할 수 없습니다.");
-        }
+        validSelfReaction(memberId, comment);
         CommentReaction commentReaction = CommentReaction.builder()
                 .user(user)
                 .post(comment.getPost())
@@ -46,12 +43,9 @@ public class CommentReactionService {
 
     public void increaseDisLike(Long memberId, Long commentId) {
         isAlreadyReactionExists(memberId, commentId);
-        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException("해당 정보와 일치하는 회원이 존재하지 않습니다"));
+        UserEntity user = userRepository.findById(memberId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoCommentException(NO_COMMENT_MESSAGE));
-        if (comment.isOwnedBy(memberId)) {
-            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
-            throw new NotIncreaseLikeSelfException("자신이 작성한 댓글에는 좋아요를 할 수 없습니다.");
-        }
+        validSelfReaction(memberId, comment);
         CommentReaction commentReaction = CommentReaction.builder()
                 .user(user)
                 .post(comment.getPost())
@@ -63,9 +57,16 @@ public class CommentReactionService {
         commentReactionRepository.save(commentReaction);
     }
 
+    private static void validSelfReaction(Long memberId, Comment comment) {
+        if (comment.isOwnedBy(memberId)) {
+            //자신이 작성한 게시글에는 스스로 추천할 수 없다.
+            throw new NotIncreaseLikeSelfException(CANNOT_SELF_REACTION_COMMENT);
+        }
+    }
+
     public void isAlreadyReactionExists(Long memberId, Long commentId) {
         if (commentReactionRepository.existsByUserIdAndCommentId(memberId, commentId)) {
-            throw new AlreadyReactionExistsException("이미 좋아요/싫어요한 댓글에 좋아요/싫어요를 할 수 없습니다.");
+            throw new AlreadyReactionExistsException(CANNOT_REACTION_TWICE_COMMENT);
         }
     }
 }

@@ -12,12 +12,13 @@ public abstract class ExceptionMessage {
     public static final String BE_RIGHT_LENGTH = "글자 수와 형식에 맞게 작성해주십시오";
 
     public static final String NO_POST_MESSAGE = "해당 게시글은 존재하지 않습니다.";
-    public static final String CANNOT_SELF_REACTION = "자신이 작성한 게시글에는 싫어요를 할 수 없습니다.";
-    public static final String CANNOT_REACTION_TWICE = "이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.";
+    public static final String CANNOT_SELF_REACTION_POST = "자신이 작성한 게시글에는 싫어요를 할 수 없습니다.";
+    public static final String CANNOT_REACTION_TWICE_POST = "이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.";
 
     public static final String UNKNOWN_IMAGE_UPLOAD_ERROR = "이미지 업로드 중 문제가 발생했습니다.";
 
     public static final String NO_COMMENT_MESSAGE = "해당 댓글은 존재하지 않습니다.";
     public static final String NO_RE_COMMENT_ERROR = "해당 대댓글은 존재하지 않습니다.";
-
+    public static final String CANNOT_SELF_REACTION_COMMENT = "자신이 작성한 댓글에는 좋아요를 할 수 없습니다.";
+    public static final String CANNOT_REACTION_TWICE_COMMENT = "이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.";
 }

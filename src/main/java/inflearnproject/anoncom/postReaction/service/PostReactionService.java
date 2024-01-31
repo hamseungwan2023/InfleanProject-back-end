@@ -58,13 +58,13 @@ public class PostReactionService {
     private void validSelfPost(Long memberId, Post post) {
         if (post.isOwnedBy(memberId)) {
             //자신이 작성한 게시글에는 스스로 추천할 수 없다.
-            throw new NotIncreaseLikeSelfException(CANNOT_SELF_REACTION);
+            throw new NotIncreaseLikeSelfException(CANNOT_SELF_REACTION_POST);
         }
     }
 
     public void isAlreadyReactionExists(Long memberId, Long postId) {
         if (postReactionRepository.existsByUserIdAndPostId(memberId, postId)) {
-            throw new AlreadyReactionExistsException(CANNOT_REACTION_TWICE);
+            throw new AlreadyReactionExistsException(CANNOT_REACTION_TWICE_POST);
         }
     }
 }
