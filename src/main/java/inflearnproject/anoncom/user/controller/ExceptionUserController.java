@@ -8,7 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static inflearnproject.anoncom.user.exception.ExceptionMessage.BE_RIGHT_LENGTH;
+import static inflearnproject.anoncom.error.ExceptionMessage.BE_RIGHT_LENGTH;
 
 @RestControllerAdvice(assignableTypes = UserController.class)
 public class ExceptionUserController {

@@ -21,7 +21,6 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "comment_id")
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
@@ -67,7 +66,6 @@ public class Comment extends BaseTimeEntity {
     public void addUserDisLike() {
         userDisLike++;
     }
-
 
     public void setUser(UserEntity user) {
         this.user = user;

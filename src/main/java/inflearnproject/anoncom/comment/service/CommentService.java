@@ -75,13 +75,13 @@ public class CommentService {
 
     private Comment validAndGetComment(LoginUserDto userDto, Long commentId) {
         Comment comment = commentRepository.findCommentById(commentId);
-        UserEntity user = userRepository.findByEmail(userDto.getEmail());
-
         if (comment == null) {
             throw new NoCommentException("해당 댓글이 존재하지 않습니다.");
         }
+
+        UserEntity user = userRepository.findByEmail(userDto.getEmail());
         if (!comment.getUser().equals(user)) {
-            throw new NotSameUserException("동일한 유저가 아니라서 삭제가 불가능합니다.");
+            throw new NotSameUserException("동일한 유저가 아니라서 접근할 수 없습니다.");
         }
         return comment;
     }

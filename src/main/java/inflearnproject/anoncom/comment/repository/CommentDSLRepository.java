@@ -11,7 +11,6 @@ import java.util.List;
 
 import static inflearnproject.anoncom.domain.QComment.comment;
 import static inflearnproject.anoncom.domain.QPost.post;
-import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 public class CommentDSLRepository {
@@ -46,9 +45,5 @@ public class CommentDSLRepository {
 
     private BooleanExpression postIdEq(Long postId) {
         return comment.post.id.eq(postId);
-    }
-
-    private BooleanExpression titleEq(String title) {
-        return hasText(title) ? post.title.contains(title) : null;
     }
 }

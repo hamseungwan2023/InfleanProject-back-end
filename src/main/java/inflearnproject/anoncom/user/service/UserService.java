@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static inflearnproject.anoncom.user.exception.ExceptionMessage.*;
+import static inflearnproject.anoncom.error.ExceptionMessage.*;
 import static org.springframework.util.StringUtils.hasText;
 
 @Transactional

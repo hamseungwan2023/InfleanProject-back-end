@@ -16,9 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_POST_MESSAGE;
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.buildPost;
-import static inflearnproject.anoncom.user.exception.ExceptionMessage.NOT_SAME_USER;
-import static inflearnproject.anoncom.user.exception.ExceptionMessage.NO_POST_MESSAGE;
 
 @Service
 @Transactional

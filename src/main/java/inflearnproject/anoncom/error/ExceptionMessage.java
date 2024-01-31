@@ -1,4 +1,4 @@
-package inflearnproject.anoncom.user.exception;
+package inflearnproject.anoncom.error;
 
 public abstract class ExceptionMessage {
 
