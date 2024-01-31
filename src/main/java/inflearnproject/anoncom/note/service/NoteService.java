@@ -31,7 +31,6 @@ public class NoteService {
     private final UserRepository userRepository;
     private final NoteBulkRepository noteBulkRepository;
 
-
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
         UserEntity sender = userRepository.findByEmail(userDto.getEmail());
@@ -40,20 +39,9 @@ public class NoteService {
         List<String> receiverNicknames = noteDto.getReceiverNicknames();
         List<UserEntity> receivers = userRepository.findByNicknameIn(receiverNicknames);
 
-        // 수신자가 없거나 비활성화된 경우 오류 목록에 추가
-        Set<String> activeReceiverNicknames = receivers.stream()
-                .filter(UserEntity::isActive)
-                .map(UserEntity::getNickname)
-                .collect(Collectors.toSet());
-        for (String receiverNickname : receiverNicknames) {
-            if (!activeReceiverNicknames.contains(receiverNickname)) {
-                erroredList.add(receiverNickname);
-            }
-        }
+        findErrorNicknames(receivers, receiverNicknames, erroredList);
 
-        // 활성 수신자에 대한 쪽지 생성 및 저장
         List<Note> notesToSave = receivers.stream()
-                .filter(UserEntity::isActive)
                 .map(receiver -> Note.builder()
                         .receiver(receiver)
                         .sender(sender)
@@ -68,17 +56,24 @@ public class NoteService {
         return erroredList;
     }
 
-    public List<Long> deleteSendNote(NoteDeleteDto noteDto) {
-        List<Long> deletedList = new ArrayList<>();
-        for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try {
-                noteSenderService.deleteSendNote(deleteNoteId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                deletedList.add(errorId);
+    private void findErrorNicknames(List<UserEntity> receivers, List<String> receiverNicknames, List<String> erroredList) {
+        Set<String> existReceiverNicknames = receivers.stream()
+                .map(UserEntity::getNickname)
+                .collect(Collectors.toSet());
+        for (String receiverNickname : receiverNicknames) {
+            if (!existReceiverNicknames.contains(receiverNickname)) {
+                erroredList.add(receiverNickname);
             }
         }
-        return deletedList;
+    }
+
+    /**
+     * 보낸 사람이 쪽지 삭제
+     */
+    public void deleteSendNote(NoteDeleteDto noteDto) {
+        List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
+        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
+        noteBulkRepository.batchDeleteNotes(noteIds);
     }
 
     public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {

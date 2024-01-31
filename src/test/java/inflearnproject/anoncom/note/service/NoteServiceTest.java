@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.note.service;
 
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
+import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.dto.NoteAddDto;
 import inflearnproject.anoncom.note.dto.NoteDeclareDto;
@@ -11,6 +12,7 @@ import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import inflearnproject.anoncom.user.service.UserService;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static inflearnproject.anoncom.custom.TestServiceUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +46,8 @@ class NoteServiceTest {
     NoteRepository noteRepository;
     @Autowired
     NoteSenderService noteSenderService;
-
+    @Autowired
+    EntityManager em;
     @Autowired
     NoteServiceForTest noteServiceForTest;
     @Autowired
@@ -120,15 +124,30 @@ class NoteServiceTest {
     @DisplayName("보낸 사람이 쪽지를 삭제하면 isSenderDelete라는 필드가 true가 되나")
     void delete_send_note() {
 
-        Long noteId = noteRepository.findAll().get(0).getId();
+        for (int i = 100; i < 110; i++) {
+            addAnotherUser(userService, i);
+        }
+
+        LoginUserDto dto = buildUserDto(user);
+        NoteAddDto noteAddDto = new NoteAddDto();
+        noteAddDto.setContent("쪽지");
+        List<String> list = new ArrayList<>();
+        for (int i = 100; i < 10000; i++) {
+            list.add("nickname" + i);
+        }
+        noteAddDto.setReceiverNicknames(list);
+        noteService.addNote(dto, noteAddDto);
 
         NoteDeleteDto noteDeleteDto = new NoteDeleteDto();
-        List<Long> deleteNoteIds = new ArrayList<>();
-        deleteNoteIds.add(noteId);
-        noteDeleteDto.setDeleteNoteIds(deleteNoteIds);
+        List<Long> collect = noteRepository.findAll().stream().map(findNote -> findNote.getId()).collect(Collectors.toList());
+        noteDeleteDto.setDeleteNoteIds(collect);
 
-        noteServiceForTest.deleteSendNote(noteDeleteDto);
-        assertTrue(noteRepository.findAll().get(0).isSenderDelete());
+        noteService.deleteSendNote(noteDeleteDto);
+        em.flush();
+        em.clear();
+        for (Note note : noteRepository.findAll()) {
+            assertTrue(note.isSenderDelete());
+        }
     }
 
 

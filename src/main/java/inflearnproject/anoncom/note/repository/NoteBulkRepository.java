@@ -43,4 +43,20 @@ public class NoteBulkRepository {
         });
     }
 
+    public void batchDeleteNotes(List<Long> noteIds) {
+        String sql = "UPDATE NOTE SET IS_SENDER_DELETE = true WHERE note_id = ?";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Long noteId = noteIds.get(i);
+                ps.setLong(1, noteId);
+            }
+
+            @Override
+            public int getBatchSize() {
+                return noteIds.size();
+            }
+        });
+    }
 }
