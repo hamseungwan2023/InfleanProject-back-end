@@ -2,6 +2,7 @@ package inflearnproject.anoncom.note.repository;
 
 import inflearnproject.anoncom.domain.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +17,8 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     @Query
     List<Note> findByIdIn(List<Long> noteIds);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Note n SET n.isSenderDelete = true WHERE n.id IN :noteIds")
+    int bulkNoteDelete(@Param("noteIds") List<Long> noteIds);
 }

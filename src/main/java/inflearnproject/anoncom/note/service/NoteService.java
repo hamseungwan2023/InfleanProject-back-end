@@ -73,7 +73,7 @@ public class NoteService {
     public void deleteSendNote(NoteDeleteDto noteDto) {
         List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
         List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
-        noteBulkRepository.batchDeleteNotes(noteIds);
+        noteRepository.bulkNoteDelete(noteIds);
     }
 
     public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {

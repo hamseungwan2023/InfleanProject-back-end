@@ -143,8 +143,6 @@ class NoteServiceTest {
         noteDeleteDto.setDeleteNoteIds(collect);
 
         noteService.deleteSendNote(noteDeleteDto);
-        em.flush();
-        em.clear();
         for (Note note : noteRepository.findAll()) {
             assertTrue(note.isSenderDelete());
         }
