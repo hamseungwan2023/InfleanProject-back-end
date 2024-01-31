@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_RE_COMMENT_ERROR;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -23,10 +26,12 @@ public class ReCommentService {
     private final ReCommentRepository reCommentRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    public ReComment addReComment(LoginUserDto userDto, Long commentId, String content){
+
+    public ReComment addReComment(LoginUserDto userDto, Long commentId, String content) {
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         Comment comment = commentRepository.findCommentById(commentId);
         Post post = comment.getPost();
+
         ReComment recomment = ReComment.builder().
                 post(post)
                 .user(user)
@@ -38,7 +43,7 @@ public class ReCommentService {
         return reCommentRepository.save(recomment);
     }
 
-    public void patchComment(LoginUserDto userDto,Long reCommentId,ReqAddReCommentDto reqAddReCommentDto){
+    public void patchComment(LoginUserDto userDto, Long reCommentId, ReqAddReCommentDto reqAddReCommentDto) {
         ReComment reComment = validAndGetReComment(userDto, reCommentId);
         reComment.updateContent(reqAddReCommentDto.getContent());
     }
@@ -50,9 +55,9 @@ public class ReCommentService {
 
     private ReComment validAndGetReComment(LoginUserDto userDto, Long reCommentId) {
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
-        ReComment reComment = reCommentRepository.findById(reCommentId).orElseThrow(() -> new NoReCommentException("해당 댓글은 존재하지 않습니다."));
-        if(!user.equals(reComment.getUser())){
-            throw new NotSameUserException("대댓글을 작성한 사용자가 아니기에 수정할 수 없습니다.");
+        ReComment reComment = reCommentRepository.findById(reCommentId).orElseThrow(() -> new NoReCommentException(NO_RE_COMMENT_ERROR));
+        if (!user.equals(reComment.getUser())) {
+            throw new NotSameUserException(NOT_SAME_USER);
         }
         return reComment;
     }
