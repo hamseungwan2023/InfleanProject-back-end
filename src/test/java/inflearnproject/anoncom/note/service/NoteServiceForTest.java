@@ -28,7 +28,6 @@ public class NoteServiceForTest {
     @Autowired
     private NoteRepository noteRepository;
 
-    //TODO : BATCHSIZE로 나중에 일괄처리 해보기
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
         for (String receiverNickname : noteDto.getReceiverNicknames()) {
@@ -44,9 +43,9 @@ public class NoteServiceForTest {
     public List<Long> deleteSendNote(NoteDeleteDto noteDto) {
         List<Long> deletedList = new ArrayList<>();
         for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try{
+            try {
                 noteSenderService.deleteSendNote(deleteNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 deletedList.add(errorId);
             }
@@ -57,9 +56,9 @@ public class NoteServiceForTest {
     public List<Long> deleteReceiveNote(NoteDeleteDto noteDto) {
         List<Long> deletedList = new ArrayList<>();
         for (Long deleteNoteId : noteDto.getDeleteNoteIds()) {
-            try{
+            try {
                 noteSenderService.deleteReceiveNote(deleteNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 deletedList.add(errorId);
             }
@@ -67,8 +66,8 @@ public class NoteServiceForTest {
         return deletedList;
     }
 
-    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable){
-        return noteDSLRepository.findReceivedNotes(receiverId,cond, pageable);
+    public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable) {
+        return noteDSLRepository.findReceivedNotes(receiverId, cond, pageable);
     }
 
     public Page<NoteSendedShowDto> findSendedNotes(Long senderId, Pageable pageable) {
@@ -78,9 +77,9 @@ public class NoteServiceForTest {
     public List<Long> keepNote(NoteKeepDto noteKeepDto) {
         List<Long> keepList = new ArrayList<>();
         for (Long noteKeepId : noteKeepDto.getNoteKeeps()) {
-            try{
+            try {
                 noteSenderService.keepNote(noteKeepId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 keepList.add(errorId);
             }
@@ -92,9 +91,9 @@ public class NoteServiceForTest {
 
         List<Long> spamList = new ArrayList<>();
         for (Long noteSpamId : noteSpamDto.getSpamNotes()) {
-            try{
-                noteSenderService.spamNote(userId,noteSpamId);
-            }catch (NoSuchNoteException e){
+            try {
+                noteSenderService.spamNote(userId, noteSpamId);
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 spamList.add(errorId);
             }
@@ -113,9 +112,9 @@ public class NoteServiceForTest {
     public List<Long> declareNote(NoteDeclareDto noteDeclareDto) {
         List<Long> declareList = new ArrayList<>();
         for (Long declareNoteId : noteDeclareDto.getDeclareNotes()) {
-            try{
+            try {
                 noteSenderService.declareNote(declareNoteId);
-            }catch (NoSuchNoteException e){
+            } catch (NoSuchNoteException e) {
                 long errorId = Long.parseLong(e.getMessage());
                 declareList.add(errorId);
             }
