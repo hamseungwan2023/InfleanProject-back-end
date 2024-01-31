@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Comment extends BaseTimeEntity{
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,10 +26,11 @@ public class Comment extends BaseTimeEntity{
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(fetch =  FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReComment> reComments = new ArrayList<>();
 
@@ -40,17 +41,18 @@ public class Comment extends BaseTimeEntity{
     private String content;
 
     private boolean deleted; //삭제된 상태면 true, 삭제 안 된 상태면 false
-    public void putUserPost(UserEntity user, Post post){
+
+    public void putUserPost(UserEntity user, Post post) {
         this.user = user;
         this.post = post;
         post.getComments().add(this);
     }
 
-    public void updateContent(String content){
+    public void updateContent(String content) {
         this.content = content;
     }
 
-    public void delete(){
+    public void delete() {
         this.deleted = true;
     }
 
@@ -58,11 +60,11 @@ public class Comment extends BaseTimeEntity{
         return this.user != null && userId.equals(this.user.getId());
     }
 
-    public void addUserLike(){
+    public void addUserLike() {
         userLike++;
     }
 
-    public void addUserDisLike(){
+    public void addUserDisLike() {
         userDisLike++;
     }
 

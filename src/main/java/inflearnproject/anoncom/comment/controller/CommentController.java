@@ -4,9 +4,6 @@ import inflearnproject.anoncom.comment.dto.ReqAddPatchCommentDto;
 import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.comment.service.CommentService;
-import inflearnproject.anoncom.domain.Comment;
-import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.reComment.dto.ResReCommentDto;
 import inflearnproject.anoncom.reComment.repository.ReCommentDSLRepository;
@@ -16,10 +13,8 @@ import inflearnproject.anoncom.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,21 +29,10 @@ public class CommentController {
     private final ReCommentDSLRepository reCommentDSLRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    @PostMapping("/api/commentWrite/{postId}")
-    public ResponseEntity<?> addComment(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId, @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
-        Post post = postRepository.findPostById(postId);
-        UserEntity user = userRepository.findByEmail(userDto.getEmail());
-        Comment comment = Comment.builder()
-                .post(post)
-                .user(user)
-                .userLike(0)
-                .userDisLike(0)
-                .content(reqAddPatchCommentDto.getContent())
-                .reComments(new ArrayList<>())
-                .deleted(false)
-                .build();
-        commentService.saveComment(comment,user,post);
 
+    @PostMapping("/api/commentWrite/{postId}")
+    public ResponseEntity<?> addComment(@IfLogin LoginUserDto userDto, @PathVariable("postId") Long postId, @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto) {
+        commentService.saveComment(userDto, postId, reqAddPatchCommentDto.getContent());
         return ResponseEntity.ok().body("ok");
     }
 
@@ -67,14 +51,14 @@ public class CommentController {
     }
 
     @PatchMapping("/api/commentCorrect/{commentId}")
-    public ResponseEntity<?> patchComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @Valid @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto){
+    public ResponseEntity<?> patchComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId, @Valid @RequestBody ReqAddPatchCommentDto reqAddPatchCommentDto) {
         commentService.updateComment(userDto, commentId, reqAddPatchCommentDto.getContent());
         return ResponseEntity.ok().body("ok");
     }
 
     @DeleteMapping("/api/commentDelete/{commentId}")
-    public ResponseEntity<?> deleteComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId){
-        commentService.deleteComment(userDto,commentId);
+    public ResponseEntity<?> deleteComment(@IfLogin LoginUserDto userDto, @PathVariable("commentId") Long commentId) {
+        commentService.deleteComment(userDto, commentId);
         return ResponseEntity.ok().body("ok");
     }
 }
