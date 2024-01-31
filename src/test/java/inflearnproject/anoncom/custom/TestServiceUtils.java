@@ -77,17 +77,9 @@ public class TestServiceUtils {
     }
 
     public static Comment addComment(CommentService commentService, Post post, UserEntity user) {
-        Comment comment = Comment.builder()
-                .post(post)
-                .user(user)
-                .userLike(0)
-                .userDisLike(0)
-                .content("댓글입니다.")
-                .reComments(new ArrayList<>())
-                .deleted(false)
-                .build();
-        commentService.saveComment(comment, user, post);
-        return comment;
+        String content = "댓글입니다.";
+
+        return commentService.saveComment(buildUserDto(user), post.getId(), content);
     }
 
     public static ReComment addReComment(UserEntity user, Comment comment, ReCommentService reCommentService) {

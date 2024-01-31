@@ -1,11 +1,14 @@
 package inflearnproject.anoncom.reComment.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import inflearnproject.anoncom.domain.ReComment;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class ResReCommentDto {
 
     private Long id; //대댓글 id
@@ -21,9 +24,10 @@ public class ResReCommentDto {
     private LocalDateTime createdAt; //대댓글 작성 날짜
     private String content; //대댓글 내용
     private boolean isDelete;
+
     @QueryProjection
-    public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, boolean writerActive,Long writerId,
-                           String writerNickname, int rank, LocalDateTime createdAt, String content,boolean isDelete) {
+    public ResReCommentDto(Long id, Long parentCommentId, String parentCommentNickname, boolean writerActive, Long writerId,
+                           String writerNickname, int rank, LocalDateTime createdAt, String content, boolean isDelete) {
         this.id = id;
         this.parentCommentId = parentCommentId;
         this.parentCommentNickname = parentCommentNickname;
@@ -34,5 +38,18 @@ public class ResReCommentDto {
         this.createdAt = createdAt;
         this.content = content;
         this.isDelete = isDelete;
+    }
+
+    public ResReCommentDto(ReComment reComment) {
+        this.id = reComment.getId();
+        this.parentCommentId = reComment.getComment().getId();
+        this.parentCommentNickname = reComment.getComment().getUser().getNickname();
+        this.writerActive = reComment.getUser().isActive();
+        this.writerId = reComment.getUser().getId();
+        this.writerNickname = reComment.getUser().getNickname();
+        this.rank = reComment.getUser().getRank();
+        this.createdAt = reComment.getCreatedAt();
+        this.content = reComment.getContent();
+        this.isDelete = reComment.isDeleted();
     }
 }

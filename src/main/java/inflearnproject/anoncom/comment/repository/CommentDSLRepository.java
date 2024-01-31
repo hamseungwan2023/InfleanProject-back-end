@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static inflearnproject.anoncom.domain.QComment.*;
-import static inflearnproject.anoncom.domain.QPost.*;
+import static inflearnproject.anoncom.domain.QComment.comment;
+import static inflearnproject.anoncom.domain.QPost.post;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
@@ -44,11 +44,11 @@ public class CommentDSLRepository {
                 .fetch();
     }
 
-    private BooleanExpression postIdEq(Long postId){
+    private BooleanExpression postIdEq(Long postId) {
         return comment.post.id.eq(postId);
     }
 
-    private BooleanExpression titleEq(String title){
+    private BooleanExpression titleEq(String title) {
         return hasText(title) ? post.title.contains(title) : null;
     }
 }

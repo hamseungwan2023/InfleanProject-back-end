@@ -1,8 +1,6 @@
 package inflearnproject.anoncom.reComment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import inflearnproject.anoncom.domain.QComment;
-import inflearnproject.anoncom.domain.QReComment;
 import inflearnproject.anoncom.reComment.dto.QResReCommentDto;
 import inflearnproject.anoncom.reComment.dto.ResReCommentDto;
 import jakarta.persistence.EntityManager;
@@ -12,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static inflearnproject.anoncom.domain.QComment.*;
-import static inflearnproject.anoncom.domain.QReComment.*;
+import static inflearnproject.anoncom.domain.QReComment.reComment;
 
 @Repository
 public class ReCommentDSLRepository {

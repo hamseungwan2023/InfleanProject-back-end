@@ -5,7 +5,6 @@ import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.comment.service.CommentService;
 import inflearnproject.anoncom.post.repository.PostRepository;
-import inflearnproject.anoncom.reComment.dto.ResReCommentDto;
 import inflearnproject.anoncom.reComment.repository.ReCommentDSLRepository;
 import inflearnproject.anoncom.security.jwt.util.IfLogin;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
@@ -16,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,14 +36,6 @@ public class CommentController {
     @GetMapping("/api/commentList/{postId}")
     public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId) {
         List<ResCommentDto> comments = commentService.findComments(postId);
-        List<Long> commentIds = comments.stream().map(ResCommentDto::getId).collect(Collectors.toList());
-
-        // 모든 대댓글을 한 번에 조회
-        Map<Long, List<ResReCommentDto>> reCommentsMap = reCommentDSLRepository.findReCommentsByPost(postId, commentIds);
-
-        // 각 댓글에 대댓글 매핑
-        comments.forEach(comment -> comment.setReplyCommentList(reCommentsMap.get(comment.getId())));
-
         return ResponseEntity.ok().body(comments);
     }
 
