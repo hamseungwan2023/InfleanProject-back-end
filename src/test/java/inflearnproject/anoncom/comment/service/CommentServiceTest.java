@@ -126,7 +126,7 @@ class CommentServiceTest {
             }
         }
         LocalDateTime before2 = LocalDateTime.now();
-        commentService.findComments2(post.getId());
+        commentService.findCommentsBatch(post.getId());
         LocalDateTime after2 = LocalDateTime.now();
 
         Duration duration2 = Duration.between(before2, after2);

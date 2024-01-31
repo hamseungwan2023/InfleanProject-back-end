@@ -35,7 +35,7 @@ public class CommentController {
 
     @GetMapping("/api/commentList/{postId}")
     public ResponseEntity<List<ResCommentDto>> showComments(@PathVariable("postId") Long postId) {
-        List<ResCommentDto> comments = commentService.findComments2(postId);
+        List<ResCommentDto> comments = commentService.findCommentsBatch(postId);
         return ResponseEntity.ok().body(comments);
     }
 

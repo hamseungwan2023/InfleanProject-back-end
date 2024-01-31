@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_COMMENT_ERROR;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -76,17 +79,17 @@ public class CommentService {
     private Comment validAndGetComment(LoginUserDto userDto, Long commentId) {
         Comment comment = commentRepository.findCommentById(commentId);
         if (comment == null) {
-            throw new NoCommentException("해당 댓글이 존재하지 않습니다.");
+            throw new NoCommentException(NO_COMMENT_ERROR);
         }
 
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
         if (!comment.getUser().equals(user)) {
-            throw new NotSameUserException("동일한 유저가 아니라서 접근할 수 없습니다.");
+            throw new NotSameUserException(NOT_SAME_USER);
         }
         return comment;
     }
 
-    public List<ResCommentDto> findComments2(Long postId) {
+    public List<ResCommentDto> findCommentsBatch(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
         return comments.stream().map(this::convertToResCommentDto).collect(Collectors.toList());
     }
