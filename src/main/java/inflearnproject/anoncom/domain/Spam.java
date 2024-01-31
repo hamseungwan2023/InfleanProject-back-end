@@ -19,10 +19,10 @@ public class Spam {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dedclaring_id")
+    @JoinColumn(name = "declaring_id")
     private UserEntity declaring;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dedclared_id")
+    @JoinColumn(name = "declared_id")
     private UserEntity declared;
 }

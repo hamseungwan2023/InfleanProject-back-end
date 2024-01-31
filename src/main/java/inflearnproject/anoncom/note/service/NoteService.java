@@ -9,6 +9,7 @@ import inflearnproject.anoncom.note.repository.NoteBulkRepository;
 import inflearnproject.anoncom.note.repository.NoteDSLRepository;
 import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.spam.repository.SpamBulkRepository;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,7 @@ public class NoteService {
     private final UserRepository userRepository;
     private final NoteBulkRepository noteBulkRepository;
     private final SpamRepository spamRepository;
+    private final SpamBulkRepository spamBulkRepository;
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -112,6 +114,8 @@ public class NoteService {
         List<Spam> existingSpams = spamRepository.findByDeclaringAndDeclaredIds(declaring.getId(), senderIds);
         //스팸처리된 유저들의 id set
         Set<Long> alreadyDeclaredSenderIds = existingSpams.stream().map(spam -> spam.getDeclared().getId()).collect(Collectors.toSet());
+        //spamTrue로 바꿔줄 리스트
+        List<Long> spamToTrues = new ArrayList<>();
 
         // 새로운 스팸 선언을 저장할 리스트
         List<Spam> spamsToSave = new ArrayList<>();
@@ -125,11 +129,13 @@ public class NoteService {
                         .build();
                 spamsToSave.add(spam);
             }
-            note.spamTrue(); // 노트를 스팸으로 표시합니다.
+            spamToTrues.add(note.getId()); // 노트를 스팸으로 표시합니다.
         }
 
         // 새로운 스팸 선언을 데이터베이스에 저장합니다.
-        spamRepository.saveAll(spamsToSave);
+        spamBulkRepository.batchInsertSpams(spamsToSave);
+        //쪽지들의 spam true로 바꿔준다
+        spamRepository.updateSpamTrue(spamToTrues);
     }
 
     public Note findById(Long noteId) {

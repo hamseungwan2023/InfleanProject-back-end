@@ -3,6 +3,7 @@ package inflearnproject.anoncom.spam.repository;
 import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,4 +16,8 @@ public interface SpamRepository extends JpaRepository<Spam, Long> {
     List<Spam> findByDeclaringAndDeclaredIds(@Param("declaringId") Long declaringId, @Param("declaredIds") Set<Long> declaredIds);
 
     List<Spam> findAllByDeclaring(UserEntity declaring);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Note n set n.isSpam = true where n.id in :spamToTrues")
+    void updateSpamTrue(@Param("spamToTrues") List<Long> spamToTrues);
 }
