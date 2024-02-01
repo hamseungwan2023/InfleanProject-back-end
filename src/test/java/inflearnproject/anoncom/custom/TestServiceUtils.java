@@ -6,6 +6,7 @@ import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.ReComment;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.PostCategory;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.service.PostService;
 import inflearnproject.anoncom.postReaction.service.PostReactionService;
@@ -69,7 +70,7 @@ public class TestServiceUtils {
     public static Post addPost(UserEntity user, PostService postService) {
         Post post = Post.builder()
                 .title("제목")
-                .category("카테고리")
+                .category(PostCategory.LOL)
                 .content("컨텐츠123123123")
                 .userLike(0)
                 .userDisLike(0)

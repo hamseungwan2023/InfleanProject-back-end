@@ -4,6 +4,7 @@ import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.enumType.LocationType;
+import inflearnproject.anoncom.enumType.PostCategory;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
@@ -54,7 +55,7 @@ class PostServiceTest {
 
         Post findPost = postRepository.findById(post.getId()).get();
         assertEquals(post.getLocation(), user.getLocation());
-        assertEquals(post.getCategory(), "카테고리");
+        assertEquals(post.getCategory(), PostCategory.LOL);
         assertEquals(post.getContent(), "컨텐츠123123123");
         assertEquals(post.getTitle(), "제목");
         assertNotNull(postRepository.findById(findPost.getId()));
@@ -66,12 +67,12 @@ class PostServiceTest {
     @DisplayName("게시글 수정이 잘 되나 -> 제목 카테고리 내용 세 가지 다")
     void post_update() {
         Long postId = post.getId();
-        ReqAddPostDto reqAddPostDto = new ReqAddPostDto("제목2", "카테고리2", "컨텐츠123123123");
+        ReqAddPostDto reqAddPostDto = new ReqAddPostDto("제목2", PostCategory.OVERWATCH, "컨텐츠123123123");
         LoginUserDto loginUserDto = buildUserDto(user);
         postService.update(loginUserDto, postId, reqAddPostDto);
 
         assertEquals(post.getContent(), "컨텐츠123123123");
-        assertEquals(post.getCategory(), "카테고리2");
+        assertEquals(post.getCategory(), PostCategory.OVERWATCH);
         assertEquals(post.getTitle(), "제목2");
     }
 
@@ -112,7 +113,7 @@ class PostServiceTest {
             String title = i % 5 == 0 ? "제목1" : "제목0";
             Post post2 = Post.builder()
                     .title(title)
-                    .category("카테고리")
+                    .category(PostCategory.LOL)
                     .content("컨텐츠123123123")
                     .userLike(0)
                     .userDisLike(0)

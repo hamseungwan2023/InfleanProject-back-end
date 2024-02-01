@@ -6,6 +6,7 @@ import inflearnproject.anoncom.custom.MockMvcUTF;
 import inflearnproject.anoncom.custom.TestControllerUtils;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.PostCategory;
 import inflearnproject.anoncom.post.dto.PagingPost;
 import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import inflearnproject.anoncom.post.dto.ResPostDetailDto;
@@ -63,7 +64,7 @@ class PostControllerTest {
     @DisplayName("게시글 추가가 잘 됐나 확인")
     @WithMockUser(username = "username1")
     void addPost_success() throws Exception {
-        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리\",\"location\":\"SEOUL\"}";
+        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"LOL\",\"location\":\"SEOUL\"}";
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/postWrite")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +75,7 @@ class PostControllerTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ResAddPostDto dto = objectMapper.readValue(contentAsString, new TypeReference<ResAddPostDto>() {
         });
-        assertEquals(dto.getCategory(), "카테고리");
+        assertEquals(dto.getCategory(), PostCategory.LOL);
         assertEquals(dto.getContent(), "컨텐츠123123123");
         assertEquals(dto.getTitle(), "제목");
         assertNotNull(postRepository.findPostById(dto.getId()));
@@ -83,7 +84,7 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 작성한 사람이 게시글 수정을 요청하면 처리가 잘 됐나")
     void post_update() throws Exception {
-        String jsonRequest = "{\"title\":\"제목2\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리2\",\"location\":\"SEOUL\"}";
+        String jsonRequest = "{\"title\":\"제목2\", \"content\":\"컨텐츠123123123\", \"category\":\"OVERWATCH\",\"location\":\"SEOUL\"}";
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/postCorrect/" + postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
@@ -94,7 +95,7 @@ class PostControllerTest {
         Post post = postRepository.findById(postId).get();
         assertEquals(post.getTitle(), "제목2");
         assertEquals(post.getContent(), "컨텐츠123123123");
-        assertEquals(post.getCategory(), "카테고리2");
+        assertEquals(post.getCategory(), PostCategory.OVERWATCH);
     }
 
 
@@ -142,7 +143,7 @@ class PostControllerTest {
         }
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/postList")
-                        .param("category", "카테고리")
+                        .param("category", "LOL")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
@@ -160,12 +161,12 @@ class PostControllerTest {
     }
 
     private void addPost() throws Exception {
-        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리\"}";
+        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"LOL\"}";
         postId = TestControllerUtils.addPostReturnPostId(mockMvc, objectMapper, accessToken, jsonRequest);
     }
 
     private void addPostDifferentCategory() throws Exception {
-        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리2\"}";
+        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"OVERWATCH\"}";
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/postWrite")
                         .contentType(MediaType.APPLICATION_JSON)
