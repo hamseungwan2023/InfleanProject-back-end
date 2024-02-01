@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SpamUsersDto {
 
-    private Long userId;
+    private Long id;
     private String nickname;
 
 }

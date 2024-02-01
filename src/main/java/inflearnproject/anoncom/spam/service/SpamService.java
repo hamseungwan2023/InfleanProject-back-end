@@ -2,7 +2,6 @@ package inflearnproject.anoncom.spam.service;
 
 import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
-import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
 import inflearnproject.anoncom.user.dto.DeleteSpamDto;
 import inflearnproject.anoncom.user.repository.UserRepository;
@@ -20,24 +19,27 @@ public class SpamService {
 
     private final UserRepository userRepository;
     private final SpamRepository spamRepository;
-    private final SpamUserService spamUserService;
 
     public List<Spam> searchSpamUser(Long memberId) {
         UserEntity declaring = userRepository.findById(memberId).get();
         return spamRepository.findAllByDeclaring(declaring);
     }
 
-    public List<Long> deleteSpamNote(DeleteSpamDto deleteSpamDto) {
+    public List<Long> deleteSpamNote(Long userId, DeleteSpamDto deleteSpamDto) {
 
-        List<Long> deleteSpams = new ArrayList<>();
-        for (Long deleteSpamId : deleteSpamDto.getDeleteSpamIds()) {
-            try {
-                spamUserService.deleteSpam(deleteSpamId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                deleteSpams.add(errorId);
+        List<Spam> deleteSpams = spamRepository.findByIn(userId, deleteSpamDto.getDeleteSpamIds());
+
+        List<Long> matchingNoteIds = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
+        for (Spam spam : deleteSpams) {
+            if (spam.getDeclaring().getId().equals(userId)) {
+                matchingNoteIds.add(spam.getId());
+            } else {
+                nonMatchingNoteIds.add(spam.getId());
             }
         }
-        return deleteSpams;
+        spamRepository.deleteSpams(userId, matchingNoteIds);
+        return nonMatchingNoteIds;
     }
 }

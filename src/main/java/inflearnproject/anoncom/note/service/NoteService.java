@@ -169,23 +169,20 @@ public class NoteService {
             }
         }
 
-        // 스팸 선언된 노트의 발신자 ID set
         Set<Long> senderIds = matchingNotes.stream().map(note -> note.getSender().getId()).collect(Collectors.toSet());
 
-        // 이미 스팸으로 선언된 (선언자, 발신자) 쌍을 찾습니다.
         List<Spam> existingSpams = spamRepository.findByDeclaringAndDeclaredIds(declaring.getId(), senderIds);
-        //스팸처리된 유저들의 id set
+
         Set<Long> alreadyDeclaredSenderIds = existingSpams.stream().map(spam -> spam.getDeclared().getId()).collect(Collectors.toSet());
-        //spamTrue로 바꿔줄 리스트
+
         List<Long> spamToTrues = new ArrayList<>();
 
-        // 새로운 스팸 선언을 저장할 리스트
+
         List<Spam> spamsToSave = new ArrayList<>();
         addNewSpamsAndToTrue(matchingNotes, alreadyDeclaredSenderIds, declaring, spamsToSave, spamToTrues);
 
-        // 새로운 스팸 선언을 데이터베이스에 저장합니다.
         spamBulkRepository.batchInsertSpams(spamsToSave);
-        //쪽지들의 spam true로 바꿔준다
+
         noteRepository.updateSpamTrue(spamToTrues);
 
         return nonMatchingNoteIds;
@@ -194,15 +191,20 @@ public class NoteService {
     private static void addNewSpamsAndToTrue(List<Note> matchingNotes, Set<Long> alreadyDeclaredSenderIds, UserEntity declaring, List<Spam> spamsToSave, List<Long> spamToTrues) {
         for (Note note : matchingNotes) {
             UserEntity declared = note.getSender();
-            // 이미 스팸으로 선언되지 않은 경우에만 새 스팸 선언을 추가합니다.
+            Long noteId = note.getId();
+
             if (!alreadyDeclaredSenderIds.contains(declared.getId())) {
                 Spam spam = Spam.builder()
                         .declaring(declaring)
                         .declared(declared)
                         .build();
                 spamsToSave.add(spam);
+                alreadyDeclaredSenderIds.add(declared.getId());
             }
-            spamToTrues.add(note.getId()); // 노트를 스팸으로 표시합니다.
+
+            if (!note.isSpam()) {
+                spamToTrues.add(noteId);
+            }
         }
     }
 

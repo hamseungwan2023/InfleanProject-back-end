@@ -136,13 +136,13 @@ public class UserController {
     @GetMapping("/api/spamUsers")
     public ResponseEntity<List<SpamUsersDto>> searchSpamUsers(@IfLogin LoginUserDto userDto) {
         List<Spam> spams = spamService.searchSpamUser(userDto.getMemberId());
-        List<SpamUsersDto> list = spams.stream().map(spam -> new SpamUsersDto(spam.getDeclared().getId(), spam.getDeclared().getNickname())).toList();
+        List<SpamUsersDto> list = spams.stream().map(spam -> new SpamUsersDto(spam.getId(), spam.getDeclared().getNickname())).toList();
         return ResponseEntity.ok().body(list);
     }
 
     @DeleteMapping("/api/spamUser")
-    public ResponseEntity<List<Long>> DeleteSpamUsers(@RequestBody DeleteSpamDto deleteSpamDto) {
-        List<Long> fails = spamService.deleteSpamNote(deleteSpamDto);
+    public ResponseEntity<List<Long>> DeleteSpamUsers(@IfLogin LoginUserDto userDto, @RequestBody DeleteSpamDto deleteSpamDto) {
+        List<Long> fails = spamService.deleteSpamNote(userDto.getMemberId(), deleteSpamDto);
         return ResponseEntity.ok().body(fails);
     }
 
