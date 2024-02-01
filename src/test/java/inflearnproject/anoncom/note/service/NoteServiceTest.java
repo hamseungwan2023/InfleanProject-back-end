@@ -43,12 +43,10 @@ class NoteServiceTest {
     NoteService noteService;
     @Autowired
     NoteRepository noteRepository;
-    @Autowired
-    NoteSenderService noteSenderService;
+
     @Autowired
     EntityManager em;
-    @Autowired
-    NoteServiceForTest noteServiceForTest;
+
     @Autowired
     DeclareNoteRepository declareNoteRepository;
     @Autowired
@@ -66,14 +64,10 @@ class NoteServiceTest {
         noteAddDto.setContent("쪽지");
         noteAddDto.setReceiverNicknames(List.of("nickname2"));
 
-        noteServiceForTest.addNote(dto, noteAddDto);
+        noteService.addNote(dto, noteAddDto);
     }
 
-    /**
-     * @Transactional(propagation = Propagation.REQUIRES_NEW)를 걸어놓으면 변경사항을 em.flush()를 통해서 트랜잭션을 db에 전송해도
-     * 아직 커밋되지 않은 상태기 때문에 새로운 트랜잭션은 이 db의 변화를 못 볼 수도 있기 때문에 에러가 발생할 수 있음
-     * 이럴땐 그냥 단순한 @Transactional을 걸어둔 테스트만을 위한 메서드를 하나 만들어둔다.
-     */
+
     @Test
     @DisplayName("쪽지가 대상한테 잘 보내졌는지 확인")
     void add_note_success() {
@@ -83,7 +77,7 @@ class NoteServiceTest {
         noteAddDto.setContent("쪽지");
         noteAddDto.setReceiverNicknames(List.of("nickname2"));
 
-        noteServiceForTest.addNote(dto, noteAddDto);
+        noteService.addNote(dto, noteAddDto);
         assertEquals(noteRepository.findAll().size(), 2);
     }
 
@@ -105,7 +99,7 @@ class NoteServiceTest {
         noteAddDto.setReceiverNicknames(list);
 
         LocalDateTime before = LocalDateTime.now();
-        noteServiceForTest.addNote(dto, noteAddDto);
+        noteService.addNote(dto, noteAddDto);
         LocalDateTime after = LocalDateTime.now();
 
         Duration duration = Duration.between(before, after);
@@ -159,24 +153,10 @@ class NoteServiceTest {
         deleteNoteIds.add(noteId);
         noteDeleteDto.setDeleteNoteIds(deleteNoteIds);
 
-        noteServiceForTest.deleteReceiveNote(noteDeleteDto);
+        noteService.deleteReceiveNote(noteDeleteDto);
         assertTrue(noteRepository.findAll().get(0).isReceiverDelete());
     }
 
-//    @Test
-//    @DisplayName("받은 사람이 쪽지를 스팸하면 isReceiverDelete라는 필드가 true가 되나")
-//    void spam_note() {
-//
-//        Long noteId = noteRepository.findAll().get(0).getId();
-//
-//        NoteSpamDto noteSpamDto = new NoteSpamDto();
-//        List<Long> spamIds = new ArrayList<>();
-//        spamIds.add(noteId);
-//        noteSpamDto.setSpamNotes(spamIds);
-//
-//        noteServiceForTest.spamNote(user.getId(), noteSpamDto);
-//        assertTrue(noteRepository.findAll().get(0).isSpam());
-//    }
 
     @Test
     @DisplayName("받은 사람이 쪽지를 신고하면 isReceiverDelete라는 필드가 true가 되나")
@@ -189,7 +169,7 @@ class NoteServiceTest {
         declareIds.add(noteId);
         noteDeclareDto.setDeclareNotes(declareIds);
 
-        noteServiceForTest.declareNote(noteDeclareDto);
+        noteService.declareNote(noteDeclareDto);
         assertTrue(noteRepository.findAll().get(0).isDeclaration());
         assertEquals(declareNoteRepository.findAll().size(), 1);
     }
