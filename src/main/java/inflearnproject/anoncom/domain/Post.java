@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.domain;
 
 import inflearnproject.anoncom.enumType.LocationType;
+import inflearnproject.anoncom.enumType.PostCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +23,8 @@ public class Post extends BaseTimeEntity {
 
     private String title;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;
 
     private String content;
 
@@ -63,7 +65,7 @@ public class Post extends BaseTimeEntity {
         user.getPosts().add(this);
     }
 
-    public void updateValues(String title, String category, String content) {
+    public void updateValues(String title, PostCategory category, String content) {
         this.title = title;
         this.category = category;
         this.content = content;

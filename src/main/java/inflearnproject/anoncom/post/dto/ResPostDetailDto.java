@@ -2,6 +2,7 @@ package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.enumType.LocationType;
+import inflearnproject.anoncom.enumType.PostCategory;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,7 @@ public class ResPostDetailDto {
 
     private Long id;
     private String title;
-    private String category;
+    private PostCategory category;
 
     private LocalDateTime createdAt;
     private Long writeId;

@@ -1,34 +1,24 @@
 package inflearnproject.anoncom.post.repository;
 
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.QPost;
-import inflearnproject.anoncom.domain.QUserEntity;
-import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
+import inflearnproject.anoncom.enumType.PostCategory;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
-import inflearnproject.anoncom.post.dto.QResAddPostDto;
-import inflearnproject.anoncom.post.dto.ResAddPostDto;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 import static inflearnproject.anoncom.domain.QPost.post;
-import static inflearnproject.anoncom.domain.QUserEntity.*;
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 public class PostDSLRepository {
@@ -45,7 +35,7 @@ public class PostDSLRepository {
     }
 
 
-    public Page<Post> findPostsByCondition(PostSearchCondition cond, Pageable pageable){
+    public Page<Post> findPostsByCondition(PostSearchCondition cond, Pageable pageable) {
         JPAQuery<Post> query = queryFactory
                 .select(post)
                 .from(post)
@@ -59,7 +49,7 @@ public class PostDSLRepository {
                         titleContentEq(cond.getTitleContent())
                 );
 
-        if(hasText(cond.getOrderBy())){
+        if (hasText(cond.getOrderBy())) {
             if (cond.getOrderBy().equals(ORDER_BY_CREATED_AT)) {
                 query.orderBy(post.createdAt.desc());
             } else if (cond.getOrderBy().equals(ORDER_BY_FINAL_LIKE)) {
@@ -89,23 +79,23 @@ public class PostDSLRepository {
         return new PageImpl<>(posts, pageable, total);
     }
 
-    private BooleanExpression titleEq(String title){
-        return hasText(title) ? post.title.contains(title) :  Expressions.asBoolean(true).isTrue();
+    private BooleanExpression titleEq(String title) {
+        return hasText(title) ? post.title.contains(title) : Expressions.asBoolean(true).isTrue();
     }
 
-    private BooleanExpression categoryEq(String category){
-        return hasText(category) ? post.category.eq(category) : null;
+    private BooleanExpression categoryEq(PostCategory category) {
+        return category != null ? post.category.eq(category) : null;
     }
 
-    private BooleanExpression contentEq(String content){
-        return hasText(content) ? post.content.contains(content) :  Expressions.asBoolean(true).isTrue();
+    private BooleanExpression contentEq(String content) {
+        return hasText(content) ? post.content.contains(content) : Expressions.asBoolean(true).isTrue();
     }
 
-    private BooleanExpression locationEq(String location){
-        return hasText(location) ? post.location.eq(location) : null;
+    private BooleanExpression locationEq(LocationType location) {
+        return location != null ? post.location.eq(location) : null;
     }
 
-    private BooleanExpression titleContentEq(String titleContent){
+    private BooleanExpression titleContentEq(String titleContent) {
         return titleEq(titleContent).or(contentEq(titleContent));
     }
 }

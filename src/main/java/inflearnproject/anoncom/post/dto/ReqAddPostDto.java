@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
+import inflearnproject.anoncom.enumType.PostCategory;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class ReqAddPostDto {
     private String title;
 
     @NotNull
-    private String category;
+    private PostCategory category;
 
     @Length(min = 10)
     private String content;

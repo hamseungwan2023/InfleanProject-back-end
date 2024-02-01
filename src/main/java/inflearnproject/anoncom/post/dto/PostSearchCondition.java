@@ -1,12 +1,14 @@
 package inflearnproject.anoncom.post.dto;
 
+import inflearnproject.anoncom.enumType.LocationType;
+import inflearnproject.anoncom.enumType.PostCategory;
 import inflearnproject.anoncom.user.util.ConditionalNotBlank;
 import lombok.Data;
 
 @Data
 public class PostSearchCondition {
 
-    private String category;
+    private PostCategory category;
 
     @ConditionalNotBlank(min = 2)
     private String content;
@@ -14,7 +16,7 @@ public class PostSearchCondition {
     @ConditionalNotBlank(min = 2)
     private String title;
 
-    private String location;
+    private LocationType location;
 
     @ConditionalNotBlank(min = 2)
     private String titleContent;
