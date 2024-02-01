@@ -178,6 +178,17 @@ public class NoteService {
 
         // 새로운 스팸 선언을 저장할 리스트
         List<Spam> spamsToSave = new ArrayList<>();
+        addNewSpamsAndToTrue(matchingNotes, alreadyDeclaredSenderIds, declaring, spamsToSave, spamToTrues);
+
+        // 새로운 스팸 선언을 데이터베이스에 저장합니다.
+        spamBulkRepository.batchInsertSpams(spamsToSave);
+        //쪽지들의 spam true로 바꿔준다
+        noteRepository.updateSpamTrue(spamToTrues);
+
+        return nonMatchingNoteIds;
+    }
+
+    private static void addNewSpamsAndToTrue(List<Note> matchingNotes, Set<Long> alreadyDeclaredSenderIds, UserEntity declaring, List<Spam> spamsToSave, List<Long> spamToTrues) {
         for (Note note : matchingNotes) {
             UserEntity declared = note.getSender();
             // 이미 스팸으로 선언되지 않은 경우에만 새 스팸 선언을 추가합니다.
@@ -190,13 +201,6 @@ public class NoteService {
             }
             spamToTrues.add(note.getId()); // 노트를 스팸으로 표시합니다.
         }
-
-        // 새로운 스팸 선언을 데이터베이스에 저장합니다.
-        spamBulkRepository.batchInsertSpams(spamsToSave);
-        //쪽지들의 spam true로 바꿔준다
-        noteRepository.updateSpamTrue(spamToTrues);
-
-        return nonMatchingNoteIds;
     }
 
     public Note findById(Long userId, Long noteId) {
@@ -223,8 +227,14 @@ public class NoteService {
             }
         }
         noteRepository.updateDeclareTrue(matchingNoteIds);
-        List<Note> validNotes = declareNotes.stream().filter(note -> note.getReceiver().getId().equals(userId)).toList();
         List<Long> alreadyDeclareExists = declareNoteRepository.findByNoteId(userId);
+        insertDeclareNotes(userId, declareNotes, alreadyDeclareExists);
+
+        return nonMatchingNoteIds;
+    }
+
+    private void insertDeclareNotes(Long userId, List<Note> declareNotes, List<Long> alreadyDeclareExists) {
+        List<Note> validNotes = declareNotes.stream().filter(note -> note.getReceiver().getId().equals(userId)).toList();
         List<DeclareNote> createdDeclareNotes = new ArrayList<>();
         for (Note note : validNotes) {
             DeclareNote declareNote = DeclareNote.builder()
@@ -236,7 +246,5 @@ public class NoteService {
             }
         }
         declareBulkRepository.batchInsertNotes(createdDeclareNotes);
-
-        return nonMatchingNoteIds;
     }
 }
