@@ -2,6 +2,7 @@ package inflearnproject.anoncom.post.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import inflearnproject.anoncom.domain.Post;
+import inflearnproject.anoncom.enumType.LocationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class ResAddPostDto {
     private Long userId;
     private int finalLike;
     private String content;
-    private String location;
+    private LocationType location;
 
     public static ResAddPostDto buildResPostDto(Long userId, Post post) {
         ResAddPostDto dto = ResAddPostDto.builder()

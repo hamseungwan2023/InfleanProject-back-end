@@ -1,8 +1,7 @@
 package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.UserEntity;
-import lombok.Builder;
+import inflearnproject.anoncom.enumType.LocationType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,8 +28,9 @@ public class ResPostDetailDto {
 
     private String content;
     private int contentCount;
-    private String location;
-    public ResPostDetailDto (Post post){
+    private LocationType location;
+
+    public ResPostDetailDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.category = post.getCategory();

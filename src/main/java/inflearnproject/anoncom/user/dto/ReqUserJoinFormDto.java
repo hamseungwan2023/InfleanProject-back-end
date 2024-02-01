@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.user.dto;
 
+import inflearnproject.anoncom.enumType.LocationType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,6 @@ public class ReqUserJoinFormDto {
     @Length(max = 50)
     private String info;
 
-    private String location;
+    private LocationType location;
 
 }

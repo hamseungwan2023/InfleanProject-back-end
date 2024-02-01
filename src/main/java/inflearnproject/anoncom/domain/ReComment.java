@@ -1,6 +1,5 @@
 package inflearnproject.anoncom.domain;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +22,7 @@ public class ReComment extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(fetch =  FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
@@ -35,22 +34,16 @@ public class ReComment extends BaseTimeEntity {
 
     private boolean deleted; //삭제된 상태면 true, 삭제 안 된 상태면 false
 
-    public void setReCommentInfo(UserEntity user, Post post, Comment comment){
-        this.user = user;
-        this.post = post;
-        this.comment = comment;
-    }
-
-    public void addComment(Comment comment){
+    public void addComment(Comment comment) {
         this.comment = comment;
         comment.getReComments().add(this);
     }
 
-    public void updateContent(String content){
+    public void updateContent(String content) {
         this.content = content;
     }
 
-    public void delete(){
+    public void delete() {
         this.deleted = true;
     }
 

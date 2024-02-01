@@ -3,6 +3,7 @@ package inflearnproject.anoncom.post.service;
 import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
 import inflearnproject.anoncom.post.dto.PostSearchCondition;
 import inflearnproject.anoncom.post.dto.ReqAddPostDto;
 import inflearnproject.anoncom.post.repository.PostRepository;
@@ -92,7 +93,7 @@ class PostServiceTest {
                 .nickname("nickname2")
                 .password("password2")
                 .roles(new HashSet<>())
-                .location("seoul")
+                .location(LocationType.SEOUL)
                 .isActive(true)
                 .posts(new ArrayList<>())
                 .build();

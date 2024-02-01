@@ -64,7 +64,7 @@ class UserControllerTest {
     @BeforeEach
     void before() throws Exception {
         // JSON 데이터를 문자열로 준비
-        String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        String jsonRequest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, jsonRequest);
     }
 

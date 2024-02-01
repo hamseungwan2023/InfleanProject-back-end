@@ -1,6 +1,6 @@
 package inflearnproject.anoncom.domain;
 
-import inflearnproject.anoncom.user.dto.ReqUserJoinFormDto;
+import inflearnproject.anoncom.enumType.LocationType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,7 +36,8 @@ public class UserEntity extends BaseTimeEntity {
     private String password;
 
     @Column(nullable = false)
-    private String location;
+    @Enumerated(EnumType.STRING)
+    private LocationType location;
 
     private String info;
 
@@ -76,16 +77,6 @@ public class UserEntity extends BaseTimeEntity {
     private LocalDateTime blockUntil;
 
     private Boolean isBlocked;
-
-    public UserEntity(ReqUserJoinFormDto reqUserJoinFormDto) {
-        this.nickname = reqUserJoinFormDto.getNickname();
-        this.username = reqUserJoinFormDto.getUsername();
-        this.password = reqUserJoinFormDto.getPassword();
-        this.email = reqUserJoinFormDto.getEmail();
-        this.location = reqUserJoinFormDto.getLocation();
-        this.info = reqUserJoinFormDto.getInfo();
-        this.isActive = true;
-    }
 
     public void changeToBCryptPassword(String bcryptPassword) {
         this.password = bcryptPassword;

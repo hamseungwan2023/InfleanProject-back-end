@@ -1,11 +1,10 @@
 package inflearnproject.anoncom.post.dto;
 
 import inflearnproject.anoncom.domain.Post;
-import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,8 +21,9 @@ public class ResPostDto {
     private int rank;
     private int finalLike;
     private int contentCount;
-    private String location;
-    public ResPostDto(Post post){
+    private LocationType location;
+
+    public ResPostDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.category = post.getCategory();

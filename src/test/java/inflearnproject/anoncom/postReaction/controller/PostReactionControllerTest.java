@@ -52,7 +52,7 @@ class PostReactionControllerTest {
 
     @BeforeEach
     void before() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
@@ -130,7 +130,7 @@ class PostReactionControllerTest {
 
 
     private void loginUser2() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"seoul\"}";
+        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username2\", \"password\":\"password2\"}";

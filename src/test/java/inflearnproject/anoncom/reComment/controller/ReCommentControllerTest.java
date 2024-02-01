@@ -51,7 +51,7 @@ class ReCommentControllerTest {
 
     @BeforeEach
     void before() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
@@ -92,7 +92,7 @@ class ReCommentControllerTest {
     @Test
     @DisplayName("대댓글을 단 본인이 아닌 다른 사용자가 대댓글의 수정을 요청할 경우 에러가 나는지 확인")
     void update_reComment_fail() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"seoul\"}";
+        String signupReQuest = "{\"nickname\":\"nickname2\", \"username\":\"username2\", \"password\":\"password2\", \"email\":\"2@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, signupReQuest);
 
         String loginRequest = "{\"username\":\"username2\", \"password\":\"password2\"}";

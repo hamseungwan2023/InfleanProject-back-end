@@ -16,6 +16,8 @@ import inflearnproject.anoncom.user.service.UserService;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static inflearnproject.anoncom.enumType.LocationType.SEOUL;
+
 public class TestServiceUtils {
 
     public static LoginUserDto buildUserDto(UserEntity user) {
@@ -41,7 +43,7 @@ public class TestServiceUtils {
                 .nickname("nickname")
                 .password("password")
                 .roles(new HashSet<>())
-                .location("seoul")
+                .location(SEOUL)
                 .isActive(true)
                 .posts(new ArrayList<>())
                 .build();
@@ -56,7 +58,7 @@ public class TestServiceUtils {
                 .nickname("nickname" + i)
                 .password("password")
                 .roles(new HashSet<>())
-                .location("seoul")
+                .location(SEOUL)
                 .isActive(true)
                 .posts(new ArrayList<>())
                 .build();

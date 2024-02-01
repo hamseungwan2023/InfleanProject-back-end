@@ -6,6 +6,7 @@ import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.ReComment;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
 import inflearnproject.anoncom.postReaction.exception.NotIncreaseLikeSelfException;
@@ -24,8 +25,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static inflearnproject.anoncom.custom.TestServiceUtils.*;
-import static inflearnproject.anoncom.custom.TestServiceUtils.addReComment;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -54,43 +55,44 @@ class PostReactionServiceTest {
     private Post post;
     private Comment comment;
     private ReComment recomment;
+
     @BeforeEach
     void addUserPost() {
         user = addUser(userService);
-        post = addPost(user,postService);
-        comment = addComment(commentService,post,user);
-        recomment = addReComment(user,comment,reCommentService);
+        post = addPost(user, postService);
+        comment = addComment(commentService, post, user);
+        recomment = addReComment(user, comment, reCommentService);
     }
 
     @Test
     @DisplayName("게시글 작성한 본인이 아닌 다른 사용자가 게시글을 좋아요 할 시 게시글의 userLike 필드가 1 증가한다")
-    void increasePostReaction_success(){
+    void increasePostReaction_success() {
         UserEntity user2 = signUpUser2();
-        increasePostReaction(postReactionService,user2.getId(),post.getId());
-        assertEquals(post.getUserLike(),1);
-        assertEquals(post.getFinalLike(),1);
+        increasePostReaction(postReactionService, user2.getId(), post.getId());
+        assertEquals(post.getUserLike(), 1);
+        assertEquals(post.getFinalLike(), 1);
     }
 
     @Test
     @DisplayName("자신이 작성한 게시글에 좋아요를 누를 시 에러가 발생")
-    void increase_postReaction_error(){
-        assertThrows(NotIncreaseLikeSelfException.class, () -> increasePostReaction(postReactionService,user.getId(),post.getId()));
+    void increase_postReaction_error() {
+        assertThrows(NotIncreaseLikeSelfException.class, () -> increasePostReaction(postReactionService, user.getId(), post.getId()));
     }
 
     @Test
     @DisplayName("게시글 작성한 본인이 아닌 다른 사용자가 게시글을 싫어요 할 시 게시글의 userdisLike 필드가 1 증가한다")
-    void increase_postReaction_disLike_success(){
+    void increase_postReaction_disLike_success() {
         UserEntity user2 = signUpUser2();
-        decreasePostReaction(postReactionService,user2.getId(),post.getId());
-        assertEquals(post.getUserDisLike(),1);
-        assertEquals(post.getFinalLike(),-1);
+        decreasePostReaction(postReactionService, user2.getId(), post.getId());
+        assertEquals(post.getUserDisLike(), 1);
+        assertEquals(post.getFinalLike(), -1);
 
     }
 
     @Test
     @DisplayName("자신이 작성한 게시글에 싫어요를 누를 시 에러가 발생")
-    void increase_postReaction_disLike_fail(){
-        assertThrows(NotIncreaseLikeSelfException.class, () -> decreasePostReaction(postReactionService,user.getId(),post.getId()));
+    void increase_postReaction_disLike_fail() {
+        assertThrows(NotIncreaseLikeSelfException.class, () -> decreasePostReaction(postReactionService, user.getId(), post.getId()));
     }
 
     private UserEntity signUpUser2() {
@@ -100,7 +102,7 @@ class PostReactionServiceTest {
                 .nickname("nickname2")
                 .password("password2")
                 .roles(new HashSet<>())
-                .location("seoul")
+                .location(LocationType.SEOUL)
                 .isActive(true)
                 .posts(new ArrayList<>())
                 .build();

@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.domain;
 
+import inflearnproject.anoncom.enumType.LocationType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +51,8 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostReaction> postReactions = new ArrayList<>();
 
-    private String location;
+    @Enumerated(EnumType.STRING)
+    private LocationType location;
 
     // 댓글 개수를 저장하지 않는 필드
     @Transient
@@ -91,7 +93,7 @@ public class Post extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void putLocation(String location) {
+    public void putLocation(LocationType location) {
         this.location = location;
     }
 }

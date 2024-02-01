@@ -63,7 +63,7 @@ class PostControllerTest {
     @DisplayName("게시글 추가가 잘 됐나 확인")
     @WithMockUser(username = "username1")
     void addPost_success() throws Exception {
-        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리\",\"location\":\"seoul\"}";
+        String jsonRequest = "{\"title\":\"제목\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리\",\"location\":\"SEOUL\"}";
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/postWrite")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,7 +83,7 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 작성한 사람이 게시글 수정을 요청하면 처리가 잘 됐나")
     void post_update() throws Exception {
-        String jsonRequest = "{\"title\":\"제목2\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리2\",\"location\":\"seoul\"}";
+        String jsonRequest = "{\"title\":\"제목2\", \"content\":\"컨텐츠123123123\", \"category\":\"카테고리2\",\"location\":\"SEOUL\"}";
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/postCorrect/" + postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
@@ -153,7 +153,7 @@ class PostControllerTest {
 
 
     private void signupAndLoginUser() throws Exception {
-        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"seoul\"}";
+        String signupReQuest = "{\"nickname\":\"nickname\", \"username\":\"username\", \"password\":\"password\", \"email\":\"1@naver.com\",\"location\":\"SEOUL\"}";
         TestControllerUtils.signUpUser(mockMvc, signupReQuest);
         String loginRequest = "{\"username\":\"username\", \"password\":\"password\"}";
         accessToken = TestControllerUtils.loginUser(mockMvc, objectMapper, loginRequest);

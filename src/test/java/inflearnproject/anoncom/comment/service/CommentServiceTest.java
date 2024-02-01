@@ -5,6 +5,7 @@ import inflearnproject.anoncom.comment.repository.CommentRepository;
 import inflearnproject.anoncom.domain.Comment;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.post.service.PostService;
 import inflearnproject.anoncom.reComment.service.ReCommentService;
@@ -107,7 +108,7 @@ class CommentServiceTest {
                 .nickname("nickname2")
                 .password("password2")
                 .roles(new HashSet<>())
-                .location("seoul")
+                .location(LocationType.SEOUL)
                 .isActive(true)
                 .posts(new ArrayList<>())
                 .build();
