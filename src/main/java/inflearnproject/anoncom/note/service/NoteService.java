@@ -14,8 +14,8 @@ import inflearnproject.anoncom.note.repository.NoteRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
 import inflearnproject.anoncom.spam.repository.SpamBulkRepository;
 import inflearnproject.anoncom.spam.repository.SpamRepository;
+import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_SAME_INFO_USER_MESSAGE;
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_SUCH_NOTE;
 
 @Service
 @Transactional
@@ -153,7 +156,7 @@ public class NoteService {
 
         List<Note> spamNotes = noteRepository.findByIdIn(noteSpamDto.getSpamNotes());
 
-        UserEntity declaring = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserEntity declaring = userRepository.findById(userId).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
 
         List<Note> matchingNotes = new ArrayList<>();
         List<Long> nonMatchingNoteIds = new ArrayList<>();
@@ -205,7 +208,7 @@ public class NoteService {
 
     public Note findById(Long userId, Long noteId) {
         Note note = noteRepository.findById(noteId).orElseThrow(
-                () -> new NoSuchNoteException("해당 쪽지는 존재하지 않습니다.")
+                () -> new NoSuchNoteException(NO_SUCH_NOTE)
         );
         if (note.getReceiver().getId().equals(userId)) {
             note.receiverReadTrue();

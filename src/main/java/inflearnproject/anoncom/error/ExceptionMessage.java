@@ -21,4 +21,6 @@ public abstract class ExceptionMessage {
     public static final String NO_RE_COMMENT_ERROR = "해당 대댓글은 존재하지 않습니다.";
     public static final String CANNOT_SELF_REACTION_COMMENT = "자신이 작성한 댓글에는 좋아요를 할 수 없습니다.";
     public static final String CANNOT_REACTION_TWICE_COMMENT = "이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.";
+
+    public static final String NO_SUCH_NOTE = "해당 쪽지는 존재하지 않습니다.";
 }
