@@ -215,7 +215,7 @@ public class NoteService {
         if (note.getReceiver().getId().equals(userId)) {
             note.receiverReadTrue();
             note.putReceiverDate();
-        } else {
+        } else if (!note.getSender().getId().equals(userId)) {
             throw new NotSameUserException(NOT_SAME_USER);
         }
         return note;
