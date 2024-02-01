@@ -78,16 +78,44 @@ public class NoteService {
     /**
      * 보낸 사람이 쪽지 삭제
      */
-    public void deleteSendNote(NoteDeleteDto noteDto) {
-        List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
-        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
-        noteRepository.bulkNoteSenderDelete(noteIds);
+    public List<Long> deleteSendNote(Long userId, NoteDeleteDto noteDto) {
+        List<Note> notes = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
+        List<Long> matchingNoteIds = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
+        for (Note note : notes) {
+            if (note.getSender().getId().equals(userId)) {
+                matchingNoteIds.add(note.getId());
+            } else {
+                nonMatchingNoteIds.add(note.getId());
+            }
+        }
+
+        if (!matchingNoteIds.isEmpty()) {
+            noteRepository.bulkNoteSenderDelete(matchingNoteIds);
+        }
+
+        return nonMatchingNoteIds;
     }
 
-    public void deleteReceiveNote(NoteDeleteDto noteDto) {
-        List<Note> findNoteIds = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
-        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
-        noteRepository.bulkNoteReceiverDelete(noteIds);
+    public List<Long> deleteReceiveNote(Long userId, NoteDeleteDto noteDto) {
+        List<Note> notes = noteRepository.findByIdIn(noteDto.getDeleteNoteIds());
+        List<Long> matchingNoteIds = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
+        for (Note note : notes) {
+            if (note.getReceiver().getId().equals(userId)) {
+                matchingNoteIds.add(note.getId());
+            } else {
+                nonMatchingNoteIds.add(note.getId());
+            }
+        }
+
+        if (!matchingNoteIds.isEmpty()) {
+            noteRepository.bulkNoteReceiverDelete(matchingNoteIds);
+        }
+
+        return nonMatchingNoteIds;
     }
 
     public Page<NoteShowDto> findReceivedNotes(Long receiverId, NoteSearchCond cond, Pageable pageable) {
@@ -98,19 +126,46 @@ public class NoteService {
         return noteDSLRepository.findSendedNotes(senderId, pageable);
     }
 
-    public void keepNote(NoteKeepDto noteKeepDto) {
-        List<Note> findNoteIds = noteRepository.findByIdIn(noteKeepDto.getNoteKeeps());
-        List<Long> noteIds = findNoteIds.stream().map(note -> note.getId()).toList();
-        noteRepository.bulkNoteKeep(noteIds);
+    public List<Long> keepNote(Long userId, NoteKeepDto noteKeepDto) {
+        List<Note> findNotes = noteRepository.findByIdIn(noteKeepDto.getNoteKeeps());
+
+        List<Long> matchingNoteIds = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
+        for (Note note : findNotes) {
+            if (note.getReceiver().getId().equals(userId)) {
+                matchingNoteIds.add(note.getId());
+            } else {
+                nonMatchingNoteIds.add(note.getId());
+            }
+        }
+
+        if (!matchingNoteIds.isEmpty()) {
+            noteRepository.bulkNoteKeep(matchingNoteIds);
+        }
+
+        return nonMatchingNoteIds;
     }
 
-    public void spamNote(Long userId, NoteSpamDto noteSpamDto) {
+    public List<Long> spamNote(Long userId, NoteSpamDto noteSpamDto) {
 
         List<Note> spamNotes = noteRepository.findByIdIn(noteSpamDto.getSpamNotes());
 
         UserEntity declaring = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<Note> matchingNotes = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
+        for (Note note : spamNotes) {
+            if (note.getReceiver().getId().equals(userId)) {
+                matchingNotes.add(note);
+            } else {
+                nonMatchingNoteIds.add(note.getId());
+            }
+        }
+
         // 스팸 선언된 노트의 발신자 ID set
-        Set<Long> senderIds = spamNotes.stream().map(note -> note.getSender().getId()).collect(Collectors.toSet());
+        Set<Long> senderIds = matchingNotes.stream().map(note -> note.getSender().getId()).collect(Collectors.toSet());
 
         // 이미 스팸으로 선언된 (선언자, 발신자) 쌍을 찾습니다.
         List<Spam> existingSpams = spamRepository.findByDeclaringAndDeclaredIds(declaring.getId(), senderIds);
@@ -121,7 +176,7 @@ public class NoteService {
 
         // 새로운 스팸 선언을 저장할 리스트
         List<Spam> spamsToSave = new ArrayList<>();
-        for (Note note : spamNotes) {
+        for (Note note : matchingNotes) {
             UserEntity declared = note.getSender();
             // 이미 스팸으로 선언되지 않은 경우에만 새 스팸 선언을 추가합니다.
             if (!alreadyDeclaredSenderIds.contains(declared.getId())) {
@@ -138,28 +193,44 @@ public class NoteService {
         spamBulkRepository.batchInsertSpams(spamsToSave);
         //쪽지들의 spam true로 바꿔준다
         noteRepository.updateSpamTrue(spamToTrues);
+
+        return nonMatchingNoteIds;
     }
 
-    public Note findById(Long noteId) {
+    public Note findById(Long userId, Long noteId) {
         Note note = noteRepository.findById(noteId).orElseThrow(
                 () -> new NoSuchNoteException("해당 쪽지는 존재하지 않습니다.")
         );
-        note.receiverReadTrue();
+        if (note.getReceiver().getId().equals(userId)) {
+            note.receiverReadTrue();
+        }
         return note;
     }
 
-    public void declareNote(NoteDeclareDto noteDeclareDto) {
+    public List<Long> declareNote(Long userId, NoteDeclareDto noteDeclareDto) {
         List<Note> declareNotes = noteRepository.findByIdIn(noteDeclareDto.getDeclareNotes());
 
-        List<Long> noteIds = declareNotes.stream().map(note -> note.getId()).toList();
-        List<DeclareNote> createdDeclareNotes = new ArrayList<>();
-        noteRepository.updateDeclareTrue(noteIds);
+        List<Long> matchingNoteIds = new ArrayList<>();
+        List<Long> nonMatchingNoteIds = new ArrayList<>();
+
         for (Note note : declareNotes) {
+            if (note.getReceiver().getId().equals(userId)) {
+                matchingNoteIds.add(note.getId());
+            } else {
+                nonMatchingNoteIds.add(note.getId());
+            }
+        }
+        noteRepository.updateDeclareTrue(matchingNoteIds);
+        List<Note> validNotes = declareNotes.stream().filter(matchingNoteIds::contains).toList();
+        List<DeclareNote> createdDeclareNotes = new ArrayList<>();
+        for (Note note : validNotes) {
             DeclareNote declareNote = DeclareNote.builder()
                     .note(note)
                     .build();
             createdDeclareNotes.add(declareNote);
         }
         declareBulkRepository.batchInsertNotes(createdDeclareNotes);
+
+        return nonMatchingNoteIds;
     }
 }

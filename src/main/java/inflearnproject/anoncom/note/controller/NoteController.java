@@ -29,15 +29,15 @@ public class NoteController {
     }
 
     @DeleteMapping("/api/sendNoteDelete")
-    public ResponseEntity<?> deleteSendNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
-        noteService.deleteSendNote(noteDto);
-        return ResponseEntity.ok().body("ok");
+    public ResponseEntity<List<Long>> deleteSendNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
+        List<Long> nonMatchingIds = noteService.deleteSendNote(userDto.getMemberId(), noteDto);
+        return ResponseEntity.ok().body(nonMatchingIds);
     }
 
     @DeleteMapping("/api/receiveNoteDelete")
-    public ResponseEntity<?> deleteReceiveNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
-        noteService.deleteReceiveNote(noteDto);
-        return ResponseEntity.ok().body("ok");
+    public ResponseEntity<List<Long>> deleteReceiveNote(@IfLogin LoginUserDto userDto, @RequestBody NoteDeleteDto noteDto) {
+        List<Long> nonMatchingIds = noteService.deleteReceiveNote(userDto.getMemberId(), noteDto);
+        return ResponseEntity.ok().body(nonMatchingIds);
     }
 
     /**
@@ -66,26 +66,26 @@ public class NoteController {
     //TODO noteDetailDto 필드 추가하기
     @GetMapping("/api/noteRead/{noteId}")
     public ResponseEntity<NoteDetailDto> showNoteDetail(@IfLogin LoginUserDto userDto, @PathVariable("noteId") Long noteId) {
-        Note note = noteService.findById(noteId);
+        Note note = noteService.findById(userDto.getMemberId(), noteId);
         NoteDetailDto noteDetailDto = new NoteDetailDto(note);
         return ResponseEntity.ok().body(noteDetailDto);
     }
 
     @PostMapping("/api/keepNote")
-    public ResponseEntity<?> keepNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteKeepDto noteKeepDto) {
-        noteService.keepNote(noteKeepDto);
-        return ResponseEntity.ok().body("ok");
+    public ResponseEntity<List<Long>> keepNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteKeepDto noteKeepDto) {
+        List<Long> nonMatchingIds = noteService.keepNote(userDto.getMemberId(), noteKeepDto);
+        return ResponseEntity.ok().body(nonMatchingIds);
     }
 
     @PostMapping("/api/spamNote")
-    public ResponseEntity<?> spamNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteSpamDto noteSpamDto) {
-        noteService.spamNote(userDto.getMemberId(), noteSpamDto);
-        return ResponseEntity.ok().body("ok");
+    public ResponseEntity<List<Long>> spamNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteSpamDto noteSpamDto) {
+        List<Long> nonMatchingIds = noteService.spamNote(userDto.getMemberId(), noteSpamDto);
+        return ResponseEntity.ok().body(nonMatchingIds);
     }
 
     @PostMapping("/api/declareNote")
-    public ResponseEntity<?> declareNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteDeclareDto noteDeclareDto) {
-        noteService.declareNote(noteDeclareDto);
-        return ResponseEntity.ok().body("ok");
+    public ResponseEntity<List<Long>> declareNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteDeclareDto noteDeclareDto) {
+        List<Long> nonMatchingIds = noteService.declareNote(userDto.getMemberId(), noteDeclareDto);
+        return ResponseEntity.ok().body(nonMatchingIds);
     }
 }
