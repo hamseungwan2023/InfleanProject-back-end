@@ -53,11 +53,12 @@ class NoteServiceTest {
     SpamRepository spamRepository;
 
     private UserEntity user;
+    private UserEntity user2;
 
     @BeforeEach
     void before() {
         user = addUser(userService);
-        addAnotherUser(userService, 2);
+        user2 = addAnotherUser(userService, 2);
 
         LoginUserDto dto = buildUserDto(user);
         NoteAddDto noteAddDto = new NoteAddDto();
@@ -135,7 +136,7 @@ class NoteServiceTest {
         List<Long> collect = noteRepository.findAll().stream().map(findNote -> findNote.getId()).collect(Collectors.toList());
         noteDeleteDto.setDeleteNoteIds(collect);
 
-        noteService.deleteSendNote(noteDeleteDto);
+        noteService.deleteSendNote(user.getId(), noteDeleteDto);
         for (Note note : noteRepository.findAll()) {
             assertTrue(note.isSenderDelete());
         }
@@ -153,7 +154,7 @@ class NoteServiceTest {
         deleteNoteIds.add(noteId);
         noteDeleteDto.setDeleteNoteIds(deleteNoteIds);
 
-        noteService.deleteReceiveNote(noteDeleteDto);
+        noteService.deleteReceiveNote(user2.getId(), noteDeleteDto);
         assertTrue(noteRepository.findAll().get(0).isReceiverDelete());
     }
 
@@ -169,7 +170,11 @@ class NoteServiceTest {
         declareIds.add(noteId);
         noteDeclareDto.setDeclareNotes(declareIds);
 
-        noteService.declareNote(noteDeclareDto);
+        noteService.declareNote(user2.getId(), noteDeclareDto);
+
+        em.flush();
+        em.clear();
+        
         assertTrue(noteRepository.findAll().get(0).isDeclaration());
         assertEquals(declareNoteRepository.findAll().size(), 1);
     }

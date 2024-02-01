@@ -1,6 +1,7 @@
 package inflearnproject.anoncom.note.service;
 
 import inflearnproject.anoncom.declareNote.repository.DeclareBulkRepository;
+import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
 import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.Spam;
@@ -38,6 +39,7 @@ public class NoteService {
     private final NoteBulkRepository noteBulkRepository;
     private final SpamRepository spamRepository;
     private final SpamBulkRepository spamBulkRepository;
+    private final DeclareNoteRepository declareNoteRepository;
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -221,13 +223,17 @@ public class NoteService {
             }
         }
         noteRepository.updateDeclareTrue(matchingNoteIds);
-        List<Note> validNotes = declareNotes.stream().filter(matchingNoteIds::contains).toList();
+        List<Note> validNotes = declareNotes.stream().filter(note -> note.getReceiver().getId().equals(userId)).toList();
+        List<Long> alreadyDeclareExists = declareNoteRepository.findByNoteId(userId);
         List<DeclareNote> createdDeclareNotes = new ArrayList<>();
         for (Note note : validNotes) {
             DeclareNote declareNote = DeclareNote.builder()
                     .note(note)
                     .build();
-            createdDeclareNotes.add(declareNote);
+
+            if (!alreadyDeclareExists.contains(note.getId())) {
+                createdDeclareNotes.add(declareNote);
+            }
         }
         declareBulkRepository.batchInsertNotes(createdDeclareNotes);
 
