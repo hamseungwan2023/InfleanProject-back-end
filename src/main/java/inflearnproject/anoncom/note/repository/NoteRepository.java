@@ -29,4 +29,12 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Note n SET n.isKeep = true WHERE n.id IN :noteIds")
     int bulkNoteKeep(@Param("noteIds") List<Long> noteIds);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Note n set n.isSpam = true where n.id in :spamToTrues")
+    void updateSpamTrue(@Param("spamToTrues") List<Long> spamToTrues);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Note n set n.isDeclaration = true where n.id in :noteIds")
+    void updateDeclareTrue(@Param("noteIds") List<Long> noteIds);
 }

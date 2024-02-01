@@ -3,7 +3,6 @@ package inflearnproject.anoncom.note.service;
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
 import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
-import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.note.exception.NoSuchNoteException;
 import inflearnproject.anoncom.note.repository.NoteRepository;
@@ -24,9 +23,9 @@ public class NoteSendServiceForTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private  NoteRepository noteRepository;
+    private NoteRepository noteRepository;
     @Autowired
-    private  DeclareNoteRepository declareNoteRepository;
+    private DeclareNoteRepository declareNoteRepository;
     @Autowired
     private SpamRepository spamRepository;
 
@@ -35,7 +34,7 @@ public class NoteSendServiceForTest {
         UserEntity receiver = userRepository.findByNickname(receiverNickname).orElseThrow(
                 () -> new NoUserEntityException(receiverNickname)
         );
-        if(!receiver.isActive()){
+        if (!receiver.isActive()) {
             throw new NoUserEntityException(receiverNickname);
         }
         UserEntity sender = userRepository.findByEmail(userDto.getEmail());
@@ -68,8 +67,8 @@ public class NoteSendServiceForTest {
         );
     }
 
-    private void deleteIfAllTrue(Note note){
-        if(note.isSenderDelete() && note.isReceiverDelete()){
+    private void deleteIfAllTrue(Note note) {
+        if (note.isSenderDelete() && note.isReceiverDelete()) {
             noteRepository.delete(note);
         }
     }
@@ -81,21 +80,21 @@ public class NoteSendServiceForTest {
         note.keepTrue();
     }
 
-    public void spamNote(Long userId,Long noteSpamId) {
-        Note note = noteRepository.findById(noteSpamId).orElseThrow(
-                () -> new NoSuchNoteException(String.valueOf(noteSpamId))
-        );
-        UserEntity declaring = userRepository.findById(userId).get();
-        UserEntity declared = noteRepository.findById(noteSpamId).get().getSender();
-        Spam spam = Spam.builder()
-                .declaring(declaring)
-                .declared(declared)
-                .build();
-        if(spamRepository.findByDeclaringAndDeclared(declaring,declared).isEmpty()){
-            spamRepository.save(spam);
-        }
-        note.spamTrue();
-    }
+//    public void spamNote(Long userId,Long noteSpamId) {
+//        Note note = noteRepository.findById(noteSpamId).orElseThrow(
+//                () -> new NoSuchNoteException(String.valueOf(noteSpamId))
+//        );
+//        UserEntity declaring = userRepository.findById(userId).get();
+//        UserEntity declared = noteRepository.findById(noteSpamId).get().getSender();
+//        Spam spam = Spam.builder()
+//                .declaring(declaring)
+//                .declared(declared)
+//                .build();
+//        if(spamRepository.findByDeclaringAndDeclared(declaring,declared).isEmpty()){
+//            spamRepository.save(spam);
+//        }
+//        note.spamTrue();
+//    }
 
 
     public void declareNote(Long declareNoteId) {

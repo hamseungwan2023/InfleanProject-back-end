@@ -1,5 +1,7 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.declareNote.repository.DeclareBulkRepository;
+import inflearnproject.anoncom.domain.DeclareNote;
 import inflearnproject.anoncom.domain.Note;
 import inflearnproject.anoncom.domain.Spam;
 import inflearnproject.anoncom.domain.UserEntity;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoteService {
 
-    private final NoteSenderService noteSenderService;
+    private final DeclareBulkRepository declareBulkRepository;
     private final NoteDSLRepository noteDSLRepository;
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
@@ -135,7 +137,7 @@ public class NoteService {
         // 새로운 스팸 선언을 데이터베이스에 저장합니다.
         spamBulkRepository.batchInsertSpams(spamsToSave);
         //쪽지들의 spam true로 바꿔준다
-        spamRepository.updateSpamTrue(spamToTrues);
+        noteRepository.updateSpamTrue(spamToTrues);
     }
 
     public Note findById(Long noteId) {
@@ -146,16 +148,18 @@ public class NoteService {
         return note;
     }
 
-    public List<Long> declareNote(NoteDeclareDto noteDeclareDto) {
-        List<Long> declareList = new ArrayList<>();
-        for (Long declareNoteId : noteDeclareDto.getDeclareNotes()) {
-            try {
-                noteSenderService.declareNote(declareNoteId);
-            } catch (NoSuchNoteException e) {
-                long errorId = Long.parseLong(e.getMessage());
-                declareList.add(errorId);
-            }
+    public void declareNote(NoteDeclareDto noteDeclareDto) {
+        List<Note> declareNotes = noteRepository.findByIdIn(noteDeclareDto.getDeclareNotes());
+
+        List<Long> noteIds = declareNotes.stream().map(note -> note.getId()).toList();
+        List<DeclareNote> createdDeclareNotes = new ArrayList<>();
+        noteRepository.updateDeclareTrue(noteIds);
+        for (Note note : declareNotes) {
+            DeclareNote declareNote = DeclareNote.builder()
+                    .note(note)
+                    .build();
+            createdDeclareNotes.add(declareNote);
         }
-        return declareList;
+        declareBulkRepository.batchInsertNotes(createdDeclareNotes);
     }
 }

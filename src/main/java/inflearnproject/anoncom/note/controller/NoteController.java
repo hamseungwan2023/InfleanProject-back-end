@@ -84,8 +84,8 @@ public class NoteController {
     }
 
     @PostMapping("/api/declareNote")
-    public ResponseEntity<List<Long>> declareNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteDeclareDto noteDeclareDto) {
-        List<Long> declareNotes = noteService.declareNote(noteDeclareDto);
-        return ResponseEntity.ok().body(declareNotes);
+    public ResponseEntity<?> declareNotes(@IfLogin LoginUserDto userDto, @RequestBody NoteDeclareDto noteDeclareDto) {
+        noteService.declareNote(noteDeclareDto);
+        return ResponseEntity.ok().body("ok");
     }
 }
