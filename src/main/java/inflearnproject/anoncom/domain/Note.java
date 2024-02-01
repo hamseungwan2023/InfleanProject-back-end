@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,8 @@ public class Note extends BaseCreatedEntity {
 
     private String content;
 
+    private LocalDateTime receiveDate;
+
     private boolean isReceiverRead = false; // 수신자 읽음 여부
 
     private boolean isSenderDelete = false; //발신자 삭제 여부
@@ -40,27 +44,12 @@ public class Note extends BaseCreatedEntity {
 
     private boolean isKeep = false; //보관 여부
 
-    public void senderDelete() {
-        this.isSenderDelete = true;
-    }
-
-    public void receiverDelete() {
-        this.isReceiverDelete = true;
-    }
-
-    public void keepTrue() {
-        this.isKeep = true;
-    }
-
-    public void spamTrue() {
-        this.isSpam = true;
-    }
-
     public void receiverReadTrue() {
         this.isReceiverRead = true;
     }
 
-    public void delcareTrue() {
-        this.isDeclaration = true;
+    public void putReceiverDate() {
+        this.receiveDate = LocalDateTime.now();
     }
+
 }

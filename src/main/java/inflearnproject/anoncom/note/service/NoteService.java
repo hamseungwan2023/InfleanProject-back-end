@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.declareNote.repository.DeclareBulkRepository;
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
 import inflearnproject.anoncom.domain.DeclareNote;
@@ -27,8 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_SAME_INFO_USER_MESSAGE;
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_SUCH_NOTE;
+import static inflearnproject.anoncom.error.ExceptionMessage.*;
 
 @Service
 @Transactional
@@ -214,6 +214,9 @@ public class NoteService {
         );
         if (note.getReceiver().getId().equals(userId)) {
             note.receiverReadTrue();
+            note.putReceiverDate();
+        } else {
+            throw new NotSameUserException(NOT_SAME_USER);
         }
         return note;
     }
