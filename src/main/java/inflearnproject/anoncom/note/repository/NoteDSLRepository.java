@@ -43,7 +43,11 @@ public class NoteDSLRepository {
                         isCondEq(cond)
                 );
 
-
+        if (cond.getUnit() != null) {
+            System.out.println("zzz");
+            int pageSize = pageable.getPageSize();
+            pageSize = cond.getUnit();
+        }
         List<NoteShowDto> notes = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

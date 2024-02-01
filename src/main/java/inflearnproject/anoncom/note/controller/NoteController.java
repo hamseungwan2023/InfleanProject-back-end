@@ -20,7 +20,6 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
-    private final int pageSize = 5;
 
     @PostMapping("/api/noteWrite")
     public ResponseEntity<List<String>> sendNote(@IfLogin LoginUserDto userDto, @RequestBody NoteAddDto noteDto) {
@@ -46,6 +45,7 @@ public class NoteController {
     @GetMapping("/api/noteReadReceivedList")
     public ResponseEntity<Page<NoteShowDto>> showReceiverNotes(@IfLogin LoginUserDto userDto, @RequestParam(value = "page", defaultValue = "0") int page,
                                                                @ModelAttribute(value = "cond") NoteSearchCond cond) {
+        int pageSize = cond.getUnit() == null ? 15 : cond.getUnit();
 
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<NoteShowDto> notesDto = noteService.findReceivedNotes(userDto.getMemberId(), cond, pageable);
@@ -58,6 +58,7 @@ public class NoteController {
     @GetMapping("/api/noteReadSendedList")
     public ResponseEntity<Page<NoteSendedShowDto>> showSendNotes(@IfLogin LoginUserDto userDto, @RequestParam(value = "page", defaultValue = "0") int page,
                                                                  @ModelAttribute(value = "cond") NoteSearchCond cond) {
+        int pageSize = cond.getUnit() == null ? 15 : cond.getUnit();
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
