@@ -43,11 +43,6 @@ public class NoteDSLRepository {
                         isCondEq(cond)
                 );
 
-        if (cond.getUnit() != null) {
-            System.out.println("zzz");
-            int pageSize = pageable.getPageSize();
-            pageSize = cond.getUnit();
-        }
         List<NoteShowDto> notes = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -69,10 +64,10 @@ public class NoteDSLRepository {
 
     private BooleanExpression isCondEq(NoteSearchCond cond) {
         if (cond.getIsSpam() != null) {
-            return note.isSpam.eq(true);
+            return note.isSpam.eq(true).and(note.isReceiverDelete.isFalse());
         }
         if (cond.getIsKeep() != null) {
-            return note.isKeep.eq(true);
+            return note.isKeep.eq(true).and(note.isReceiverDelete.isFalse());
         }
         return note.isSpam.isFalse().and(note.isKeep.isFalse()).and(note.isReceiverDelete.isFalse());
     }
