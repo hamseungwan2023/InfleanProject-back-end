@@ -2,7 +2,6 @@ package inflearnproject.anoncom.note.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +19,7 @@ public class NoteShowDto {
     private boolean isReceiverRead;
 
     @QueryProjection
-    public NoteShowDto(Long id, Long senderId, String senderNickname, String content, LocalDateTime sendDate, LocalDateTime receiveDate, boolean isReceiverRead){
+    public NoteShowDto(Long id, Long senderId, String senderNickname, String content, LocalDateTime sendDate, LocalDateTime receiveDate, boolean isReceiverRead) {
         this.id = id;
         this.senderId = senderId;
         this.senderNickname = senderNickname;

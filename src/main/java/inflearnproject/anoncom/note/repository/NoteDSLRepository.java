@@ -34,7 +34,7 @@ public class NoteDSLRepository {
                         note.sender.nickname,
                         note.content,
                         note.createdAt,
-                        note.createdAt,
+                        note.receiveDate,
                         note.isReceiverRead))
                 .from(note)
                 .leftJoin(note.sender)
@@ -95,7 +95,7 @@ public class NoteDSLRepository {
                         note.receiver.nickname,
                         note.content,
                         note.createdAt,
-                        note.createdAt,
+                        note.receiveDate,
                         note.isReceiverRead))
                 .from(note)
                 .leftJoin(note.sender)

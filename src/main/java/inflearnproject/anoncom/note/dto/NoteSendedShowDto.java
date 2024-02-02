@@ -19,13 +19,13 @@ public class NoteSendedShowDto {
     private boolean isReceiverRead;
 
     @QueryProjection
-    public NoteSendedShowDto(Long id, Long receiverId, String receiverNickname, String content, LocalDateTime sendDate, LocalDateTime receiveDate, boolean isReceiverRead){
+    public NoteSendedShowDto(Long id, Long receiverId, String receiverNickname, String content, LocalDateTime sendDate, LocalDateTime receiveDate, boolean isReceiverRead) {
         this.id = id;
         this.receiverId = receiverId;
         this.receiverNickname = receiverNickname;
         this.content = content;
         this.sendDate = sendDate;
-        this.receiveDate = receiveDate;
+        this.receiveDate = null;
         this.isReceiverRead = isReceiverRead;
     }
 }
