@@ -255,4 +255,8 @@ public class NoteService {
         }
         declareBulkRepository.batchInsertNotes(createdDeclareNotes);
     }
+
+    public Long getNotReadReceivedNotesSize(Long receiverId, NoteSearchCond cond) {
+        return noteDSLRepository.findNotReadReceivedNotes(receiverId, cond);
+    }
 }

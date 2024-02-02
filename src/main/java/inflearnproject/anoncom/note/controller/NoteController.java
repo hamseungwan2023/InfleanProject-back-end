@@ -52,6 +52,12 @@ public class NoteController {
         return ResponseEntity.ok().body(notesDto);
     }
 
+    @GetMapping("/api/noteNotReadReceivedList")
+    public ResponseEntity<Long> showNotReadReceiverNotes(@IfLogin LoginUserDto userDto, @ModelAttribute(value = "cond") NoteSearchCond cond) {
+        Long size = noteService.getNotReadReceivedNotesSize(userDto.getMemberId(), cond);
+        return ResponseEntity.ok().body(size);
+    }
+
     /**
      * 내가 보낸 쪽지들 보여주기
      */
@@ -63,6 +69,7 @@ public class NoteController {
         Page<NoteSendedShowDto> notesDto = noteService.findSendedNotes(userDto.getMemberId(), pageable);
         return ResponseEntity.ok().body(notesDto);
     }
+
 
     //TODO noteDetailDto 필드 추가하기
     @GetMapping("/api/noteRead/{noteId}")

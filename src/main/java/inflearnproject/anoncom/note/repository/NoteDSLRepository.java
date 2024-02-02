@@ -62,6 +62,22 @@ public class NoteDSLRepository {
         return new PageImpl<>(notes, pageable, total);
     }
 
+    public long findNotReadReceivedNotes(Long receiverId, NoteSearchCond cond) {
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(note.count())
+                        .from(note)
+                        .where(
+                                note.receiver.id.eq(receiverId),
+                                isCondEq(cond),
+                                note.isReceiverRead.eq(false)
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return total;
+    }
+
     private BooleanExpression isCondEq(NoteSearchCond cond) {
         if (cond.getIsSpam() != null) {
             return note.isSpam.eq(true).and(note.isReceiverDelete.isFalse());
