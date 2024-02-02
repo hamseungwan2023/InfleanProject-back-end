@@ -14,5 +14,5 @@ public class ResUserLoginDto {
 
     private Long memberId;
     private String nickname;
-    private int rank;
+    private int postsCount;
 }

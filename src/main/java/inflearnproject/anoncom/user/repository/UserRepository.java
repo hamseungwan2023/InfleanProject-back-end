@@ -34,7 +34,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findAllByIsBlockedTrueAndBlockUntilBefore(LocalDateTime time);
 
     List<UserEntity> findByNicknameIn(List<String> receiverNicknames);
-    
+
     @Query("SELECT u FROM UserEntity u WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail")
     Optional<UserEntity> findByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail);
 

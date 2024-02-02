@@ -4,6 +4,7 @@ package inflearnproject.anoncom.refreshToken.service;
 import inflearnproject.anoncom.domain.RefreshToken;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.refreshToken.exception.NoRefreshTokenException;
 import inflearnproject.anoncom.refreshToken.repository.RefreshTokenRepository;
 import inflearnproject.anoncom.security.jwt.util.JwtTokenizer;
@@ -27,6 +28,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
+    private final PostRepository postRepository;
 
     public RefreshToken addRefreshToken(RefreshToken refreshToken, Long userId) {
 
@@ -61,13 +63,13 @@ public class RefreshTokenService {
                 .build();
 
         addRefreshToken(refreshTokenEntity, user.getId());
-
+        int postsCount = postRepository.findPostsCount(user.getId());
         return ResUserLoginDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .memberId(user.getId())
                 .nickname(user.getUsername())
-                .rank(user.getRank())
+                .postsCount(postsCount)
                 .build();
     }
 
