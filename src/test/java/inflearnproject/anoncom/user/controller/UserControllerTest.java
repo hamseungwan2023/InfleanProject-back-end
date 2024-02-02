@@ -121,7 +121,7 @@ class UserControllerTest {
         assertNotNull(dto.getRefreshToken());
         assertNotNull(dto.getMemberId());
         assertNotNull(dto.getMemberId());
-        assertEquals(dto.getRank(), 0);
+        assertEquals(dto.getPostsCount(), 0);
 
         RefreshToken refreshTokenByUserEntityId = refreshTokenRepository.findRefreshTokenByUserEntityId(1L);
         System.out.println(refreshTokenByUserEntityId);
