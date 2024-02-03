@@ -3,14 +3,16 @@ package inflearnproject.anoncom.user.service;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
+@Component
+@EnableScheduling
 @Transactional
 @RequiredArgsConstructor
 public class UserBlockScheduler {
