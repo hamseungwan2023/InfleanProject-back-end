@@ -3,6 +3,7 @@ package inflearnproject.anoncom.config;
 
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
+import inflearnproject.anoncom.enumType.LocationType;
 import inflearnproject.anoncom.role.repository.RoleRepository;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -23,6 +22,7 @@ import java.util.Optional;
 public class RoleInitializer {
 
     private final PasswordEncoder passwordEncoder;
+
     @Bean
     public CommandLineRunner initRoles(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
@@ -39,16 +39,20 @@ public class RoleInitializer {
                 roleRepository.save(adminRole);
             }
 
-            if(!userRepository.existsByUsername("adminUser")){
+            if (!userRepository.existsByUsername("adminUser")) {
                 String nickname = "adminNick";
                 String password = "adminPass";
                 String username = "adminUser";
+                String email = "admin@naver.com";
+                LocationType location = LocationType.SEOUL;
 
                 UserEntity user = UserEntity.builder()
                         .nickname(nickname)
                         .password(passwordEncoder.encode(password))
                         .username(username)
                         .roles(new HashSet<>())
+                        .location(location)
+                        .email(email)
                         .isActive(true).build();
 
                 Optional<Role> userRole = roleRepository.findByName("ROLE_ADMIN");

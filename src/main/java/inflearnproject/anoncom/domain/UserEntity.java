@@ -43,6 +43,7 @@ public class UserEntity extends BaseTimeEntity {
 
     private String profileImg;
 
+    @Column(name = "userRank")
     private int rank;
 
     @Builder.Default
