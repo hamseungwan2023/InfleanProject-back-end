@@ -78,5 +78,11 @@ public class PostController {
         return ResponseEntity.ok().body(new PagingPost(dtos, currentPage, totalPage));
     }
 
-
+    @GetMapping("/myPosts")
+    public ResponseEntity<?> showMyPosts(@IfLogin LoginUserDto userDto, @RequestParam(value = "page", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> userPosts = postService.findUserPosts(userDto, pageable);
+        List<ResPostDetailDto> detailPostDtos = userPosts.getContent().stream().map(ResPostDetailDto::new).toList();
+        return ResponseEntity.ok().body(new UsersPostsDto(detailPostDtos, userPosts.getNumber(), userPosts.getTotalPages()));
+    }
 }

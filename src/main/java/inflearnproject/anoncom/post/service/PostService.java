@@ -74,4 +74,8 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    public Page<Post> findUserPosts(LoginUserDto userDto, Pageable pageable) {
+        UserEntity user = userRepository.findByEmail(userDto.getEmail());
+        return postRepository.findPostsByUser(user, pageable);
+    }
 }
