@@ -9,11 +9,11 @@ public class UserDetailDto {
 
     private String nickname;
     private LocationType location;
-    private int rank;
+    private int postCount;
 
     public UserDetailDto(UserEntity user) {
         this.nickname = user.getNickname();
         this.location = user.getLocation();
-        this.rank = user.getRank();
+        this.postCount = user.getPosts().size();
     }
 }
