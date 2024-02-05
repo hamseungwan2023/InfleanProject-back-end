@@ -25,7 +25,7 @@ public class NoteSendedShowDto {
         this.receiverNickname = receiverNickname;
         this.content = content;
         this.sendDate = sendDate;
-        this.receiveDate = null;
+        this.receiveDate = receiveDate;
         this.isReceiverRead = isReceiverRead;
     }
 }
