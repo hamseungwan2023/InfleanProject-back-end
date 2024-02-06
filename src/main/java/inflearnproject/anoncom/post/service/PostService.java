@@ -9,6 +9,7 @@ import inflearnproject.anoncom.post.exception.NoPostException;
 import inflearnproject.anoncom.post.repository.PostDSLRepository;
 import inflearnproject.anoncom.post.repository.PostRepository;
 import inflearnproject.anoncom.security.jwt.util.LoginUserDto;
+import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
-import static inflearnproject.anoncom.error.ExceptionMessage.NO_POST_MESSAGE;
+import static inflearnproject.anoncom.error.ExceptionMessage.*;
 import static inflearnproject.anoncom.post.dto.ReqAddPostDto.buildPost;
 
 @Service
@@ -76,6 +76,11 @@ public class PostService {
 
     public Page<Post> findUserPosts(LoginUserDto userDto, Pageable pageable) {
         UserEntity user = userRepository.findByEmail(userDto.getEmail());
+        return postRepository.findPostsByUser(user, pageable);
+    }
+
+    public Page<Post> findOtherUserPostsByNickname(String nickname, Pageable pageable) {
+        UserEntity user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoUserEntityException(NO_SAME_INFO_USER_MESSAGE));
         return postRepository.findPostsByUser(user, pageable);
     }
 }

@@ -85,4 +85,13 @@ public class PostController {
         List<ResPostDetailDto> detailPostDtos = userPosts.getContent().stream().map(ResPostDetailDto::new).toList();
         return ResponseEntity.ok().body(new UsersPostsDto(detailPostDtos, userPosts.getNumber(), userPosts.getTotalPages()));
     }
+
+    @GetMapping("/posts/{nickname}")
+    public ResponseEntity<?> showPostsByUsername(@RequestParam(value = "page", defaultValue = "0") int page
+            , @PathVariable("nickname") String nickname) {
+        Pageable pageable = PageRequest.of(page, defaultPageSize);
+        Page<Post> userPosts = postService.findOtherUserPostsByNickname(nickname, pageable);
+        List<ResPostDetailDto> detailPostDtos = userPosts.getContent().stream().map(ResPostDetailDto::new).toList();
+        return ResponseEntity.ok().body(new UsersPostsDto(detailPostDtos, userPosts.getNumber(), userPosts.getTotalPages()));
+    }
 }
