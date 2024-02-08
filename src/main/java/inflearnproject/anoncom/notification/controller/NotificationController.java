@@ -3,6 +3,7 @@ package inflearnproject.anoncom.notification.controller;
 import inflearnproject.anoncom.domain.Notification;
 import inflearnproject.anoncom.notification.dto.NotificationAddDto;
 import inflearnproject.anoncom.notification.dto.NotificationSearchCondition;
+import inflearnproject.anoncom.notification.dto.NotificationShortDto;
 import inflearnproject.anoncom.notification.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class NotificationController {
     public ResponseEntity<?> getNotifications(
             @Valid @ModelAttribute(value = "findPostContent") NotificationSearchCondition cond) {
         List<Notification> notifications = notificationService.getNotifications(cond);
-        return ResponseEntity.ok().body(notifications);
+        List<NotificationShortDto> shortNotifications = notifications.stream().map(NotificationShortDto::new).toList();
+        return ResponseEntity.ok().body(shortNotifications);
     }
 
     @GetMapping("/notification/{notificationId}")

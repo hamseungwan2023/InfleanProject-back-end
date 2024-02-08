@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static inflearnproject.anoncom.error.ExceptionMessage.NO_SUCH_NOTIFICATION;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -36,13 +38,13 @@ public class NotificationService {
 
     public Notification getOneNotification(Long id) {
         return notificationRepository.findById(id).orElseThrow(
-                () -> new NotExistNotificationException("해당 공지는 존재하지 않습니다.")
+                () -> new NotExistNotificationException(NO_SUCH_NOTIFICATION)
         );
     }
 
     public void deleteNotification(Long id) {
         Notification notification = notificationRepository.findById(id).orElseThrow(
-                () -> new NotExistNotificationException("해당 공지는 존재하지 않습니다."));
+                () -> new NotExistNotificationException(NO_SUCH_NOTIFICATION));
         notificationRepository.delete(notification);
     }
 }

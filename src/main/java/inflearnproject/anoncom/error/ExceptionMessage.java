@@ -23,4 +23,6 @@ public abstract class ExceptionMessage {
     public static final String CANNOT_REACTION_TWICE_COMMENT = "이미 좋아요/싫어요한 게시글에 좋아요/싫어요를 할 수 없습니다.";
 
     public static final String NO_SUCH_NOTE = "해당 쪽지는 존재하지 않습니다.";
+
+    public static final String NO_SUCH_NOTIFICATION = "해당 공지는 존재하지 않습니다.";
 }
