@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.note.service;
 
+import inflearnproject.anoncom.alarm.repository.AlarmBulkRepository;
 import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.declareNote.repository.DeclareBulkRepository;
 import inflearnproject.anoncom.declareNote.repository.DeclareNoteRepository;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static inflearnproject.anoncom.alarm.constant.AlarmMessage.NOTE_ARRIVED;
 import static inflearnproject.anoncom.error.ExceptionMessage.*;
 
 @Service
@@ -43,6 +45,7 @@ public class NoteService {
     private final SpamRepository spamRepository;
     private final SpamBulkRepository spamBulkRepository;
     private final DeclareNoteRepository declareNoteRepository;
+    private final AlarmBulkRepository alarmBulkRepository;
 
     public List<String> addNote(LoginUserDto userDto, NoteAddDto noteDto) {
         List<String> erroredList = new ArrayList<>();
@@ -64,6 +67,7 @@ public class NoteService {
 
         if (!notesToSave.isEmpty()) {
             noteBulkRepository.batchInsertNotes(notesToSave);  // 일괄 저장
+            alarmBulkRepository.batchInsertAlarms(receivers, NOTE_ARRIVED);
         }
 
         return erroredList;

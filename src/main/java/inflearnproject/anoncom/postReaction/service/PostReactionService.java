@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.postReaction.service;
 
+import inflearnproject.anoncom.alarm.service.AlarmService;
 import inflearnproject.anoncom.domain.Post;
 import inflearnproject.anoncom.domain.PostReaction;
 import inflearnproject.anoncom.domain.UserEntity;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static inflearnproject.anoncom.alarm.constant.AlarmMessage.POST_REACTION_DIS_LIKE_MESSAGE;
+import static inflearnproject.anoncom.alarm.constant.AlarmMessage.POST_REACTION_LIKE_MESSAGE;
 import static inflearnproject.anoncom.error.ExceptionMessage.*;
 
 @Service
@@ -24,6 +27,7 @@ public class PostReactionService {
     private final PostReactionRepository postReactionRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmService alarmService;
 
     public void increaseLike(Long memberId, Long postId) {
         isAlreadyReactionExists(memberId, postId);
@@ -37,6 +41,9 @@ public class PostReactionService {
                 .build();
         post.addUserLike();
         post.buildFinalLike();
+
+        alarmService.addAlarm(post.getUser(), POST_REACTION_LIKE_MESSAGE);
+
         postReactionRepository.save(postReaction);
     }
 
@@ -52,6 +59,9 @@ public class PostReactionService {
                 .build();
         post.addUserDisLike();
         post.buildFinalLike();
+
+        alarmService.addAlarm(post.getUser(), POST_REACTION_DIS_LIKE_MESSAGE);
+
         postReactionRepository.save(postReaction);
     }
 

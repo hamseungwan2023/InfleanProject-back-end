@@ -1,5 +1,6 @@
 package inflearnproject.anoncom.comment.service;
 
+import inflearnproject.anoncom.alarm.service.AlarmService;
 import inflearnproject.anoncom.comment.dto.ResCommentDto;
 import inflearnproject.anoncom.comment.exception.NoCommentException;
 import inflearnproject.anoncom.comment.exception.NotSameUserException;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static inflearnproject.anoncom.alarm.constant.AlarmMessage.POST_ADD_COMMENT;
 import static inflearnproject.anoncom.error.ExceptionMessage.NOT_SAME_USER;
 import static inflearnproject.anoncom.error.ExceptionMessage.NO_COMMENT_MESSAGE;
 
@@ -36,6 +38,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final ReCommentDSLRepository reCommentDSLRepository;
+    private final AlarmService alarmService;
 
     public Comment saveComment(LoginUserDto userDto, Long postId, String content) {
         Post post = postRepository.findPostById(postId);
@@ -49,6 +52,9 @@ public class CommentService {
                 .deleted(false)
                 .build();
         comment.putUserPost(user, post);
+
+        alarmService.addAlarm(post.getUser(), post.getTitle() + POST_ADD_COMMENT);
+
         return commentRepository.save(comment);
     }
 
