@@ -17,8 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
@@ -41,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers("/declareNotes", "/declareUser").hasAnyRole("ADMIN")
                         .requestMatchers(POST, "/notification").hasAnyRole("ADMIN")
+                        .requestMatchers(DELETE, "/notification").hasAnyRole("ADMIN")
                         .requestMatchers("/email/**", "/user/signup", "/user/login", "/user/refreshToken").permitAll()
                         .requestMatchers(GET, "/api/postList/**", "/api/postDetail/**", "/notification/**").permitAll()
                         .requestMatchers(GET, "/api/commentList/**").permitAll()

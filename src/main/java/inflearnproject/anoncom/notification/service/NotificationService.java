@@ -3,6 +3,7 @@ package inflearnproject.anoncom.notification.service;
 import inflearnproject.anoncom.domain.Notification;
 import inflearnproject.anoncom.notification.dto.NotificationAddDto;
 import inflearnproject.anoncom.notification.dto.NotificationSearchCondition;
+import inflearnproject.anoncom.notification.exception.NotExistNotificationException;
 import inflearnproject.anoncom.notification.repository.NotificationDSLRepository;
 import inflearnproject.anoncom.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,17 @@ public class NotificationService {
 
     public List<Notification> getNotifications(NotificationSearchCondition cond) {
         return notificationDSLRepository.findNotificationsByCondition(cond);
+    }
+
+    public Notification getOneNotification(Long id) {
+        return notificationRepository.findById(id).orElseThrow(
+                () -> new NotExistNotificationException("해당 공지는 존재하지 않습니다.")
+        );
+    }
+
+    public void deleteNotification(Long id) {
+        Notification notification = notificationRepository.findById(id).orElseThrow(
+                () -> new NotExistNotificationException("해당 공지는 존재하지 않습니다."));
+        notificationRepository.delete(notification);
     }
 }
