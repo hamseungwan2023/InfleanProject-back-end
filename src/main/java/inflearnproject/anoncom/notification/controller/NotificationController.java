@@ -27,7 +27,7 @@ public class NotificationController {
 
     @GetMapping("/notification")
     public ResponseEntity<?> getNotifications(
-            @Valid @ModelAttribute(value = "findPostContent") NotificationSearchCondition cond) {
+            @Valid @ModelAttribute(value = "findNotificationContent") NotificationSearchCondition cond) {
         List<Notification> notifications = notificationService.getNotifications(cond);
         List<NotificationShortDto> shortNotifications = notifications.stream().map(NotificationShortDto::new).toList();
         return ResponseEntity.ok().body(shortNotifications);
