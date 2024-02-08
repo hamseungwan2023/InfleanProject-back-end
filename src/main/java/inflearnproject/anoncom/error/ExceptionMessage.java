@@ -25,4 +25,6 @@ public abstract class ExceptionMessage {
     public static final String NO_SUCH_NOTE = "해당 쪽지는 존재하지 않습니다.";
 
     public static final String NO_SUCH_NOTIFICATION = "해당 공지는 존재하지 않습니다.";
+
+    public static final String NO_ALARM = "해당 알림은 존재하지 않습니다.";
 }
