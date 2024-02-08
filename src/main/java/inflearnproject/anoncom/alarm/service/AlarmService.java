@@ -9,10 +9,10 @@ import inflearnproject.anoncom.error.ExceptionMessage;
 import inflearnproject.anoncom.user.exception.NoUserEntityException;
 import inflearnproject.anoncom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static inflearnproject.anoncom.error.ExceptionMessage.NO_ALARM;
 
@@ -33,8 +33,8 @@ public class AlarmService {
         alarmRepository.save(alarm);
     }
 
-    public List<Alarm> getAlarms(Long userId) {
-        return alarmRepository.findByUserId(userId);
+    public Page<Alarm> getAlarms(Long userId, Pageable pageable) {
+        return alarmRepository.findByUserId(userId, pageable);
     }
 
     public void deleteOneAlarm(Long memberId, Long alarmId) {
