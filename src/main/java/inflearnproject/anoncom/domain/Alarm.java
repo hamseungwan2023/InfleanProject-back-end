@@ -23,6 +23,5 @@ public class Alarm {
     private UserEntity user;
 
     private String message;
-
-    private boolean isRead;
+    
 }

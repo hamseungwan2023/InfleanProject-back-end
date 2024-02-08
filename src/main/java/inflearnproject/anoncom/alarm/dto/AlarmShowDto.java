@@ -12,11 +12,9 @@ public class AlarmShowDto {
 
     private Long id;
     private String content;
-    private boolean isRead;
 
     public AlarmShowDto(Alarm alarm) {
         this.id = alarm.getId();
         this.content = alarm.getMessage();
-        this.isRead = alarm.isRead();
     }
 }

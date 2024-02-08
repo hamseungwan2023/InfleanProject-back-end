@@ -28,7 +28,6 @@ public class AlarmService {
         Alarm alarm = Alarm.builder()
                 .user(to)
                 .message(content)
-                .isRead(false)
                 .build();
 
         alarmRepository.save(alarm);
