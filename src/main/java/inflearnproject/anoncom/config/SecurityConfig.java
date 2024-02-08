@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +28,7 @@ public class SecurityConfig {
 
     private final AuthenticationManagerConfig authenticationManagerConfig;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -39,10 +39,11 @@ public class SecurityConfig {
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .authorizeHttpRequests(httpRequests -> httpRequests
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/declareNotes","/declareUser").hasAnyRole("ADMIN")
-                        .requestMatchers( "/email/**","/user/signup","/user/login","/user/refreshToken").permitAll()
-                        .requestMatchers(GET,"/api/postList/**","/api/postDetail/**").permitAll()
-                        .requestMatchers(GET,"/api/commentList/**").permitAll()
+                        .requestMatchers("/declareNotes", "/declareUser").hasAnyRole("ADMIN")
+                        .requestMatchers(POST, "/notification").hasAnyRole("ADMIN")
+                        .requestMatchers("/email/**", "/user/signup", "/user/login", "/user/refreshToken").permitAll()
+                        .requestMatchers(GET, "/api/postList/**", "/api/postDetail/**", "/notification/**").permitAll()
+                        .requestMatchers(GET, "/api/commentList/**").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .apply(authenticationManagerConfig);
@@ -58,7 +59,7 @@ public class SecurityConfig {
         // https://gareen.tistory.com/66
         config.addAllowedOrigin("*");
         config.addAllowedMethod("*");
-        config.setAllowedMethods(List.of("GET","POST","DELETE","PATCH","OPTION","PUT"));
+        config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PATCH", "OPTION", "PUT"));
         source.registerCorsConfiguration("/**", config);
 
         return source;

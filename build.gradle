@@ -66,6 +66,6 @@ clean {
     delete file('src/main/generated')
 }
 
-tasks.withType(JavaCompile){
+tasks.withType(JavaCompile) {
     options.generatedSourceOutputDirectory = file(querydslSrcDir)
 }
