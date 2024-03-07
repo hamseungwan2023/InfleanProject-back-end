@@ -112,6 +112,15 @@ class NoteServiceTest {
 
         Duration duration2 = Duration.between(before2, after2);
         System.out.println("Duration2: " + duration2.getSeconds() + " seconds " + duration2.getNano() + " nanoseconds");
+
+        long totalNanos1 = duration.getSeconds() * 1_000_000_000L + duration.getNano();
+        long totalNanos2 = duration2.getSeconds() * 1_000_000_000L + duration2.getNano();
+        long differenceInNanos = Math.abs(totalNanos1 - totalNanos2);
+
+        // 결과를 초와 나노초로 변환하여 출력
+        long differenceInSeconds = differenceInNanos / 1_000_000_000L;
+        long differenceInNanosOnly = differenceInNanos % 1_000_000_000L;
+        System.out.println("Final Duration Difference: " + differenceInSeconds + " seconds " + differenceInNanosOnly + " nanoseconds");
     }
 
     @Test
@@ -174,7 +183,7 @@ class NoteServiceTest {
 
         em.flush();
         em.clear();
-        
+
         assertTrue(noteRepository.findAll().get(0).isDeclaration());
         assertEquals(declareNoteRepository.findAll().size(), 1);
     }

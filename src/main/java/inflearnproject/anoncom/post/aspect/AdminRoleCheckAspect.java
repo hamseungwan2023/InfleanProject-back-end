@@ -1,6 +1,5 @@
 package inflearnproject.anoncom.post.aspect;
 
-import inflearnproject.anoncom.comment.exception.NotSameUserException;
 import inflearnproject.anoncom.domain.Role;
 import inflearnproject.anoncom.domain.UserEntity;
 import inflearnproject.anoncom.post.repository.PostRepository;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +35,7 @@ public class AdminRoleCheckAspect {
             return null;
         } else {
             // 관리자가 아닌 경우, 원래 메소드 로직 실행
-            return joinPoint.proceed(new Object[] {userId, postId});
+            return joinPoint.proceed(new Object[]{userId, postId});
         }
     }
 }
